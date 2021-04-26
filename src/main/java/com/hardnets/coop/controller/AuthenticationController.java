@@ -1,10 +1,14 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.dto.CreateUserDto;
+import com.hardnets.coop.dto.UserDto;
 import com.hardnets.coop.dto.request.UserSignupRequest;
 import com.hardnets.coop.dto.response.LoginDto;
 import com.hardnets.coop.entity.UserEntity;
+import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
+import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +35,7 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
@@ -53,6 +58,14 @@ public class AuthenticationController {
             log.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
+        if (userService.getUsers().size() > 0) {
+            throw new HandleException("Cannot create user without authentication");
+        }
+        return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);
     }
 
 }
