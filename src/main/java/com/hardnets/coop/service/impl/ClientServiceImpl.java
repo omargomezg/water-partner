@@ -2,6 +2,8 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.entity.ClientEntity;
+import com.hardnets.coop.entity.DropDownListEntity;
+import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
@@ -68,14 +70,10 @@ public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
     @Override
     public ClientDto create(ClientDto clientDto) {
         ClientEntity client = new ClientEntity(clientDto);
-        /*
-         * if (clientDto.getClientType() != null) {
-         *
-         * client.setClientType(); }
-         */
+        DropDownListEntity clientType = dropDownListRepository.findById(clientDto.getClientType().getId())
+                .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
+        client.setClientType(clientType);
         ClientEntity dbClient = clientRepository.save(client);
-        // Optional<DropDownListEntity> clientType =
-        // dropDownListRepository.findById(clientDto.getClientType());
         return new ClientDto(dbClient);
     }
 
