@@ -9,6 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GenericListDto {
     private Long id;
-    private String value;
-    private String code;
+    private String value = "";
+    private String code = "";
+
+    public GenericListDto(Long id) {
+        setId(id);
+    }
 }

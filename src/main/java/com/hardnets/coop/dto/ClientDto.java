@@ -87,7 +87,9 @@ public class ClientDto {
         this.setProfession(client.getProfession());
         this.setDateOfAdmission(client.getDateOfAdmission());
         this.getClientType().setId(client.getClientType().getId());
-        this.getClientType().setValue(client.getClientType().getValue());
+        if (client.getClientType() != null) {
+            this.getClientType().setValue(client.getClientType().getValue());
+        }
         this.setEmail(client.getEmail());
         this.setIsActive(client.getEnabled());
         this.setTelephone(client.getTelephone());
