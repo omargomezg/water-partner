@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,9 @@ public class WaterMeterEntity extends BaseEntity {
 
     @CreationTimestamp
     private Date created;
+
+    @UpdateTimestamp
+    private Date updated;
 
     @Column
     private String description;

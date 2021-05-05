@@ -68,8 +68,9 @@ public class ConsumptionController {
      * @return
      */
     @GetMapping("/v1/consumption/period/{id}/detail-resume")
-    public ResponseEntity<List<ResumeConsumptionDto>> getPeriodResumeByPeriodId(@PathVariable Long id) {
-        return new ResponseEntity(consumptionService.findAllByPeriodId(id), HttpStatus.OK);
+    public ResponseEntity<List<ResumeConsumptionDto>> getPeriodResumeByPeriodId(@PathVariable Long id, @RequestParam int pageIndex,
+                                                                                @RequestParam int pageSize) {
+        return new ResponseEntity(consumptionService.findAllByPeriodId(id, pageIndex, pageSize), HttpStatus.OK);
     }
 
     /**

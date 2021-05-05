@@ -11,6 +11,9 @@ import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -57,14 +60,18 @@ public class ConsumptionService {
         return consumptionRepository.save(consumptionEntity);
     }
 
-    public ResumeConsumptionDto findAllByPeriodId(Long periodId) {
+    public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
         ResumeConsumptionDto response = new ResumeConsumptionDto();
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
         if (period.isPresent()) {
             response.setStatus(period.get().getStatus());
             response.setStartDate(period.get().getStartDate());
             response.setEndDate(period.get().getEndDate());
-            response.setDetail(consumptionRepository.findAllByPeriodId(period.get().getId()));
+
+            Pageable pageable = PageRequest.of(pageIndex, pageSize);
+            Page page = consumptionRepository.findAllByPeriodId(period.get().getId(), pageable);
+            response.setDetail(page.getContent());
+            response.setTotalHits(page.getTotalElements());
         }
         return response;
     }

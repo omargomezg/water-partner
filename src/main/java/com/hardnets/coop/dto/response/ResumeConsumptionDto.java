@@ -18,4 +18,5 @@ public class ResumeConsumptionDto {
     private Date endDate;
     private String status;
     private List<ResumeConsumptionDetailDto> detail;
+    private Long totalHits;
 }

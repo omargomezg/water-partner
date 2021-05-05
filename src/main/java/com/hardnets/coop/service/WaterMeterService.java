@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class WaterMeterService {
     @Autowired
     DropDownListRepository dropDownListRepository;
 
-    public WaterMeterDto create(WaterMeterDto waterMeterDto, String rut) {
+    public WaterMeterDto create(WaterMeterDto waterMeterDto) {
         DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
                 .orElseThrow(() -> new DropDownNotFoundException("Size not found"));
         DropDownListEntity status = dropDownListRepository.findByCode("NEW")
@@ -61,7 +62,9 @@ public class WaterMeterService {
 
     public Collection<WaterMeterDto> getAll() {
         Collection<WaterMeterEntity> waterMeterEntities = waterMeterRepository.findAll();
-        return waterMeterEntities.stream().map(WaterMeterDto::new).collect(Collectors.toList());
+        return waterMeterEntities.stream().map(WaterMeterDto::new)
+                .sorted(Comparator.comparing(WaterMeterDto::getUpdated).reversed())
+                .collect(Collectors.toList());
     }
 
     public Collection<WaterMeterDto> getByUser(String rut) {

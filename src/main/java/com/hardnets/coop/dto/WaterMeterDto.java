@@ -14,6 +14,7 @@ public class WaterMeterDto {
     private Long sizeId;
     private String comment;
     private String sector;
+    private Date updated;
 
     /**
      * Date when is related to
@@ -27,5 +28,6 @@ public class WaterMeterDto {
         this.setComment(waterMeter.getDescription());
         this.setSizeId(waterMeter.getSize().getId());
         this.setSector(waterMeter.getSector());
+        this.setUpdated(waterMeter.getUpdated());
     }
 }
