@@ -1,6 +1,7 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.dto.ClientDto;
+import com.hardnets.coop.dto.request.FilterDto;
 import com.hardnets.coop.entity.ClientEntity;
 import com.hardnets.coop.entity.DropDownListEntity;
 import com.hardnets.coop.exception.DropDownNotFoundException;
@@ -14,7 +15,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -45,16 +48,27 @@ public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
     }
 
     @Override
-    public Collection<ClientDto> getUsers() {
-        Collection<ClientDto> dbClient = clientRepository.findAllClientsDto();
-        dbClient.forEach(client -> {
+    public List<ClientDto> getUsers(FilterDto filter) {
+        List<ClientDto> clients = new ArrayList<>();
+        if (filter.getName() != null && filter.getRut() != null) {
+            clients = clientRepository.findAllClientsByRutOrName(filter.getRut(), filter.getName());
+        } else if (filter.getRut() != null) {
+            Optional<ClientDto> client = clientRepository.findUserDtoByRut(filter.getRut());
+            if (client.isPresent()) {
+                clients.add(client.get());
+            }
+        } else if (filter.getName() != null) {
+            clients = clientRepository.findAllClientsByName(filter.getName());
+        } else {
+            clients = clientRepository.findAllClientsDto();
+        }
+        clients.forEach(client -> {
             Collection<String> ids = waterMeterRepository.finadAllIdsByClient(client.getRut());
             if (!ids.isEmpty()) {
                 client.getWaterMeters().addAll(ids);
             }
         });
-        log.info("Getting {} users", dbClient.size());
-        return dbClient;
+        return clients;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.hardnets.coop.repository;
 
 import com.hardnets.coop.dto.ReadingsDto;
+import com.hardnets.coop.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.dto.response.ResumeConsumptionDetailDto;
 import com.hardnets.coop.entity.ConsumptionEntity;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,11 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
 
     @Query(value = "select new com.hardnets.coop.dto.response.ResumeConsumptionDetailDto(ce.rut, ce.clientType.code, ce.names, ce.middleName, ce.lastName, ce.businessName, " +
             "c.consumption) from ConsumptionEntity c, ClientEntity ce where c.period.id = ?1",
-            countQuery = "select count(*) from ConsumptionEntity c where c.period.id = ?1"
+            countQuery = "select count(c) from ConsumptionEntity c where c.period.id = ?1"
     )
     Page<ResumeConsumptionDetailDto> findAllByPeriodId(Long id, Pageable pageable);
+
+    @Query(value = "select new com.hardnets.coop.dto.response.ConsumptionClientDetailDto(c.readingDate, c.period.endDate, c.consumption) from ConsumptionEntity c, ClientEntity ce where ce.rut = ?1",
+            countQuery = "select count(c) from ConsumptionEntity c, ClientEntity ce where ce.rut = ?1")
+    Page<ConsumptionClientDetailDto> findAllByClient(String rut, Pageable pageable);
 }

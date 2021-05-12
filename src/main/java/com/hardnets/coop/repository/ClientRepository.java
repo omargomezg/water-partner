@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -19,6 +19,14 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
     Optional<ClientEntity> findByRut(String rut);
 
     @Query("select new com.hardnets.coop.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) from ClientEntity c")
-    Collection<ClientDto> findAllClientsDto();
+    List<ClientDto> findAllClientsDto();
+
+    @Query("select new com.hardnets.coop.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) " +
+            "from ClientEntity c where c.rut = :rut or c.names like %:name% or c.lastName like %:name% or c.middleName like %:name% or c.businessName like %:name%")
+    List<ClientDto> findAllClientsByRutOrName(String rut, String name);
+
+    @Query("select new com.hardnets.coop.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) " +
+            "from ClientEntity c where c.names like %:name% or c.lastName like %:name% or c.middleName like %:name% or c.businessName like %:name%")
+    List<ClientDto> findAllClientsByName(String name);
 
 }

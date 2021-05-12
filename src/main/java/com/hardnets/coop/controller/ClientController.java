@@ -2,6 +2,7 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.dto.WaterMeterDto;
+import com.hardnets.coop.dto.request.FilterDto;
 import com.hardnets.coop.service.PersonService;
 import com.hardnets.coop.service.WaterMeterService;
 import io.swagger.annotations.Api;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -38,9 +40,12 @@ public class ClientController {
     }
 
     @GetMapping("/v1/client")
-    public ResponseEntity<Collection<ClientDto>> getUsers() {
-        log.info("access to Get Users");
-        return ResponseEntity.ok(personService.getUsers());
+    public ResponseEntity<Collection<ClientDto>> getUsers(@RequestParam(required = false) String rut,
+                                                          @RequestParam(required = false) String name) {
+        FilterDto filter = new FilterDto();
+        filter.setRut(rut);
+        filter.setName(name);
+        return ResponseEntity.ok(personService.getUsers(filter));
     }
 
     @GetMapping("/v1/client/{rut}")

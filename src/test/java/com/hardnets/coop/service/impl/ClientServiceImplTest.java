@@ -20,7 +20,7 @@ class ClientServiceImplTest {
 
     @Test
     void getUsers() {
-        Collection<ClientDto> users = clientService.getUsers();
+        Collection<ClientDto> users = clientService.getUsers(null);
         assertEquals(users.size(), 2);
     }
 

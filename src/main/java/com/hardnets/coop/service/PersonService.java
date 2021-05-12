@@ -1,12 +1,14 @@
 package com.hardnets.coop.service;
 
-import java.util.Collection;
+import com.hardnets.coop.dto.request.FilterDto;
+
+import java.util.List;
 
 public interface PersonService<T, C> {
 
     T update(T entity);
 
-    Collection<T> getUsers();
+    List<T> getUsers(FilterDto filter);
 
     T getByRut(String rut);
 

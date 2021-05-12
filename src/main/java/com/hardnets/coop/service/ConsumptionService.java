@@ -1,16 +1,20 @@
 package com.hardnets.coop.service;
 
 import com.hardnets.coop.dto.ReadingsDto;
+import com.hardnets.coop.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.entity.ClientEntity;
 import com.hardnets.coop.entity.ConsumptionEntity;
 import com.hardnets.coop.entity.PeriodEntity;
 import com.hardnets.coop.entity.WaterMeterEntity;
+import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
+@AllArgsConstructor
 @Service
 public class ConsumptionService {
 
@@ -30,15 +35,7 @@ public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final WaterMeterRepository waterMeterRepository;
     private final PeriodRepository periodRepository;
-
-    @Autowired
-    public ConsumptionService(WaterMeterRepository waterMeterRepository, ConsumptionRepository consumptionRepository,
-                              PeriodRepository periodRepository) {
-        this.waterMeterRepository = waterMeterRepository;
-        this.consumptionRepository = consumptionRepository;
-        this.periodRepository = periodRepository;
-    }
-
+    private final ClientRepository clientRepository;
 
     public List<ReadingsDto> findRecordsByWaterMeterId(Long id) {
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(id);
@@ -74,5 +71,16 @@ public class ConsumptionService {
             response.setTotalHits(page.getTotalElements());
         }
         return response;
+    }
+
+    public ConsumptionClientDto findAllByClient(String rut) {
+        ClientEntity client = clientRepository.findByRut(rut).orElseThrow(() -> new ClientNotFoundException(rut));
+        Pageable pageable = PageRequest.of(0, 25);
+        Page page = consumptionRepository.findAllByClient(rut, pageable);
+        ConsumptionClientDto pageDto = new ConsumptionClientDto();
+        pageDto.setFullName(client.getFullName());
+        pageDto.setTotalHits(1L);
+        pageDto.setContent(page.getContent());
+        return pageDto;
     }
 }

@@ -2,6 +2,7 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.dto.ReadingsDto;
 import com.hardnets.coop.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.dto.response.PeriodDto;
 import com.hardnets.coop.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.entity.PeriodEntity;
@@ -9,6 +10,7 @@ import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.WaterMeterService;
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +28,13 @@ import java.util.Set;
 
 @Log4j2
 @Api("All client operations")
+@AllArgsConstructor
 @RestController
 public class ConsumptionController {
 
     private final WaterMeterService waterMeterService;
     private final ConsumptionService consumptionService;
     private final PeriodService periodService;
-
-    public ConsumptionController(WaterMeterService waterMeterService, ConsumptionService consumptionService,
-                                 PeriodService periodService) {
-        this.waterMeterService = waterMeterService;
-        this.consumptionService = consumptionService;
-        this.periodService = periodService;
-    }
 
     @GetMapping("/v1/consumption/related-water-meters")
     public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam Optional<String> waterMeterNumber, @RequestParam Optional<String> rut) {
@@ -48,6 +44,17 @@ public class ConsumptionController {
         return waterMeterNumber.map(aString -> new ResponseEntity<>(waterMeterService.findRelatedByNumber(aString), HttpStatus.OK))
                 .orElseGet(() -> rut.map(s -> new ResponseEntity<>(waterMeterService.findRelatedByRut(s), HttpStatus.OK))
                         .orElseGet(() -> new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK)));
+    }
+
+    /**
+     * Obtiene un listado de consumos por cliente consultado
+     *
+     * @param rut Cliente a consultar
+     * @return Un objeto que contiene el total de elementos mas el detalle por cada periodo
+     */
+    @GetMapping("/v1/consumption/client/{rut}")
+    public ResponseEntity<ConsumptionClientDto> consumptionByClient(@PathVariable String rut) {
+        return ResponseEntity.ok(consumptionService.findAllByClient(rut));
     }
 
     @GetMapping("/v1/consumption/{id}")
@@ -62,36 +69,36 @@ public class ConsumptionController {
     }
 
     /**
-     * Get resume by period id
+     * Obtiene un resumen de consumo por periodo
      *
-     * @param id the primary key of period
+     * @param id El identificador del periodo
      * @return
      */
     @GetMapping("/v1/consumption/period/{id}/detail-resume")
-    public ResponseEntity<List<ResumeConsumptionDto>> getPeriodResumeByPeriodId(@PathVariable Long id, @RequestParam int pageIndex,
-                                                                                @RequestParam int pageSize) {
-        return new ResponseEntity(consumptionService.findAllByPeriodId(id, pageIndex, pageSize), HttpStatus.OK);
+    public ResponseEntity<ResumeConsumptionDto> getPeriodResumeByPeriodId(@PathVariable Long id, @RequestParam int pageIndex,
+                                                                          @RequestParam int pageSize) {
+        return ResponseEntity.ok(consumptionService.findAllByPeriodId(id, pageIndex, pageSize));
     }
 
     /**
-     * Get Periods by year
+     * Obtiene periodos de un año en particular
      *
-     * @param year The period start date
-     * @return
+     * @param year Año que se desea consultar
+     * @return Una lista de periodos
      */
     @GetMapping("/v1/consumption/period/year")
     public ResponseEntity<Set<PeriodDto>> getAllPeriodYears(@RequestParam Integer year) {
-        return new ResponseEntity(periodService.findAllByYear(year), HttpStatus.OK);
+        return ResponseEntity.ok(periodService.findAllByYear(year));
     }
 
     /**
      * Get only years in period extracted
      *
-     * @return
+     * @return una lista de años
      */
     @GetMapping("/v1/consumption/period/years")
     public ResponseEntity<Set<Integer>> getAllPeriods() {
-        return new ResponseEntity(periodService.findAllYears(), HttpStatus.OK);
+        return ResponseEntity.ok(periodService.findAllYears());
     }
 
 }
