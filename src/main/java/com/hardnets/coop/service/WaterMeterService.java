@@ -13,27 +13,49 @@ import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class WaterMeterService {
 
-    @Autowired
-    WaterMeterRepository waterMeterRepository;
+    private final WaterMeterRepository waterMeterRepository;
+    private final ClientRepository clientRepository;
+    private final DropDownListRepository dropDownListRepository;
 
-    @Autowired
-    ClientRepository clientRepository;
+    public void update(List<WaterMeterDto> waterMeterDtos) {
+        List<WaterMeterEntity> entities = new ArrayList<>();
+        for (WaterMeterDto dto : waterMeterDtos) {
+            WaterMeterEntity entity = waterMeterRepository.findByNumber(dto.getNumber()).orElseThrow(() ->
+                    new WaterMeterNotFoundException("Water meter number " + dto.getNumber() + " was not found"));
+            ClientEntity client = clientRepository.findByRut(dto.getRut())
+                    .orElseThrow(() -> new UserNotFoundException("User by rut " + dto.getRut() + " was not" + " found"));
+            entity.setClient(client);
+            entities.add(entity);
+        }
+        waterMeterRepository.saveAll(entities);
+    }
 
-    @Autowired
-    DropDownListRepository dropDownListRepository;
+    public WaterMeterDto update(WaterMeterDto waterMeterDto) {
+        WaterMeterEntity entity = waterMeterRepository.findByNumber(waterMeterDto.getNumber()).orElseThrow(() ->
+                new WaterMeterNotFoundException("Water meter number " + waterMeterDto.getNumber() + " was not found"));
+        ClientEntity client = clientRepository.findByRut(waterMeterDto.getRut())
+                .orElseThrow(() -> new UserNotFoundException("User by rut " + waterMeterDto.getRut() + " was not" + " found"));
+        entity.setClient(client);
+        waterMeterRepository.save(entity);
+        WaterMeterDto dto = new WaterMeterDto(entity);
+        dto.setRut(entity.getClient().getRut());
+        return dto;
+    }
 
     public WaterMeterDto create(WaterMeterDto waterMeterDto) {
         DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
@@ -58,6 +80,10 @@ public class WaterMeterService {
                 .orElseThrow(() -> new WaterMeterNotFoundException("Water meter number " + number + " was " +
                         "not" + " found"));
         return new WaterMeterDto(waterMeter);
+    }
+
+    public Collection<WaterMeterDto> findAllWheregetNotRelated() {
+        return waterMeterRepository.findAllWhereClientIsNull();
     }
 
     public Collection<WaterMeterDto> getAll() {

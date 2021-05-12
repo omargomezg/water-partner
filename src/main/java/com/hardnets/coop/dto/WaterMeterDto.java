@@ -15,11 +15,21 @@ public class WaterMeterDto {
     private String comment;
     private String sector;
     private Date updated;
+    private String rut;
 
     /**
      * Date when is related to
      */
     private Date dischargeDate;
+
+    public WaterMeterDto(String number, String trademark, Long sizeId, String comment, String sector, Date updated) {
+        this.number = number;
+        this.trademark = trademark;
+        this.sizeId = sizeId;
+        this.comment = comment;
+        this.sector = sector;
+        this.updated = updated;
+    }
 
     public WaterMeterDto(WaterMeterEntity waterMeter) {
         this.setNumber(waterMeter.getNumber());
