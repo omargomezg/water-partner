@@ -4,6 +4,7 @@ import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.dto.request.FilterDto;
 import com.hardnets.coop.entity.ClientEntity;
 import com.hardnets.coop.entity.DropDownListEntity;
+import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.repository.ClientRepository;
@@ -32,18 +33,17 @@ public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
 
     @Override
     public ClientDto update(ClientDto clientDto) {
-        Optional<ClientEntity> client = clientRepository.findByRut(clientDto.getRut());
-        if (client.isPresent()) {
-            client.get().setNames(clientDto.getNames());
-            client.get().setMiddleName(clientDto.getMiddleName());
-            client.get().setLastName(clientDto.getLastName());
-            client.get().setBirthDate(clientDto.getBirthDate());
-            client.get().setDateOfAdmission(clientDto.getDateOfAdmission());
-            client.get().setProfession(clientDto.getProfession());
-            client.get().setEmail(clientDto.getEmail());
-            client.get().setTelephone(clientDto.getTelephone());
-        }
-        ClientEntity dbClient = clientRepository.save(client.get());
+        ClientEntity client = clientRepository.findByRut(clientDto.getRut())
+                .orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
+        client.setNames(clientDto.getNames());
+        client.setMiddleName(clientDto.getMiddleName());
+        client.setLastName(clientDto.getLastName());
+        client.setBirthDate(clientDto.getBirthDate());
+        client.setDateOfAdmission(clientDto.getDateOfAdmission());
+        client.setProfession(clientDto.getProfession());
+        client.setEmail(clientDto.getEmail());
+        client.setTelephone(clientDto.getTelephone());
+        ClientEntity dbClient = clientRepository.save(client);
         return new ClientDto(dbClient);
     }
 
