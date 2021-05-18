@@ -44,6 +44,7 @@ public class SubsidyService {
         subsidyEntity.setEndingDate(subsidy.getEndingDate());
         subsidyEntity.setPercentage(subsidy.getPercentage());
         subsidyEntity.setObservation(subsidy.getObservation());
+        subsidyEntity.setIsActive(true);
         subsidyRepository.save(subsidyEntity);
     }
 }
