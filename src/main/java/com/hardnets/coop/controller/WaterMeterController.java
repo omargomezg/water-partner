@@ -59,12 +59,12 @@ public class WaterMeterController {
     /**
      * Get An water meter by number
      *
-     * @param number The id for water meter
+     * @param id The id for water meter
      * @return A water meter
      */
-    @GetMapping("/v1/water-meter/{number}")
-    public ResponseEntity<WaterMeterDto> getWaterMeterByNumber(@PathVariable String number) {
-        WaterMeterDto waterMeter = waterMeterService.getByNumber(number);
+    @GetMapping("/v1/water-meter/{id}")
+    public ResponseEntity<WaterMeterDto> getWaterMeterByNumber(@PathVariable Long id) {
+        WaterMeterDto waterMeter = waterMeterService.getById(id);
         return ResponseEntity.ok(waterMeter);
     }
 }

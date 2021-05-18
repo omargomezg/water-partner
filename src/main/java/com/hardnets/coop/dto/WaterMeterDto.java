@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class WaterMeterDto {
+    private Long id;
     private String number;
     private String trademark;
     private Long sizeId;
@@ -22,7 +23,8 @@ public class WaterMeterDto {
      */
     private Date dischargeDate;
 
-    public WaterMeterDto(String number, String trademark, Long sizeId, String comment, String sector, Date updated) {
+    public WaterMeterDto(Long id, String number, String trademark, Long sizeId, String comment, String sector, Date updated) {
+        this.id = id;
         this.number = number;
         this.trademark = trademark;
         this.sizeId = sizeId;
@@ -32,6 +34,7 @@ public class WaterMeterDto {
     }
 
     public WaterMeterDto(WaterMeterEntity waterMeter) {
+        this.setId(waterMeter.getId());
         this.setNumber(waterMeter.getNumber());
         this.setTrademark(waterMeter.getTrademark());
         this.setDischargeDate(waterMeter.getCreated());

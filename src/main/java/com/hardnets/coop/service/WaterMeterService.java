@@ -3,8 +3,10 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.dto.WaterMeterDto;
 import com.hardnets.coop.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.entity.ClientEntity;
 import com.hardnets.coop.entity.DropDownListEntity;
+import com.hardnets.coop.entity.SubsidyEntity;
 import com.hardnets.coop.entity.WaterMeterEntity;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.HandleException;
@@ -12,6 +14,7 @@ import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
+import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,6 +35,7 @@ public class WaterMeterService {
     private final WaterMeterRepository waterMeterRepository;
     private final ClientRepository clientRepository;
     private final DropDownListRepository dropDownListRepository;
+    private final SubsidyRepository subsidyRepository;
 
     public void update(List<WaterMeterDto> waterMeterDtos) {
         List<WaterMeterEntity> entities = new ArrayList<>();
@@ -82,6 +87,13 @@ public class WaterMeterService {
         return new WaterMeterDto(waterMeter);
     }
 
+    public WaterMeterDto getById(Long id) {
+        WaterMeterEntity waterMeter = waterMeterRepository.findById(id)
+                .orElseThrow(() -> new WaterMeterNotFoundException("Water meter number " + id + " was " +
+                        "not" + " found"));
+        return new WaterMeterDto(waterMeter);
+    }
+
     public Collection<WaterMeterDto> findAllWheregetNotRelated() {
         return waterMeterRepository.findAllWhereClientIsNull();
     }
@@ -93,11 +105,24 @@ public class WaterMeterService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<WaterMeterDto> getByUser(String rut) {
-        clientRepository.findByRut(rut)
+    public Collection<RelatedWaterMetersDto> getByUser(String rut) {
+        Collection<RelatedWaterMetersDto> relatedMeters = new HashSet<>();
+        ClientEntity client = clientRepository.findByRut(rut)
                 .orElseThrow(() -> new UserNotFoundException("User by rut " + rut + " was not" + " found"));
-        Collection<WaterMeterEntity> waterMeterEntities = waterMeterRepository.findAllByClientRut(rut);
-        return waterMeterEntities.stream().map(WaterMeterDto::new).collect(Collectors.toList());
+        Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClient(client);
+        for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
+            Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActive(dbRelatedMeter, true);
+            RelatedWaterMetersDto related = new RelatedWaterMetersDto(
+                    dbRelatedMeter.getId(),
+                    dbRelatedMeter.getNumber(),
+                    dbRelatedMeter.getSize().getValue(),
+                    dbRelatedMeter.getCreated(),
+                    dbRelatedMeter.getSector(),
+                    subsidy.isPresent() ? subsidy.get().getPercentage() : 0
+            );
+            relatedMeters.add(related);
+        }
+        return relatedMeters;
     }
 
     public boolean relateToClient(WaterMeterDto waterMeterDto, String rut) {

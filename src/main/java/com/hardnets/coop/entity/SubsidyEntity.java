@@ -27,7 +27,13 @@ public class SubsidyEntity extends BaseEntity {
     private Date endingDate;
 
     @Column(nullable = false)
-    private Short percentaje;
+    private Short percentage;
+
+    @Column
+    private String observation;
+
+    @Column
+    private Boolean isActive;
 
     @JsonBackReference
     @OneToMany(mappedBy = "subsidy", fetch = FetchType.LAZY)

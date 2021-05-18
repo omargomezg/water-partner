@@ -25,13 +25,11 @@ public class UserController {
 
     @GetMapping("/v1/user")
     public ResponseEntity<?> getUsers() {
-        log.info("access to Get User");
         return ResponseEntity.ok(userService.getUsers());
     }
 
     @GetMapping("/v1/user/{rut}")
     public ResponseEntity<?> getUsers(@PathVariable String rut) {
-        log.info("access to Get User rut {}", rut);
         return ResponseEntity.ok(userService.getByRut(rut));
     }
 

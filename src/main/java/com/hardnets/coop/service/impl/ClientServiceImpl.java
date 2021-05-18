@@ -35,12 +35,29 @@ public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
     public ClientDto update(ClientDto clientDto) {
         ClientEntity client = clientRepository.findByRut(clientDto.getRut())
                 .orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
-        client.setNames(clientDto.getNames());
-        client.setMiddleName(clientDto.getMiddleName());
-        client.setLastName(clientDto.getLastName());
-        client.setBirthDate(clientDto.getBirthDate());
+        DropDownListEntity clientType = dropDownListRepository.findById(clientDto.getClientType().getId())
+                .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
+
+        client.setClientType(clientType);
+        if (clientType.getCode().equals("PARTNER")) {
+            client.setBirthDate(clientDto.getBirthDate());
+            client.setNames(clientDto.getNames());
+            client.setLastName(clientDto.getLastName());
+            client.setMiddleName(clientDto.getMiddleName());
+            client.setProfession(clientDto.getProfession());
+            client.setBusinessName("");
+            client.setBusinessActivity("");
+        } else {
+            client.setBusinessName(clientDto.getBusinessName());
+            client.setBusinessActivity(clientDto.getBusinessActivity());
+            client.setBirthDate(null);
+            client.setNames("");
+            client.setLastName("");
+            client.setMiddleName("");
+            client.setProfession("");
+        }
         client.setDateOfAdmission(clientDto.getDateOfAdmission());
-        client.setProfession(clientDto.getProfession());
+        client.setEnabled(clientDto.getIsActive());
         client.setEmail(clientDto.getEmail());
         client.setTelephone(clientDto.getTelephone());
         ClientEntity dbClient = clientRepository.save(client);

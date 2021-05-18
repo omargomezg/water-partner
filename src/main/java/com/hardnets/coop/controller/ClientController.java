@@ -3,6 +3,7 @@ package com.hardnets.coop.controller;
 import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.dto.WaterMeterDto;
 import com.hardnets.coop.dto.request.FilterDto;
+import com.hardnets.coop.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.service.PersonService;
 import com.hardnets.coop.service.WaterMeterService;
 import io.swagger.annotations.Api;
@@ -50,14 +51,12 @@ public class ClientController {
 
     @GetMapping("/v1/client/{rut}")
     public ResponseEntity<ClientDto> getUsers(@PathVariable String rut) {
-        log.info("access to Get User rut {}", rut);
         ClientDto client = personService.getByRut(rut);
         return ResponseEntity.ok(client);
     }
 
     @PostMapping("/v1/client")
     public ResponseEntity<ClientDto> createUser(@RequestBody @Valid ClientDto client) throws Exception {
-        log.info("access to Post Client");
         return new ResponseEntity<>(personService.create(client), HttpStatus.CREATED);
     }
 
@@ -74,9 +73,8 @@ public class ClientController {
     }
 
     @GetMapping("/v1/client/water-meter/{rut}")
-    public ResponseEntity<Collection<WaterMeterDto>> getWaterMeters(@PathVariable String rut) {
-        return new ResponseEntity<>(waterMeterService.getByUser(rut), HttpStatus.OK);
+    public ResponseEntity<Collection<RelatedWaterMetersDto>> getWaterMeters(@PathVariable String rut) {
+        return ResponseEntity.ok(waterMeterService.getByUser(rut));
     }
-
 
 }

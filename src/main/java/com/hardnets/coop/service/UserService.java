@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDto update(UserDto userDto) {
         Optional<UserEntity> user = userRepository.findById(userDto.getRut());
-        user.ifPresent(userEntity -> userRepository.save(userEntity));
+        user.ifPresent(userRepository::save);
         return userDto;
     }
 
