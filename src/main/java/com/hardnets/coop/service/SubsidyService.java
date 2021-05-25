@@ -9,6 +9,7 @@ import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -19,9 +20,8 @@ public class SubsidyService {
     private final WaterMeterRepository waterMeterRepository;
 
     public SubsidyDto findByWaterMeterId(Long waterMeterId) {
-        SubsidyEntity subsidy = subsidyRepository.findByWaterMeterId(waterMeterId).orElse(new SubsidyEntity());
-        SubsidyDto dto = new SubsidyDto(subsidy.getStartDate(), subsidy.getEndingDate(),
-                subsidy.getPercentage(), subsidy.getObservation());
+        SubsidyEntity subsidy = subsidyRepository.findByIsActiveAndWaterMeterId(waterMeterId).orElse(new SubsidyEntity());
+        SubsidyDto dto = parseToDto(subsidy);
         if (subsidy.getWaterMeter() != null) {
             WaterMeterDto waterMeter = new WaterMeterDto();
             waterMeter.setNumber(subsidy.getWaterMeter().getNumber());
@@ -44,7 +44,13 @@ public class SubsidyService {
         subsidyEntity.setEndingDate(subsidy.getEndingDate());
         subsidyEntity.setPercentage(subsidy.getPercentage());
         subsidyEntity.setObservation(subsidy.getObservation());
+        subsidyEntity.setUpdated(new Date());
         subsidyEntity.setIsActive(true);
         subsidyRepository.save(subsidyEntity);
+    }
+
+    private SubsidyDto parseToDto(SubsidyEntity subsidy) {
+        return new SubsidyDto(subsidy.getId(), subsidy.getStartDate(), subsidy.getEndingDate(),
+                subsidy.getPercentage(), subsidy.getObservation());
     }
 }

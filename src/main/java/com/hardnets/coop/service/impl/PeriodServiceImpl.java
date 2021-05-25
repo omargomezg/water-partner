@@ -5,22 +5,20 @@ import com.hardnets.coop.entity.PeriodEntity;
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
+@AllArgsConstructor
 @Service
 public class PeriodServiceImpl implements PeriodService {
 
+    public static final String ACTIVE = "ACTIVE";
     private final PeriodRepository periodRepository;
-
-    @Autowired
-    public PeriodServiceImpl(PeriodRepository periodRepository) {
-        this.periodRepository = periodRepository;
-    }
 
     @Override
     public Set<PeriodDto> findAllByYear(int year) {
@@ -48,12 +46,36 @@ public class PeriodServiceImpl implements PeriodService {
         if (period.isPresent()) {
             return period.get();
         }
-        if (status.equals("ACTIVE")) {
+        if (status.equals(ACTIVE)) {
             PeriodEntity newPeriod = new PeriodEntity();
-            newPeriod.setStatus("ACTIVE");
+            newPeriod.setStatus(ACTIVE);
             newPeriod.setStartDate(new Date());
             return periodRepository.save(newPeriod);
         }
         throw new PeriodException("Cannot find period with status " + status);
+    }
+
+    @Override
+    public void closePeriod(Long id) {
+        PeriodEntity period = periodRepository.findById(id).orElseThrow(
+                () -> new PeriodException("Period was not found")
+        );
+        Date endDate = new Date();
+        period.setEndDate(endDate);
+        period.setStatus("CLOSED");
+        periodRepository.save(period);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endDate);
+        calendar.add(Calendar.DATE, 1);
+        create(calendar.getTime());
+
+    }
+
+    @Override
+    public void create(Date startDate) {
+        PeriodEntity newPeriod = new PeriodEntity();
+        newPeriod.setStartDate(startDate);
+        newPeriod.setStatus(ACTIVE);
+        periodRepository.save(newPeriod);
     }
 }

@@ -29,6 +29,11 @@ public class PeriodEntity extends BaseEntity {
     @Column
     private Date endDate;
 
+    /**
+     * Indica el estado de un periodo el cual puede ser:
+     * - ACTIVE: Abierto, por cuanto puede recibir lecturas para el mes
+     * - CLOSED: Cerrado, cuando cambia a este estado se generan las boletas/facturas
+     */
     @Column
     private String status;
 

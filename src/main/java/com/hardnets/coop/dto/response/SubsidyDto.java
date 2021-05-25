@@ -22,7 +22,8 @@ public class SubsidyDto {
     private String observation;
     private WaterMeterDto waterMeter;
 
-    public SubsidyDto(Date startDate, Date endingDate, Short percentage, String observation) {
+    public SubsidyDto(Long id, Date startDate, Date endingDate, Short percentage, String observation) {
+        this.id = id;
         this.startDate = startDate;
         this.endingDate = endingDate;
         this.percentage = percentage;

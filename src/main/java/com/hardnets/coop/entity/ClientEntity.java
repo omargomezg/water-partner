@@ -46,6 +46,11 @@ public class ClientEntity extends PersonEntity {
 
     @OneToMany(
             mappedBy = "client",
+            fetch = FetchType.LAZY)
+    private Set<InvoiceEntity> invoices;
+
+    @OneToMany(
+            mappedBy = "client",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<WaterMeterEntity> waterMeter;

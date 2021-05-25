@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface SubsidyRepository extends JpaRepository<SubsidyEntity, Long> {
 
-    @Query("select s from SubsidyEntity s where s.waterMeter.id = ?1")
-    Optional<SubsidyEntity> findByWaterMeterId(Long number);
+    @Query("select s from SubsidyEntity s where s.waterMeter.id = ?1 and s.isActive = true")
+    Optional<SubsidyEntity> findByIsActiveAndWaterMeterId(Long number);
 
     Optional<SubsidyEntity> findAllByWaterMeterAndIsActive(WaterMeterEntity waterMeter, Boolean isActive);
 

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -63,9 +64,10 @@ public class ConsumptionController {
     }
 
     @PostMapping("/v1/consumption/{id}")
-    public ResponseEntity<?> create(@PathVariable Long id, @RequestParam Long consumption) {
+    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Long consumption) {
         PeriodEntity period = periodService.findByStatus("ACTIVE");
-        return new ResponseEntity<>(consumptionService.create(id, consumption, period), HttpStatus.CREATED);
+        consumptionService.create(id, consumption, period);
+        return ResponseEntity.created(URI.create("/consumption/" + id)).build();
     }
 
     /**

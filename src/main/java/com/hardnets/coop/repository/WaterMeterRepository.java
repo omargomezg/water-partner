@@ -18,7 +18,7 @@ public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Lo
     @Query("select wm from WaterMeterEntity wm where wm.client.rut = ?1")
     Collection<WaterMeterEntity> findAllByClientRut(String rut);
 
-    Collection<WaterMeterEntity> findAllByClient(ClientEntity clientEntity);
+    Collection<WaterMeterEntity> findAllByClientOrderByUpdatedDesc(ClientEntity clientEntity);
 
     @Query("select w.number from WaterMeterEntity w where w.client.rut = ?1")
     Collection<String> finadAllIdsByClient(String rut);

@@ -62,6 +62,9 @@ public class WaterMeterEntity extends BaseEntity {
     private DropDownListEntity status;
 
     @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
+    private Set<InvoiceEntity> invoices;
+
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<SubsidyEntity> subsidies;
 

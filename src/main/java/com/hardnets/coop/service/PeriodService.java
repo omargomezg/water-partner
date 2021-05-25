@@ -3,6 +3,7 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.dto.response.PeriodDto;
 import com.hardnets.coop.entity.PeriodEntity;
 
+import java.util.Date;
 import java.util.Set;
 
 public interface PeriodService {
@@ -16,5 +17,9 @@ public interface PeriodService {
     PeriodEntity save(PeriodEntity periodEntity);
 
     PeriodEntity findByStatus(String status);
+
+    void closePeriod(Long id);
+
+    void create(Date startDate);
 
 }

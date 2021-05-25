@@ -3,6 +3,8 @@ package com.hardnets.coop.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +21,12 @@ import java.util.Set;
 @Entity
 @Table(name = "subsidies")
 public class SubsidyEntity extends BaseEntity {
+
+    @CreationTimestamp
+    private Date created;
+
+    @UpdateTimestamp
+    private Date updated;
 
     @Column(nullable = false)
     private Date startDate;

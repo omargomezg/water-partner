@@ -45,7 +45,7 @@ public class ConsumptionService {
         return new ArrayList<>();
     }
 
-    public ConsumptionEntity create(Long id, Long consumption, PeriodEntity period) {
+    public void create(Long id, Long consumption, PeriodEntity period) {
         WaterMeterEntity waterMeter = waterMeterRepository.findById(id).orElseThrow(() -> new WaterMeterNotFoundException("Water meter number " + id + " was " +
                 "not" + " found"));
         ConsumptionEntity consumptionEntity = new ConsumptionEntity();
@@ -54,7 +54,7 @@ public class ConsumptionService {
         consumptionEntity.setReadingDate(new Date());
         consumptionEntity.setWaterMeter(waterMeter);
         consumptionEntity.setPeriod(period);
-        return consumptionRepository.save(consumptionEntity);
+        consumptionRepository.save(consumptionEntity);
     }
 
     public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
@@ -81,6 +81,9 @@ public class ConsumptionService {
         pageDto.setFullName(client.getFullName());
         pageDto.setTotalHits(1L);
         pageDto.setContent(page.getContent());
+        pageDto.getContent().forEach(item -> {
+
+        });
         return pageDto;
     }
 }
