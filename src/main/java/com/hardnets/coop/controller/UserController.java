@@ -29,15 +29,10 @@ public class UserController {
     }
 
     @GetMapping("/v1/user/{rut}")
-    public ResponseEntity<?> getUsers(@PathVariable String rut) {
+    public ResponseEntity<UserDto> getUsers(@PathVariable String rut) {
         return ResponseEntity.ok(userService.getByRut(rut));
     }
 
-    /**
-     * Create
-     *
-     * @return
-     */
     @PostMapping("/v1/user")
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserDto user) throws Exception {
         log.info("access to Post User");

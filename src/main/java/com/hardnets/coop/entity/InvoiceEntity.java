@@ -20,7 +20,8 @@ import java.util.Set;
 public class InvoiceEntity extends BaseEntity {
 
     /**
-     * Columna puede contener los siguientes valores:
+     * Indica el estado actual de un documento (boleta)
+     * Esta columna puede contener los siguientes valores:
      * - DRAFT: Borrador
      * - PENDING: Pendiente de pago
      * - PAID: Pagado
@@ -35,10 +36,11 @@ public class InvoiceEntity extends BaseEntity {
     private String documentNumber;
 
     /**
-     * Fecha de emision
+     * Fecha de emisión
      */
     @Column
     private Date dateOfEmission;
+
 
     @ManyToOne
     @JoinColumn(name = "client_rut", referencedColumnName = "rut", nullable = false)

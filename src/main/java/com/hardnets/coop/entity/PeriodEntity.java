@@ -22,10 +22,16 @@ import java.util.Set;
 @Table(name = "periods")
 public class PeriodEntity extends BaseEntity {
 
+    /**
+     * Fecha de apertura del periodo
+     */
     @NotNull
     @Column(nullable = false)
     private Date startDate;
 
+    /**
+     * Indica la fecha de cierre del periodo
+     */
     @Column
     private Date endDate;
 
