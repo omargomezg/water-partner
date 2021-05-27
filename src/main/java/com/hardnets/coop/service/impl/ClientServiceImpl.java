@@ -2,6 +2,7 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.dto.ClientDto;
 import com.hardnets.coop.dto.request.FilterDto;
+import com.hardnets.coop.dto.response.PendingPaymentDto;
 import com.hardnets.coop.entity.ClientEntity;
 import com.hardnets.coop.entity.DropDownListEntity;
 import com.hardnets.coop.exception.ClientNotFoundException;
@@ -10,7 +11,7 @@ import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import com.hardnets.coop.service.PersonService;
+import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Service
 @Qualifier("clientService")
-public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
+public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final WaterMeterRepository waterMeterRepository;
@@ -109,8 +110,7 @@ public class ClientServiceImpl implements PersonService<ClientDto, ClientDto> {
     }
 
     @Override
-    public ClientDto updatePassword(String rut, String password) {
-        return null;
+    public Collection<PendingPaymentDto> getPendingPayments(String rut) {
+        return new ArrayList<>();
     }
-
 }
