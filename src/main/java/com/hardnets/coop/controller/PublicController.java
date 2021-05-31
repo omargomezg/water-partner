@@ -15,7 +15,6 @@ import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,9 +52,6 @@ public class PublicController {
     private final UserService userService;
     private final ClientService clientService;
     private final FlowService flowService;
-
-    @Value("${front.url}")
-    private String frontUrl;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
@@ -96,8 +92,9 @@ public class PublicController {
     @PostMapping("/confirmation-payment-order")
     public RedirectView confirmationForPaymentOrder(@RequestBody String token) {
         log.info("Recibido el token: {}", token);
+        String url = flowService.confirmationPaymentOrder(token);
         RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(frontUrl);
+        redirectView.setUrl(url);
         return redirectView;
     }
 

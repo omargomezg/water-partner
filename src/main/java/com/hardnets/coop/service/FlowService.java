@@ -19,4 +19,6 @@ public interface FlowService {
      * que identifica la transacción
      */
     PaymentOrderResponse sendPaymentOrder(PendingPaymentDto paymentOrder) throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException;
+
+    String confirmationPaymentOrder(String token);
 }

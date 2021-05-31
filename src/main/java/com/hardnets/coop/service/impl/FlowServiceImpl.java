@@ -47,6 +47,9 @@ public class FlowServiceImpl implements FlowService {
     @Value("${flow.url}")
     private String flowUrl;
 
+    @Value("${front.url}")
+    private String frontUrl;
+
     @Override
     public PaymentOrderResponse sendPaymentOrder(PendingPaymentDto paymentOrder) throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         // adding headers to the api
@@ -71,6 +74,12 @@ public class FlowServiceImpl implements FlowService {
                 String.class);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(result, PaymentOrderResponse.class);
+    }
+
+
+    @Override
+    public String confirmationPaymentOrder(String token) {
+        return String.format("%s/payment/confirmation", frontUrl);
     }
 
     private String getSignature(MultiValueMap<String, String> body) throws NoSuchAlgorithmException, InvalidKeyException {
