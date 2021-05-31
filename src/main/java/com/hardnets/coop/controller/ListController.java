@@ -1,6 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.entity.DropDownListEntity;
+import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.repository.ListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

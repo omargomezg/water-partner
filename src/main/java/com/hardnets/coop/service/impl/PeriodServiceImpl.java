@@ -1,8 +1,8 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.dto.response.PeriodDto;
-import com.hardnets.coop.entity.PeriodEntity;
 import com.hardnets.coop.exception.PeriodException;
+import com.hardnets.coop.model.dto.response.PeriodDto;
+import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
 import lombok.AllArgsConstructor;

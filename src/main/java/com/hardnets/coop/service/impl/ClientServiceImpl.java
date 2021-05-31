@@ -1,13 +1,13 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.dto.ClientDto;
-import com.hardnets.coop.dto.request.FilterDto;
-import com.hardnets.coop.dto.response.PendingPaymentDto;
-import com.hardnets.coop.entity.ClientEntity;
-import com.hardnets.coop.entity.DropDownListEntity;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;

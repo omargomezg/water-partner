@@ -1,11 +1,11 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.ReadingsDto;
-import com.hardnets.coop.dto.WaterMetersConsumptionDto;
-import com.hardnets.coop.dto.response.ConsumptionClientDto;
-import com.hardnets.coop.dto.response.PeriodDto;
-import com.hardnets.coop.dto.response.ResumeConsumptionDto;
-import com.hardnets.coop.entity.PeriodEntity;
+import com.hardnets.coop.model.dto.ReadingsDto;
+import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
+import com.hardnets.coop.model.dto.response.PeriodDto;
+import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.WaterMeterService;

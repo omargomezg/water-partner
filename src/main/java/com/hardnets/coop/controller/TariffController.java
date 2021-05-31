@@ -1,7 +1,7 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.AllTariffsDto;
-import com.hardnets.coop.dto.TariffDto;
+import com.hardnets.coop.model.dto.AllTariffsDto;
+import com.hardnets.coop.model.dto.TariffDto;
 import com.hardnets.coop.service.TariffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

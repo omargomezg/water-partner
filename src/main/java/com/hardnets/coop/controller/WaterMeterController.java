@@ -1,6 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.service.WaterMeterService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

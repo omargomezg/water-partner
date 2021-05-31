@@ -1,7 +1,7 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.CreateUserDto;
-import com.hardnets.coop.dto.UserDto;
+import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

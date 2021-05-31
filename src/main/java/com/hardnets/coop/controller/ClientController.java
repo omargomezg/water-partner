@@ -1,9 +1,9 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.ClientDto;
-import com.hardnets.coop.dto.WaterMeterDto;
-import com.hardnets.coop.dto.request.FilterDto;
-import com.hardnets.coop.dto.response.RelatedWaterMetersDto;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.WaterMeterService;
 import io.swagger.annotations.Api;

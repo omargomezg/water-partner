@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "flow.url-return-successful-payment",
+      "type": "java.lang.String",
+      "description": "url to return when payment has processed by flow."
+    }
+  ]
+}

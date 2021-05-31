@@ -1,6 +1,6 @@
 package com.hardnets.coop.security;
 
-import com.hardnets.coop.entity.UserEntity;
+import com.hardnets.coop.model.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

@@ -1,8 +1,8 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.ClientDto;
-import com.hardnets.coop.dto.request.FilterDto;
-import com.hardnets.coop.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 
 import java.util.Collection;
 import java.util.List;

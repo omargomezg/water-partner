@@ -1,10 +1,10 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.AllTariffsDto;
-import com.hardnets.coop.dto.TariffDto;
-import com.hardnets.coop.entity.DropDownListEntity;
-import com.hardnets.coop.entity.TariffEntity;
 import com.hardnets.coop.exception.TariffNotFoundException;
+import com.hardnets.coop.model.dto.AllTariffsDto;
+import com.hardnets.coop.model.dto.TariffDto;
+import com.hardnets.coop.model.entity.DropDownListEntity;
+import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import lombok.RequiredArgsConstructor;

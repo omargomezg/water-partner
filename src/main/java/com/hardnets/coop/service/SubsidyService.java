@@ -1,9 +1,9 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.WaterMeterDto;
-import com.hardnets.coop.dto.response.SubsidyDto;
-import com.hardnets.coop.entity.SubsidyEntity;
-import com.hardnets.coop.entity.WaterMeterEntity;
+import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.response.SubsidyDto;
+import com.hardnets.coop.model.entity.SubsidyEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;

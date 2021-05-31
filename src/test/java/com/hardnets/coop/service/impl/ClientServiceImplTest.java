@@ -1,6 +1,6 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.dto.ClientDto;
+import com.hardnets.coop.model.dto.ClientDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

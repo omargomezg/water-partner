@@ -1,17 +1,17 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.ClientDto;
-import com.hardnets.coop.dto.WaterMeterDto;
-import com.hardnets.coop.dto.WaterMetersConsumptionDto;
-import com.hardnets.coop.dto.response.RelatedWaterMetersDto;
-import com.hardnets.coop.entity.ClientEntity;
-import com.hardnets.coop.entity.DropDownListEntity;
-import com.hardnets.coop.entity.SubsidyEntity;
-import com.hardnets.coop.entity.WaterMeterEntity;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
+import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.DropDownListEntity;
+import com.hardnets.coop.model.entity.SubsidyEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.SubsidyRepository;

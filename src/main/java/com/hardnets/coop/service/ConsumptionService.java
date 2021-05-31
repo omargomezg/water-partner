@@ -1,14 +1,14 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.ReadingsDto;
-import com.hardnets.coop.dto.response.ConsumptionClientDto;
-import com.hardnets.coop.dto.response.ResumeConsumptionDto;
-import com.hardnets.coop.entity.ClientEntity;
-import com.hardnets.coop.entity.ConsumptionEntity;
-import com.hardnets.coop.entity.PeriodEntity;
-import com.hardnets.coop.entity.WaterMeterEntity;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.model.dto.ReadingsDto;
+import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
+import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.ConsumptionEntity;
+import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.PeriodRepository;

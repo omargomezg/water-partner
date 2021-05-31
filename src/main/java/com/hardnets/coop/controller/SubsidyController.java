@@ -1,6 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.dto.response.SubsidyDto;
+import com.hardnets.coop.model.dto.response.SubsidyDto;
 import com.hardnets.coop.service.SubsidyService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

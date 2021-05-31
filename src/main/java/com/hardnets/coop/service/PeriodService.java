@@ -1,7 +1,7 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.response.PeriodDto;
-import com.hardnets.coop.entity.PeriodEntity;
+import com.hardnets.coop.model.dto.response.PeriodDto;
+import com.hardnets.coop.model.entity.PeriodEntity;
 
 import java.util.Date;
 import java.util.Set;

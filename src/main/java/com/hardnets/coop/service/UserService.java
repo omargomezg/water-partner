@@ -1,10 +1,10 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.dto.CreateUserDto;
-import com.hardnets.coop.dto.UserDto;
-import com.hardnets.coop.entity.DropDownListEntity;
-import com.hardnets.coop.entity.UserEntity;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDto;
+import com.hardnets.coop.model.entity.DropDownListEntity;
+import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
