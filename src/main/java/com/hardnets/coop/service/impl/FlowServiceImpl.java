@@ -38,11 +38,8 @@ public class FlowServiceImpl implements FlowService {
     @Value("${flow.token}")
     private String flowToken;
 
-    @Value("${flow.url-return}")
-    private String flowUrlReturn;
-
-    @Value("${flow.url-confirmation}")
-    private String flowUrlConfirmation;
+    @Value("${app.url}")
+    private String appUrl;
 
     @Value("${flow.url}")
     private String flowUrl;
@@ -62,8 +59,8 @@ public class FlowServiceImpl implements FlowService {
         body.add("amount", "2500");
         body.add("email", "omar.fdo.gomez@gmail.com");
         body.add("commerceOrder", Calendar.getInstance().toString().substring(0, 45));
-        body.add("urlConfirmation", flowUrlConfirmation);
-        body.add("urlReturn", flowUrlReturn);
+        body.add("urlConfirmation", String.format("%s/v1/public/confirmation-payment-order", appUrl));
+        body.add("urlReturn", String.format("%s/v1/public/url-return", appUrl));
         String signature = getSignature(body);
         body.add("s", signature);
         log.info("The signature: {}", signature);
