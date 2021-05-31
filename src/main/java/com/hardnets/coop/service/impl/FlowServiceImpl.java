@@ -58,7 +58,7 @@ public class FlowServiceImpl implements FlowService {
         body.add("currency", "CLP");
         body.add("amount", "2500");
         body.add("email", "omar.fdo.gomez@gmail.com");
-        body.add("commerceOrder", Calendar.getInstance().toString());
+        body.add("commerceOrder", Calendar.getInstance().toString().substring(0, 45));
         body.add("urlConfirmation", flowUrlConfirmation);
         body.add("urlReturn", flowUrlReturn);
         String signature = getSignature(body);
