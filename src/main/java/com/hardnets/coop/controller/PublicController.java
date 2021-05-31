@@ -15,6 +15,7 @@ import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.security.InvalidKeyException;
@@ -51,6 +53,9 @@ public class PublicController {
     private final UserService userService;
     private final ClientService clientService;
     private final FlowService flowService;
+
+    @Value("${front.url}")
+    private String frontUrl;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
@@ -89,8 +94,11 @@ public class PublicController {
     }
 
     @PostMapping("/confirmation-payment-order")
-    public void confirmationForPaymentOrder(@RequestBody String token) {
-        log.info(token);
+    public RedirectView confirmationForPaymentOrder(@RequestBody String token) {
+        log.info("Recibido el token: {}", token);
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(frontUrl);
+        return redirectView;
     }
 
     @PostMapping("/payment-order")
