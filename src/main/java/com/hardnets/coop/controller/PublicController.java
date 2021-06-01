@@ -9,6 +9,7 @@ import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
+import com.hardnets.coop.model.flow.UrlReturn;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
 import com.hardnets.coop.service.ClientService;
@@ -24,6 +25,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -105,11 +107,12 @@ public class PublicController {
     }
 
     @PostMapping("/url-return")
-    public RedirectView urlReturn(@RequestBody String token) {
+    public RedirectView urlReturn(@ModelAttribute UrlReturn token) {
         log.info("Url return -> Recibido el token: {}", token);
-        String url = flowService.confirmationPaymentOrder(token);
+        String url = flowService.confirmationPaymentOrder(token.getToken());
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(url);
+        log.info(url);
         return redirectView;
     }
 
