@@ -2,10 +2,15 @@ package com.hardnets.coop.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hardnets.coop.exception.PaymentNotFoundException;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.entity.PaymentEntity;
 import com.hardnets.coop.model.flow.PaymentOrderResponse;
+import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
+import com.hardnets.coop.repository.PaymentRepository;
 import com.hardnets.coop.service.FlowService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,21 +34,21 @@ import java.util.List;
 @Service
 public class FlowServiceImpl implements FlowService {
 
+
+    private static final Byte PENDING_PAY = 1;
+    @Autowired
+    PaymentRepository paymentRepository;
+
     @Value("${flow.secretKeyForSha256HMAC}")
     private String secretKeyForSha256;
-
     @Value("${flow.key}")
-    private String flowKey;
-
+    private String flowApiKey;
     @Value("${flow.token}")
     private String flowToken;
-
     @Value("${app.url}")
     private String appUrl;
-
     @Value("${flow.url}")
     private String flowUrl;
-
     @Value("${front.url}")
     private String frontUrl;
 
@@ -53,7 +58,7 @@ public class FlowServiceImpl implements FlowService {
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("apiKey", flowKey);
+        body.add("apiKey", flowApiKey);
         body.add("subject", "Pago testing");
         body.add("currency", "CLP");
         body.add("amount", "2500");
@@ -70,13 +75,57 @@ public class FlowServiceImpl implements FlowService {
                 new HttpEntity<>(body, headers),
                 String.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result, PaymentOrderResponse.class);
+        var payment = objectMapper.readValue(result, PaymentOrderResponse.class);
+        save(payment.getToken(), payment.getFlowOrder());
+        return payment;
     }
 
+    @Override
+    public void save(String token, Long flowOrder) {
+        PaymentEntity entity = new PaymentEntity();
+        entity.setStatus(PENDING_PAY);
+        entity.setToken(token);
+        entity.setFlowOrder(flowOrder);
+        paymentRepository.save(entity);
+    }
+
+    @Override
+    public PaymentEntity findByToken(String token) {
+        return paymentRepository.findByToken(token).orElseThrow(
+                () -> new PaymentNotFoundException(token)
+        );
+    }
+
+    @Override
+    public PaymentEntity update(String token) {
+        return null;
+    }
 
     @Override
     public String confirmationPaymentOrder(String token) {
+        PaymentEntity payment = findByToken(token);
+        payment.setStatus(PENDING_PAY);
+        paymentRepository.save(payment);
         return String.format("%s/payment/confirmation", frontUrl);
+    }
+
+    @Override
+    public PaymentOrderStatusResponse findFlowPaymentStatusByToken(String token) throws InvalidKeyException, NoSuchAlgorithmException, JsonProcessingException {
+        PaymentEntity payment = findByToken(token);
+        var headers = new HttpHeaders();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("apiKey", flowApiKey);
+        body.add("flowOrder", payment.getFlowOrder().toString());
+        String signature = getSignature(body);
+        var restTemplate = new RestTemplate();
+        String result = restTemplate.postForObject(
+                String.format("%s/api/payment/create?apiKey=%s&flowOrder=%s&s=%s}", flowUrl, flowApiKey, payment.getFlowOrder(), signature),
+                new HttpEntity<>(body, headers),
+                String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        var paymentStatus = objectMapper.readValue(result, PaymentOrderStatusResponse.class);
+        log.info("A guardar {}", paymentStatus);
+        return paymentStatus;
     }
 
     private String getSignature(MultiValueMap<String, String> body) throws NoSuchAlgorithmException, InvalidKeyException {

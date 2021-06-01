@@ -8,6 +8,7 @@ import com.hardnets.coop.model.dto.response.LoginDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.model.flow.PaymentOrderResponse;
+import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
 import com.hardnets.coop.service.ClientService;
@@ -96,6 +97,11 @@ public class PublicController {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(url);
         return redirectView;
+    }
+
+    @GetMapping("/payment-status/{token}")
+    public PaymentOrderStatusResponse paymentStats(@PathVariable String token) throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+        return flowService.findFlowPaymentStatusByToken(token);
     }
 
     @PostMapping("/url-return")
