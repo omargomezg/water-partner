@@ -102,9 +102,9 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public String confirmationPaymentOrder(String token) {
+    public String confirmationPaymentOrder(String token, Byte status) {
         PaymentEntity payment = findByToken(token);
-        payment.setStatus(PENDING_PAY);
+        payment.setStatus(status);
         paymentRepository.save(payment);
         return String.format("%s/payment/confirmation", frontUrl);
     }
@@ -115,19 +115,25 @@ public class FlowServiceImpl implements FlowService {
         var headers = new HttpHeaders();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("apiKey", flowApiKey);
-        body.add("flowOrder", payment.getFlowOrder().toString());
+        body.add("token", token);
         String signature = getSignature(body);
+        String url = String.format("%s/api/payment/getStatus?apiKey=%s&token=%s&s=%s", flowUrl, flowApiKey, token, signature);
         var restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(
-                String.format("%s/api/payment/create?apiKey=%s&flowOrder=%s&s=%s}", flowUrl, flowApiKey, payment.getFlowOrder(), signature),
-                new HttpEntity<>(body, headers),
-                String.class);
+        String result = restTemplate.getForObject(url, String.class);
         ObjectMapper objectMapper = new ObjectMapper();
         var paymentStatus = objectMapper.readValue(result, PaymentOrderStatusResponse.class);
-        log.info("A guardar {}", paymentStatus);
+        confirmationPaymentOrder(token, paymentStatus.getStatus());
         return paymentStatus;
     }
 
+    /**
+     * Firma un conjunto de datos
+     *
+     * @param body Un Map con los datos a firmar
+     * @return Una firma en string
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
     private String getSignature(MultiValueMap<String, String> body) throws NoSuchAlgorithmException, InvalidKeyException {
         var stringBuilder = new StringBuilder();
         List<String> keyList = new ArrayList<>(body.keySet());

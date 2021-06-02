@@ -1,5 +1,7 @@
 package com.hardnets.coop.model.flow;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentOrderStatusResponse {
 
     /**
@@ -23,6 +26,7 @@ public class PaymentOrderStatusResponse {
     /**
      * La fecha de creación de la orden
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date requestDate;
 
     /**

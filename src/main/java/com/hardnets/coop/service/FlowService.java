@@ -25,10 +25,11 @@ public interface FlowService {
     /**
      * Confirmación del pago por parte de flow
      *
-     * @param token token que ha sido confirmado
+     * @param token  token que ha sido confirmado
+     * @param status
      * @return Url del front la cual mostrara el estado del pago al cliente
      */
-    String confirmationPaymentOrder(String token);
+    String confirmationPaymentOrder(String token, Byte status);
 
     PaymentOrderStatusResponse findFlowPaymentStatusByToken(String token) throws InvalidKeyException, NoSuchAlgorithmException, JsonProcessingException;
 

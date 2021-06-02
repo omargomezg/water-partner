@@ -95,7 +95,7 @@ public class PublicController {
     @PostMapping("/confirmation-payment-order")
     public RedirectView confirmationForPaymentOrder(@RequestBody String token) {
         log.info("confirmation -> Recibido el token: {}", token);
-        String url = flowService.confirmationPaymentOrder(token);
+        String url = flowService.confirmationPaymentOrder(token, (byte) 1);
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(url);
         return redirectView;
@@ -108,11 +108,9 @@ public class PublicController {
 
     @PostMapping("/url-return")
     public RedirectView urlReturn(@ModelAttribute UrlReturn token) {
-        log.info("Url return -> Recibido el token: {}", token);
-        String url = flowService.confirmationPaymentOrder(token.getToken());
+        String url = flowService.confirmationPaymentOrder(token.getToken(), (byte) 1);
         RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(url);
-        log.info(url);
+        redirectView.setUrl(url + "/" + token.getToken());
         return redirectView;
     }
 
