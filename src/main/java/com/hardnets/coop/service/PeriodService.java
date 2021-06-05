@@ -18,7 +18,12 @@ public interface PeriodService {
 
     PeriodEntity findByStatus(String status);
 
-    void closePeriod(Long id);
+    /**
+     * Cierra un periodo y abre uno nuevo
+     *
+     * @param id Identificador de periodo
+     */
+    void close(Long id);
 
     void create(Date startDate);
 

@@ -47,7 +47,12 @@ public class ClientEntity extends PersonEntity {
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
-    private Set<InvoiceEntity> invoices;
+    private Set<BillEntity> Bills;
+
+    @OneToMany(
+            mappedBy = "client",
+            fetch = FetchType.LAZY)
+    private Set<InvoiceEntity> Invoices;
 
     @OneToMany(
             mappedBy = "client",

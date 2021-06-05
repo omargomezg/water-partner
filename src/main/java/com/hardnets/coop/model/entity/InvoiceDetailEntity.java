@@ -3,7 +3,6 @@ package com.hardnets.coop.model.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,15 +12,10 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "invoice_detail")
-public class InvoiceDetail extends BaseEntity {
-    @Column
-    private String concept;
-    @Column
-    private Long baseAmount;
-    @Column
-    private Long totalAmount;
+public class InvoiceDetailEntity extends SalesDocumentDetailEntity {
 
     @ManyToOne
-    @JoinColumn(name = "invoice_id", nullable = false)
+    @JoinColumn(name = "invoice_id", nullable = false, referencedColumnName = "id")
     private InvoiceEntity invoice;
+
 }

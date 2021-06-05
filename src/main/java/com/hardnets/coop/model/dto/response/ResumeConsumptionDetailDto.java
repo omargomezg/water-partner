@@ -13,11 +13,13 @@ public class ResumeConsumptionDetailDto {
     private Long lastRecord;
     private Long actualRecord;
     private Long amountToPaid;
+    private Long consumptionId;
 
     public ResumeConsumptionDetailDto(String rut, String clientCode, String names, String middleName, String lastName,
-                                      String businessName, Long actualRecord) {
+                                      String businessName, Long actualRecord, Long consumptionId) {
         this.rut = rut;
         this.actualRecord = actualRecord;
+        this.consumptionId = consumptionId;
         if (clientCode.equals("PARTNER")) {
             setFullName(String.format("%s %s %s", names, middleName, lastName));
         } else {

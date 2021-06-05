@@ -23,17 +23,20 @@ import java.time.Instant;
 public class TariffEntity extends BaseEntity {
 
     /**
-     * Value of flat fee
+     * Cargo fijo
      */
     @Column
     private Integer flatFee;
 
     /**
-     * Value of cubic meter
+     * Valor del m3
      */
     @Column
     private BigDecimal cubicMeter;
 
+    /**
+     * Ultima actualización de los montos
+     */
     @LastModifiedDate
     private Instant lastUpdate;
 

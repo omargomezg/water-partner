@@ -20,6 +20,7 @@ public class PeriodServiceImpl implements PeriodService {
     public static final String ACTIVE = "ACTIVE";
     private final PeriodRepository periodRepository;
 
+
     @Override
     public Set<PeriodDto> findAllByYear(int year) {
         return periodRepository.findAllDto(year);
@@ -56,7 +57,7 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public void closePeriod(Long id) {
+    public void close(Long id) {
         PeriodEntity period = periodRepository.findById(id).orElseThrow(
                 () -> new PeriodException("Period was not found")
         );
@@ -68,7 +69,9 @@ public class PeriodServiceImpl implements PeriodService {
         calendar.setTime(endDate);
         calendar.add(Calendar.DATE, 1);
         create(calendar.getTime());
-
+        //TODO crear boletas o detalle de boleas (servicio asíncrono)
+        //TODO crear pdf o boletas
+        //TODO enviar boletas a clientes
     }
 
     @Override

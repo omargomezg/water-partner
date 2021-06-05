@@ -5,14 +5,17 @@ import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.model.entity.SalesDocumentDetailEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
+import com.hardnets.coop.service.impl.BillDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class ConsumptionService {
     private final WaterMeterRepository waterMeterRepository;
     private final PeriodRepository periodRepository;
     private final ClientRepository clientRepository;
+    private final BillDetailService billDetailService;
 
     public List<ReadingsDto> findRecordsByWaterMeterId(Long id) {
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(id);
@@ -68,6 +72,13 @@ public class ConsumptionService {
             Pageable pageable = PageRequest.of(pageIndex, pageSize);
             Page page = consumptionRepository.findAllByPeriodId(period.get().getId(), pageable);
             response.setDetail(page.getContent());
+            response.getDetail().forEach(item -> {
+                Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
+                if (consumption.isPresent()) {
+                    List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);
+                    item.setAmountToPaid(billDetails.stream().mapToLong(SalesDocumentDetailEntity::getTotalAmount).sum());
+                }
+            });
             response.setTotalHits(page.getTotalElements());
         }
         return response;

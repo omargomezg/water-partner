@@ -14,17 +14,16 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "invoice")
+@Table(name = "bill")
 @EqualsAndHashCode(callSuper = true)
-public class InvoiceEntity extends SalesDocumentEntity {
-
+public class BillEntity extends SalesDocumentEntity {
 
     @ManyToOne
     @JoinColumn(name = "client_rut", referencedColumnName = "rut", nullable = false)
     private ClientEntity client;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private Set<InvoiceDetailEntity> detail = new HashSet<>();
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private Set<BillDetailEntity> detail = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "meter_id", nullable = false)

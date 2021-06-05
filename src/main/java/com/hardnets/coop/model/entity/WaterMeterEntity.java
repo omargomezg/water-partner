@@ -65,6 +65,9 @@ public class WaterMeterEntity extends BaseEntity {
     private Set<InvoiceEntity> invoices;
 
     @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
+    private Set<BillEntity> bills;
+
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<SubsidyEntity> subsidies;
 
