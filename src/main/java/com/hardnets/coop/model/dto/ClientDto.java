@@ -105,7 +105,7 @@ public class ClientDto {
 
     private void generateFullName() {
         if (getBusinessName().isEmpty())
-            setFullName(String.format("%s %s %s", getNames(), getMiddleName(), getLastName()));
+            setFullName(String.format("%s %s %s", getNames(), getMiddleName() != null ? getMiddleName(): "", getLastName()));
         else
             setFullName(getBusinessName());
     }

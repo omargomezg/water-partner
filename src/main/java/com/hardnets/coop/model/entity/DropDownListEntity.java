@@ -1,6 +1,7 @@
 package com.hardnets.coop.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +38,7 @@ public class DropDownListEntity extends BaseEntity {
     /**
      * Lista de tipo de cobros relacionados a un tipo de usuario
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemEntity> items;
 }
