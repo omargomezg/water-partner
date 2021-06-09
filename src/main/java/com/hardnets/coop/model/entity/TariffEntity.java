@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 import java.time.Instant;
 
 
@@ -32,7 +31,7 @@ public class TariffEntity extends BaseEntity {
      * Valor del m3
      */
     @Column
-    private BigDecimal cubicMeter;
+    private Float cubicMeter;
 
     /**
      * Ultima actualización de los montos
@@ -40,10 +39,16 @@ public class TariffEntity extends BaseEntity {
     @LastModifiedDate
     private Instant lastUpdate;
 
+    /**
+     * Tipo de cliente
+     */
     @ManyToOne
     @JoinColumn(name = "clienttype_id")
     private DropDownListEntity clientType;
 
+    /**
+     * Tamaño en milímetros del medidor al que aplica la tarifa
+     */
     @ManyToOne
     @JoinColumn(name = "size_id")
     private DropDownListEntity size;

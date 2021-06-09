@@ -5,6 +5,7 @@ import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
@@ -66,7 +67,12 @@ public class ConsumptionController {
     @PostMapping("/v1/consumption/{id}")
     public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Long consumption) {
         PeriodEntity period = periodService.findByStatus("ACTIVE");
-        consumptionService.create(id, consumption, period);
+        Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(), id);
+        if (dbConsumption.isPresent()) {
+            dbConsumption.get().setConsumption(consumption);
+        } else {
+            consumptionService.create(id, consumption, period);
+        }
         return ResponseEntity.created(URI.create("/consumption/" + id)).build();
     }
 

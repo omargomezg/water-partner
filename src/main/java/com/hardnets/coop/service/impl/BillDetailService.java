@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
             }
             billDetail.add(detail);
         }
-        Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActive(consumption.getWaterMeter(), true);
+        Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateBefore(consumption.getWaterMeter(), true, new Date());
         if (subsidy.isPresent()) {
             BillDetailEntity detailSubsidy = getSubsidizedAmount(subsidy.get(), consumption);
             bill.ifPresent(detailSubsidy::setBill);

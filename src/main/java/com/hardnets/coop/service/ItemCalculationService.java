@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Log4j2
@@ -23,7 +24,7 @@ public class ItemCalculationService {
      * @return el monto subsidiado
      */
     public Long getSubsidyAmount(ConsumptionEntity consumption) {
-        Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActive(consumption.getWaterMeter(), true);
+        Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateBefore(consumption.getWaterMeter(), true, new Date());
         if (subsidy.isPresent()) {
             short percentage = subsidy.get().getPercentage();
             Long total = getConsumptionAmount(consumption);

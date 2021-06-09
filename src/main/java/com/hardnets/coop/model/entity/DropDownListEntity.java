@@ -25,12 +25,16 @@ public class DropDownListEntity extends BaseEntity {
     @OneToMany(mappedBy = "size", fetch = FetchType.LAZY)
     @JsonBackReference
     Set<WaterMeterEntity> waterMeters;
+
     @Column(nullable = false)
     private String value;
+
     @Column
     private String code;
+
     @Column(name = "list_type")
     private String dropDownListType;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private DropDownListEntity parent;

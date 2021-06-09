@@ -61,6 +61,19 @@ public class ConsumptionService {
         consumptionRepository.save(consumptionEntity);
     }
 
+    public void update(ConsumptionEntity consumptionEntity) {
+        consumptionRepository.save(consumptionEntity);
+    }
+
+    public Optional<ConsumptionEntity> findOneByPeriodAndWaterMeter(Long periodId, Long waterMeterId) {
+        Optional<PeriodEntity> period = periodRepository.findById(periodId);
+        Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(waterMeterId);
+        if (period.isPresent() && waterMeter.isPresent()) {
+            return Optional.of(consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get()));
+        }
+        return Optional.empty();
+    }
+
     public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
         ResumeConsumptionDto response = new ResumeConsumptionDto();
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
@@ -70,9 +83,9 @@ public class ConsumptionService {
             response.setEndDate(period.get().getEndDate());
 
             Pageable pageable = PageRequest.of(pageIndex, pageSize);
-            Page page = consumptionRepository.findAllByPeriodId(period.get().getId(), pageable);
+            Page page = consumptionRepository.findAllByPeriod(period.get().getId(), pageable);
             response.setDetail(page.getContent());
-            response.getDetail().forEach(item -> {
+            response.getDetail().parallelStream().forEach(item -> {
                 Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
                 if (consumption.isPresent()) {
                     List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);

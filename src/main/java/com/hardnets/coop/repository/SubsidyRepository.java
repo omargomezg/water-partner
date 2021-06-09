@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,6 @@ public interface SubsidyRepository extends JpaRepository<SubsidyEntity, Long> {
     @Query("select s from SubsidyEntity s where s.waterMeter.id = ?1 and s.isActive = true")
     Optional<SubsidyEntity> findByIsActiveAndWaterMeterId(Long number);
 
-    Optional<SubsidyEntity> findAllByWaterMeterAndIsActive(WaterMeterEntity waterMeter, Boolean isActive);
+    Optional<SubsidyEntity> findAllByWaterMeterAndIsActiveAndEndingDateBefore(WaterMeterEntity waterMeter, Boolean isActive, Date date);
 
 }

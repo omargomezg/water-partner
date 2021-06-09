@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -15,7 +14,7 @@ public class AllTariffsDto {
     private Long id;
     private String waterMeterSize;
     private Integer flatFee;
-    private BigDecimal cubicMeter;
+    private Float cubicMeter;
     private String clientType;
     private Instant lastUpdate;
 

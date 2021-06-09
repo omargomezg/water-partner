@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +48,23 @@ public class SubsidyService {
         subsidyEntity.setUpdated(new Date());
         subsidyEntity.setIsActive(true);
         subsidyRepository.save(subsidyEntity);
+    }
+
+    /**
+     * Comprueba que el subsidio es valido para la fecha especificada como ultimo dia de cobertura
+     *
+     * @param id Id del subsidio
+     */
+    public boolean checkValidity(Long id) {
+        AtomicBoolean status = new AtomicBoolean(true);
+        subsidyRepository.findById(id).ifPresent(subsidy -> {
+            if (subsidy.getEndingDate().compareTo(new Date()) > 0) {
+                subsidy.setIsActive(false);
+                status.set(false);
+                subsidyRepository.save(subsidy);
+            }
+        });
+        return status.get();
     }
 
     private SubsidyDto parseToDto(SubsidyEntity subsidy) {

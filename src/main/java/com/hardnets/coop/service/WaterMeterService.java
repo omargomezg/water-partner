@@ -11,10 +11,12 @@ import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.SubsidyEntity;
+import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.SubsidyRepository;
+import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class WaterMeterService {
     private final ClientRepository clientRepository;
     private final DropDownListRepository dropDownListRepository;
     private final SubsidyRepository subsidyRepository;
+    private final TariffRepository tariffRepository;
 
     public void update(List<WaterMeterDto> waterMeterDtos) {
         List<WaterMeterEntity> entities = new ArrayList<>();
@@ -111,13 +114,16 @@ public class WaterMeterService {
                 .orElseThrow(() -> new UserNotFoundException("User by rut " + rut + " was not" + " found"));
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
-            Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActive(dbRelatedMeter, true);
+            Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateBefore(dbRelatedMeter, true, new Date());
+            Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getSize().getId(), client.getClientType().getId());
             RelatedWaterMetersDto related = new RelatedWaterMetersDto(
                     dbRelatedMeter.getId(),
                     dbRelatedMeter.getNumber(),
                     dbRelatedMeter.getSize().getValue(),
                     dbRelatedMeter.getCreated(),
                     dbRelatedMeter.getSector(),
+                    tariff.isPresent() ? tariff.get().getFlatFee() : 0,
+                    tariff.isPresent() ? tariff.get().getCubicMeter() : 0,
                     subsidy.isPresent() ? subsidy.get().getPercentage() : 0
             );
             relatedMeters.add(related);

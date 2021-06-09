@@ -15,15 +15,18 @@ public class RelatedWaterMetersDto {
     private String millimeter;
     private Date dischargeDate;
     private String sector;
-    private String tariff;
+    private Integer flatFee;
+    private Float cubicMeter;
     private Short percentage;
 
-    public RelatedWaterMetersDto(Long id, String number, String millimeter, Date dischargeDate, String sector, Short percentage) {
+    public RelatedWaterMetersDto(Long id, String number, String millimeter, Date dischargeDate, String sector, Integer flatFee, Float cubicMeter, Short percentage) {
         this.id = id;
         this.number = number;
         this.millimeter = millimeter;
         this.dischargeDate = dischargeDate;
         this.sector = sector;
+        this.flatFee = flatFee;
+        this.cubicMeter = cubicMeter;
         this.percentage = percentage;
     }
 }
