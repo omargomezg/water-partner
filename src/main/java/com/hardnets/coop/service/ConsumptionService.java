@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -109,5 +110,24 @@ public class ConsumptionService {
 
         });
         return pageDto;
+    }
+
+    /**
+     * Crea todos los registros de consumos para tener una base en futuras consultas
+     * Se crea un registro por cada medidor relacionado a un cliente
+     *
+     * @param periodId
+     */
+    @Async
+    public void createAllRecords(Long periodId) {
+        periodRepository.findById(periodId).ifPresent(period -> {
+            waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {
+                ConsumptionEntity consumptionEntity = new ConsumptionEntity();
+                consumptionEntity.setConsumption(0L);
+                consumptionEntity.setPeriod(period);
+                consumptionEntity.setWaterMeter(waterMeter);
+                consumptionRepository.save(consumptionEntity);
+            });
+        });
     }
 }

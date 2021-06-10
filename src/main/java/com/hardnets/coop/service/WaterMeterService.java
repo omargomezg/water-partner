@@ -4,17 +4,18 @@ import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
-import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.DropDownListEntity;
+import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
+import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
@@ -39,6 +40,7 @@ public class WaterMeterService {
     private final DropDownListRepository dropDownListRepository;
     private final SubsidyRepository subsidyRepository;
     private final TariffRepository tariffRepository;
+    private final PeriodRepository periodRepository;
 
     public void update(List<WaterMeterDto> waterMeterDtos) {
         List<WaterMeterEntity> entities = new ArrayList<>();
@@ -157,37 +159,11 @@ public class WaterMeterService {
         return true;
     }
 
-    public Collection<WaterMetersConsumptionDto> findRelatedByNumberOrRut(String number, String rut) {
-        Collection<WaterMeterEntity> waterMeterEntity = waterMeterRepository.findAllByNumberOrClient(number, rut);
-        return adapt(waterMeterEntity);
-    }
-
-    public Collection<WaterMetersConsumptionDto> findRelatedByNumber(String number) {
-        Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findByNumber(number);
-        if (waterMeter.isPresent()) {
-            Collection<WaterMeterEntity> waterMeters = new ArrayList<>();
-            waterMeters.add(waterMeter.get());
-            return adapt(waterMeters);
-        }
+    public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, boolean pendingConsumption) {
+        Optional<PeriodEntity> periodEntity = periodRepository.findByStatus("ACTIVE");
+        if (periodEntity.isPresent())
+            return waterMeterRepository.findAllByCustomFilters(number, rut, periodEntity.get().getId(), pendingConsumption);
         return new ArrayList<>();
     }
 
-    public Collection<WaterMetersConsumptionDto> findRelatedByRut(String rut) {
-        Collection<WaterMeterEntity> waterMeterEntity = waterMeterRepository.findAllByClientRut(rut);
-        return adapt(waterMeterEntity);
-    }
-
-    private Collection<WaterMetersConsumptionDto> adapt(Collection<WaterMeterEntity> watermeters) {
-        return watermeters.stream().map(item -> {
-            WaterMetersConsumptionDto waterMetersConsumptionDto = new WaterMetersConsumptionDto();
-            Optional<ClientDto> client = clientRepository.findUserDtoByRut(item.getClient().getRut());
-            waterMetersConsumptionDto.setId(item.getId());
-            waterMetersConsumptionDto.setNumber(item.getNumber());
-            waterMetersConsumptionDto.setMillimeters(item.getSize().getValue());
-            waterMetersConsumptionDto.setSector(item.getSector());
-            waterMetersConsumptionDto.setDischargeDate(item.getCreated());
-            client.ifPresent(clientEntity -> waterMetersConsumptionDto.setClient(clientEntity.getFullName()));
-            return waterMetersConsumptionDto;
-        }).collect(Collectors.toList());
-    }
 }

@@ -1,6 +1,8 @@
 package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.entity.BillEntity;
+import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ public class PeriodController {
 
     private final PeriodService periodService;
     private final SaleDocumentService<BillEntity> billService;
+    private final ConsumptionService consumptionService;
 
     /**
      * Cierra un periodo y abre uno nuevo con fecha al dia siguiente
@@ -24,7 +27,8 @@ public class PeriodController {
      */
     @PutMapping("/v1/period/{id}")
     public ResponseEntity<String> closePeriod(@PathVariable Long id) {
-        periodService.close(id);
+        PeriodEntity newPeriod = periodService.close(id);
+        consumptionService.createAllRecords(newPeriod.getId());
         billService.createAllInPeriod(id);
         return ResponseEntity.ok().build();
     }

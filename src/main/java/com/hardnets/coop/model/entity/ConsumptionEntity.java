@@ -18,14 +18,14 @@ import java.util.Date;
 @Table(name = "consumption")
 public class ConsumptionEntity extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column
     private Long consumption;
 
     @Column
     @CreationTimestamp
     private LocalDateTime created;
 
-    @Column(nullable = false)
+    @Column
     private Date readingDate;
 
     @Column

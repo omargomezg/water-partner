@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -39,13 +38,10 @@ public class ConsumptionController {
     private final PeriodService periodService;
 
     @GetMapping("/v1/consumption/related-water-meters")
-    public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam Optional<String> waterMeterNumber, @RequestParam Optional<String> rut) {
-        if (waterMeterNumber.isPresent() && rut.isPresent()) {
-            return new ResponseEntity<>(waterMeterService.findRelatedByNumberOrRut(waterMeterNumber.get(), rut.get()), HttpStatus.OK);
-        }
-        return waterMeterNumber.map(aString -> new ResponseEntity<>(waterMeterService.findRelatedByNumber(aString), HttpStatus.OK))
-                .orElseGet(() -> rut.map(s -> new ResponseEntity<>(waterMeterService.findRelatedByRut(s), HttpStatus.OK))
-                        .orElseGet(() -> new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK)));
+    public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
+                                                                                 @RequestParam(required = false) String rut,
+                                                                                 @RequestParam(name = "pending") boolean consumptionPending) {
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, consumptionPending));
     }
 
     /**
@@ -70,6 +66,7 @@ public class ConsumptionController {
         Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(), id);
         if (dbConsumption.isPresent()) {
             dbConsumption.get().setConsumption(consumption);
+            consumptionService.update(dbConsumption.get());
         } else {
             consumptionService.create(id, consumption, period);
         }

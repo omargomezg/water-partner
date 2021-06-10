@@ -23,8 +23,8 @@ public interface PeriodService {
      *
      * @param id Identificador de periodo
      */
-    void close(Long id);
+    PeriodEntity close(Long id);
 
-    void create(Date startDate);
+    PeriodEntity create(Date startDate);
 
 }

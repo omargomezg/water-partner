@@ -57,7 +57,7 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public void close(Long id) {
+    public PeriodEntity close(Long id) {
         PeriodEntity period = periodRepository.findById(id).orElseThrow(
                 () -> new PeriodException("Period was not found")
         );
@@ -68,17 +68,17 @@ public class PeriodServiceImpl implements PeriodService {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(endDate);
         calendar.add(Calendar.DATE, 1);
-        create(calendar.getTime());
+        return create(calendar.getTime());
         //TODO crear boletas o detalle de boleas (servicio asíncrono)
         //TODO crear pdf o boletas
         //TODO enviar boletas a clientes
     }
 
     @Override
-    public void create(Date startDate) {
+    public PeriodEntity create(Date startDate) {
         PeriodEntity newPeriod = new PeriodEntity();
         newPeriod.setStartDate(startDate);
         newPeriod.setStatus(ACTIVE);
-        periodRepository.save(newPeriod);
+        return periodRepository.save(newPeriod);
     }
 }
