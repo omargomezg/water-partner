@@ -40,12 +40,13 @@ public abstract class PersonEntity {
 
     private String password;
 
-    protected PersonEntity(String rut, String names, String middleName, String lastName, String email) {
+    protected PersonEntity(String rut, String names, String middleName, String lastName, String email, Date birthDate) {
         setRut(rut);
         setNames(names);
         setMiddleName(middleName);
         setLastName(lastName);
         setEmail(email);
+        setBirthDate(birthDate);
     }
 
     protected PersonEntity() {

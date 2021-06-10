@@ -61,7 +61,7 @@ public class ClientEntity extends PersonEntity {
     private Set<WaterMeterEntity> waterMeter;
 
     public ClientEntity(ClientDto client) {
-        super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail());
+        super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());
         setDateOfAdmission(client.getDateOfAdmission());
         setTelephone(client.getTelephone());
         setBusinessActivity(client.getBusinessActivity());

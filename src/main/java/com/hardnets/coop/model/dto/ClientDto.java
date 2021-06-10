@@ -59,7 +59,9 @@ public class ClientDto {
         generateFullName();
     }
 
-    public ClientDto(String rut, String names, String middleName, String lastName, Date birthDate, Date dateOfAdmission, String businessName, String businessActivity, String email, String clientType, Long clientTypeId, String code, boolean isActive) {
+    public ClientDto(String rut, String names, String middleName, String lastName, Date birthDate, Date dateOfAdmission,
+                     String businessName, String businessActivity, String telephone, String email, String clientType,
+                     Long clientTypeId, String code, boolean isActive) {
         setRut(rut);
         setNames(names);
         setMiddleName(middleName);
@@ -68,6 +70,7 @@ public class ClientDto {
         setDateOfAdmission(dateOfAdmission);
         setBusinessName(businessName);
         setBusinessActivity(businessActivity);
+        setTelephone(telephone);
         setEmail(email);
         getClientType().setId(clientTypeId);
         getClientType().setValue(clientType);

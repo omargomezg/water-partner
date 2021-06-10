@@ -13,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
 
-    @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.birthDate, c.dateOfAdmission, c.businessName, c.businessActivity, c.email, c.clientType.value, c.clientType.id, c.clientType.code, c.enabled) from ClientEntity c where c.rut = ?1")
+    @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.birthDate, " +
+            "c.dateOfAdmission, c.businessName, c.businessActivity, c.telephone, c.email, c.clientType.value, c.clientType.id, " +
+            "c.clientType.code, c.enabled) from ClientEntity c where c.rut = ?1")
     Optional<ClientDto> findUserDtoByRut(String rut);
 
     Optional<ClientEntity> findByRut(String rut);
