@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ResumeConsumptionDetailDto {
+    private String numberWaterMeter;
     private String rut;
     private String fullName;
     private Long lastRecord;
@@ -15,13 +16,14 @@ public class ResumeConsumptionDetailDto {
     private Long amountToPaid;
     private Long consumptionId;
 
-    public ResumeConsumptionDetailDto(String rut, String clientCode, String names, String middleName, String lastName,
+    public ResumeConsumptionDetailDto(String numberWaterMeter, String rut, String clientCode, String names, String middleName, String lastName,
                                       String businessName, Long actualRecord, Long consumptionId) {
+        this.numberWaterMeter = numberWaterMeter;
         this.rut = rut;
         this.actualRecord = actualRecord;
         this.consumptionId = consumptionId;
         if (clientCode.equals("PARTNER")) {
-            setFullName(String.format("%s %s %s", names, middleName, lastName));
+            setFullName(String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName));
         } else {
             setFullName(businessName);
         }

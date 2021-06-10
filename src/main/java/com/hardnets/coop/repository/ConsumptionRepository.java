@@ -20,9 +20,9 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
     @Query("select new com.hardnets.coop.model.dto.ReadingsDto(c.id, c.consumption,c.readingDate) from ConsumptionEntity c where c.waterMeter.id = ?1 order by c.readingDate desc")
     List<ReadingsDto> findAllByWaterMeter(Long waterMeterId);
 
-    @Query(value = "select new com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto(c.waterMeter.client.rut, " +
+    @Query(value = "select new com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto(wm.number, c.waterMeter.client.rut, " +
             "c.waterMeter.client.clientType.code, c.waterMeter.client.names, c.waterMeter.client.middleName, c.waterMeter.client.lastName, " +
-            "c.waterMeter.client.businessName, c.consumption, c.id) from ConsumptionEntity c where c.period.id = ?1",
+            "c.waterMeter.client.businessName, c.consumption, c.id) from ConsumptionEntity c inner join c.waterMeter wm where c.period.id = ?1",
             countQuery = "select count(c) from ConsumptionEntity c where c.period.id = ?1"
     )
     Page<ResumeConsumptionDetailDto> findAllByPeriod(Long id, Pageable pageable);
