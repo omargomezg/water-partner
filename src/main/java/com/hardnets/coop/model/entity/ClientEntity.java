@@ -76,7 +76,7 @@ public class ClientEntity extends PersonEntity {
     public String getFullName() {
         String fullName;
         if (this.clientType.getCode().equals("PARTNER")) {
-            fullName = String.format("%s %s %s", this.getNames(), this.getLastName(), this.getMiddleName());
+            fullName = String.format("%s %s %s", this.getNames(), this.getMiddleName(), this.getLastName());
         } else {
             fullName = this.getBusinessName();
         }

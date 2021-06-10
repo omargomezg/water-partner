@@ -130,7 +130,7 @@ public class WaterMeterService {
             );
             relatedMeters.add(related);
         }
-        return relatedMeters;
+        return relatedMeters.stream().sorted(Comparator.comparing(RelatedWaterMetersDto::getDischargeDate)).collect(Collectors.toList());
     }
 
     public boolean relateToClient(WaterMeterDto waterMeterDto, String rut) {

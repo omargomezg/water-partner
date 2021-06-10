@@ -51,8 +51,10 @@ public class ConsumptionController {
      * @return Un objeto que contiene el total de elementos mas el detalle por cada periodo
      */
     @GetMapping("/v1/consumption/client/{rut}")
-    public ResponseEntity<ConsumptionClientDto> consumptionByClient(@PathVariable String rut) {
-        return ResponseEntity.ok(consumptionService.findAllByClient(rut));
+    public ResponseEntity<ConsumptionClientDto> consumptionByClient(@PathVariable String rut,
+                                                                    @RequestParam Integer pageIndex,
+                                                                    @RequestParam Integer pageSize) {
+        return ResponseEntity.ok(consumptionService.findAllByClient(rut, pageIndex, pageSize));
     }
 
     @GetMapping("/v1/consumption/{id}")

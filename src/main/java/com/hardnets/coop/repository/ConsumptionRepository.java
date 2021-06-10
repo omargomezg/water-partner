@@ -29,8 +29,9 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
 
     List<ConsumptionEntity> findAllByPeriod(PeriodEntity period);
 
-    @Query(value = "select new com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto(c.readingDate, c.period.endDate, c.consumption) from ConsumptionEntity c, ClientEntity ce where ce.rut = ?1",
-            countQuery = "select count(c) from ConsumptionEntity c, ClientEntity ce where ce.rut = ?1")
+    @Query(value = "select new com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto(c.readingDate, pe.endDate, c.consumption) " +
+            "from ConsumptionEntity c inner join c.waterMeter.client cl inner join c.period pe where cl.rut = ?1 and c.consumption > 0 order by pe.id desc",
+            countQuery = "select count(c) from ConsumptionEntity c inner join c.waterMeter.client cl where cl.rut = ?1 and c.consumption > 0")
     Page<ConsumptionClientDetailDto> findAllByClient(String rut, Pageable pageable);
 
     ConsumptionEntity findAllByPeriodAndWaterMeter(PeriodEntity period, WaterMeterEntity waterMeter);
