@@ -4,6 +4,7 @@ import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,9 +24,14 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
     @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) from ClientEntity c")
     List<ClientDto> findAllClientsDto();
 
-    @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) " +
-            "from ClientEntity c where c.rut = :rut or c.names like %:name% or c.lastName like %:name% or c.middleName like %:name% or c.businessName like %:name%")
-    List<ClientDto> findAllClientsByRutOrName(String rut, String name);
+    @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, ct.value, ct.id, ct.code) " +
+            "from ClientEntity c inner join c.clientType ct where (:rut is null or c.rut = :rut) and " +
+            "(:name is null or (lower(c.names) like concat('%', concat(:name, '%')) or " +
+            "                   lower(c.lastName) like :name or " +
+            "                   lower(c.middleName) like :name or " +
+            "                   lower(c.businessName) like concat('%', concat(:name, '%')))" +
+            ")")
+    List<ClientDto> findAllClientsByRutOrNameOrNone(@Param("rut") String rut, @Param("name") String name);
 
     @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType.value, c.clientType.id, c.clientType.code) " +
             "from ClientEntity c where c.names like %:name% or c.lastName like %:name% or c.middleName like %:name% or c.businessName like %:name%")

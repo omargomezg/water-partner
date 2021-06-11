@@ -67,26 +67,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientDto> getUsers(FilterDto filter) {
-        List<ClientDto> clients = new ArrayList<>();
-        if (filter.getName() != null && filter.getRut() != null) {
-            clients = clientRepository.findAllClientsByRutOrName(filter.getRut(), filter.getName());
-        } else if (filter.getRut() != null) {
-            Optional<ClientDto> client = clientRepository.findUserDtoByRut(filter.getRut());
-            if (client.isPresent()) {
-                clients.add(client.get());
-            }
-        } else if (filter.getName() != null) {
-            clients = clientRepository.findAllClientsByName(filter.getName());
-        } else {
-            clients = clientRepository.findAllClientsDto();
-        }
-        clients.forEach(client -> {
+        List<ClientDto> dbClients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), filter.getName() != null ? filter.getName().toLowerCase() : null);
+        dbClients.forEach(client -> {
             Collection<String> ids = waterMeterRepository.finadAllIdsByClient(client.getRut());
             if (!ids.isEmpty()) {
                 client.getWaterMeters().addAll(ids);
             }
         });
-        return clients;
+        return dbClients;
     }
 
     @Override
