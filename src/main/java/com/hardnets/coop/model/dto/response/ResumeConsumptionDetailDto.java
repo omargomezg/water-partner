@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +18,7 @@ public class ResumeConsumptionDetailDto {
     private Long actualRecord;
     private Long amountToPaid;
     private Long consumptionId;
+    private List<DetailItemDto> detail = new ArrayList<>();
 
     public ResumeConsumptionDetailDto(String numberWaterMeter, String rut, String clientCode, String names, String middleName, String lastName,
                                       String businessName, Long actualRecord, Long consumptionId) {

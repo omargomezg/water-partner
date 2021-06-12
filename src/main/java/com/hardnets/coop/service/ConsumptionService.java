@@ -4,6 +4,7 @@ import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
+import com.hardnets.coop.model.dto.response.DetailItemDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -94,6 +96,8 @@ public class ConsumptionService {
                 if (consumption.isPresent()) {
                     List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);
                     item.setAmountToPaid(billDetails.stream().mapToLong(SalesDocumentDetailEntity::getTotalAmount).sum());
+                    List<DetailItemDto> detail = billDetails.stream().map(billDetail -> new DetailItemDto(billDetail.getConcept(), billDetail.getTotalAmount())).collect(Collectors.toList());
+                    item.getDetail().addAll(detail);
                 }
             });
             response.setTotalHits(page.getTotalElements());

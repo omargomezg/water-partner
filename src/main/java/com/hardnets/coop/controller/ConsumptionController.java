@@ -57,6 +57,10 @@ public class ConsumptionController {
         return ResponseEntity.ok(consumptionService.findAllByClient(rut, pageIndex, pageSize));
     }
 
+    /**
+     * @param id Id del medidor
+     * @return
+     */
     @GetMapping("/v1/consumption/{id}")
     public ResponseEntity<List<ReadingsDto>> findConsumptions(@PathVariable Long id) {
         return new ResponseEntity<>(consumptionService.findRecordsByWaterMeterId(id), HttpStatus.OK);
