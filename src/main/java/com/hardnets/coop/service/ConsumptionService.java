@@ -78,6 +78,7 @@ public class ConsumptionService {
     public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
         ResumeConsumptionDto response = new ResumeConsumptionDto();
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
+        PeriodEntity lastPeriod = periodRepository.findFirstByIdNot(periodId);
         if (period.isPresent()) {
             response.setStatus(period.get().getStatus());
             response.setStartDate(period.get().getStartDate());
@@ -87,6 +88,8 @@ public class ConsumptionService {
             Page page = consumptionRepository.findAllByPeriod(period.get().getId(), pageable);
             response.setDetail(page.getContent());
             response.getDetail().parallelStream().forEach(item -> {
+                var lastRecord = getLastRecordConsumption(item.getNumberWaterMeter(), Optional.of(lastPeriod));
+                item.setLastRecord(lastRecord);
                 Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
                 if (consumption.isPresent()) {
                     List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);
@@ -96,6 +99,16 @@ public class ConsumptionService {
             response.setTotalHits(page.getTotalElements());
         }
         return response;
+    }
+
+    private Long getLastRecordConsumption(String numberWaterMeter, Optional<PeriodEntity> period) {
+        List<PeriodEntity> periods = periodRepository.findAll();
+        Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findByNumber(numberWaterMeter);
+        if (period.isPresent() && waterMeter.isPresent()) {
+            ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
+            return consumption.getConsumption();
+        }
+        return 0L;
     }
 
     public ConsumptionClientDto findAllByClient(String rut, Integer pageIndex, Integer pageSize) {

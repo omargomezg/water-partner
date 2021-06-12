@@ -21,4 +21,6 @@ public interface PeriodRepository extends JpaRepository<PeriodEntity, Long> {
 
     @Query("select distinct year(p.startDate) from PeriodEntity p")
     Set<Integer> findAllYears();
+
+    PeriodEntity findFirstByIdNot(Long id);
 }
