@@ -3,6 +3,7 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.exception.WaterMeterException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
@@ -58,9 +59,16 @@ public class WaterMeterService {
     public WaterMeterDto update(WaterMeterDto waterMeterDto) {
         WaterMeterEntity entity = waterMeterRepository.findByNumber(waterMeterDto.getNumber()).orElseThrow(() ->
                 new WaterMeterNotFoundException("Water meter number " + waterMeterDto.getNumber() + " was not found"));
-        ClientEntity client = clientRepository.findByRut(waterMeterDto.getRut())
-                .orElseThrow(() -> new UserNotFoundException("User by rut " + waterMeterDto.getRut() + " was not" + " found"));
-        entity.setClient(client);
+        DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
+                .orElseThrow(() -> new DropDownNotFoundException("Size not found"));
+
+        entity.setDescription(waterMeterDto.getComment());
+        entity.setNumber(waterMeterDto.getNumber());
+        entity.setSector(waterMeterDto.getSector());
+        entity.setTrademark(waterMeterDto.getTrademark());
+        entity.setSize(size);
+        Optional<ClientEntity> client = clientRepository.findByRut(waterMeterDto.getRut());
+        client.ifPresent(entity::setClient);
         waterMeterRepository.save(entity);
         WaterMeterDto dto = new WaterMeterDto(entity);
         dto.setRut(entity.getClient().getRut());
@@ -70,6 +78,10 @@ public class WaterMeterService {
     public WaterMeterDto create(WaterMeterDto waterMeterDto) {
         DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
                 .orElseThrow(() -> new DropDownNotFoundException("Size not found"));
+        Optional<WaterMeterEntity> dbWaterMeter = waterMeterRepository.findFirstByNumberEqualsAndSizeAndTrademark(waterMeterDto.getNumber(), size, waterMeterDto.getTrademark());
+        if (dbWaterMeter.isPresent()) {
+            throw new WaterMeterException("Other water meter exists with same number, trademark and size");
+        }
         DropDownListEntity status = dropDownListRepository.findByCode("NEW")
                 .orElseThrow(() -> new DropDownNotFoundException("Status not found"));
         WaterMeterEntity waterMeter = new WaterMeterEntity();

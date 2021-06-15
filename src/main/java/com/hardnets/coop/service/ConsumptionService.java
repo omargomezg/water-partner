@@ -72,7 +72,7 @@ public class ConsumptionService {
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(waterMeterId);
         if (period.isPresent() && waterMeter.isPresent()) {
-            return Optional.of(consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get()));
+            return Optional.of(consumptionRepository.findFirstByPeriodAndWaterMeter(period.get(), waterMeter.get()));
         }
         return Optional.empty();
     }
@@ -109,7 +109,7 @@ public class ConsumptionService {
         List<PeriodEntity> periods = periodRepository.findAll();
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findByNumber(numberWaterMeter);
         if (period.isPresent() && waterMeter.isPresent()) {
-            ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
+            ConsumptionEntity consumption = consumptionRepository.findFirstByPeriodAndWaterMeter(period.get(), waterMeter.get());
             return consumption.getConsumption();
         }
         return 0L;

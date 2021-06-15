@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Log4j2
 @AllArgsConstructor
 @RestController

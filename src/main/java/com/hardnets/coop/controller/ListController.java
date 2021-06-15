@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @RestController
 @RequestMapping("/v1/list")
 public class ListController {

@@ -21,7 +21,7 @@ public class JwtTokenUtil {
     public String generateAccessToken(UserEntity user) {
         String jwtIssuer = "com.hardnets";
         return Jwts.builder()
-                .setSubject(String.format("%s,%s", user.getRut(), user.getUsername()))
+                .setSubject(String.format("%s,%s", user.getRut(), user.getEmail()))
                 .setIssuer(jwtIssuer)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 1 week
@@ -29,22 +29,28 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String getUserId(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject().split(",")[0];
-    }
-
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
 
         return claims.getSubject().split(",")[1];
+    }
+
+    /**
+     * Obtiene el rut del usuario
+     *
+     * @param token jwt token
+     * @return Rut del usuario
+     */
+    public String getIdentifier(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject().split(",")[0];
     }
 
     public Date getExpirationDate(String token) {

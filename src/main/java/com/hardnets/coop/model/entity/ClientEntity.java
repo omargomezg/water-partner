@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Getter
 @Setter
 @Entity

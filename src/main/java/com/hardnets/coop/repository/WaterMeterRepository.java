@@ -3,6 +3,7 @@ package com.hardnets.coop.repository;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,8 @@ import java.util.Optional;
 public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Long> {
 
     Optional<WaterMeterEntity> findByNumber(String number);
+
+    Optional<WaterMeterEntity> findFirstByNumberEqualsAndSizeAndTrademark(String number, DropDownListEntity size, String trademark);
 
     Collection<WaterMeterEntity> findAllByClientOrderByUpdatedDesc(ClientEntity clientEntity);
 

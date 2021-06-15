@@ -3,9 +3,7 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
-import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,13 +17,15 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @RequiredArgsConstructor
 @Log4j2
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final DropDownListRepository downListRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserDto signup(UserDto userDto, String password) {
@@ -40,29 +40,29 @@ public class UserService implements UserDetailsService {
     }
 
     public Collection<UserDto> getUsers() {
-        Collection<UserEntity> dbUsers = (Collection<UserEntity>) userRepository.findAll();
-        return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
+        Collection<UserEntity> dbUsers = userRepository.findAll();
+        return dbUsers.stream().map(this::newUserDto).collect(Collectors.toList());
     }
 
     public UserDto getByRut(String rut) throws UserNotFoundException {
         UserEntity user = userRepository.findById(rut).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return new UserDto(user);
+        return newUserDto(user);
     }
 
     @Transactional
     public UserDto create(CreateUserDto userDto) throws Exception {
-        Optional<DropDownListEntity> role = downListRepository.findById(userDto.getRoleId());
-        log.info("finded this role: {}", role.get());
-        UserEntity user = new UserEntity();
+        UserEntity user = new UserEntity(
+                passwordEncoder.encode(userDto.getPassword()),
+                userDto.getRole(),
+                null
+        );
         user.setRut(userDto.getRut());
         user.setNames(userDto.getNames());
         user.setMiddleName(userDto.getMiddleName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(role.get());
         UserEntity dbUser = userRepository.save(user);
-        return new UserDto(dbUser);
+        return newUserDto(dbUser);
     }
 
     @Override
@@ -70,4 +70,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
+
+    private UserDto newUserDto(UserEntity user) {
+        return new UserDto(user.getRut(), user.getRole(), user.getNames(), user.getMiddleName(), user.getEmail(),
+                user.getLastName(), user.getLastLogin(), user.getEnabled());
+    }
+
 }

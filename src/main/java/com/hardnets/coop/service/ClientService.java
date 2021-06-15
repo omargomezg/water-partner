@@ -7,6 +7,9 @@ import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 public interface ClientService {
 
     ClientDto update(ClientDto entity);

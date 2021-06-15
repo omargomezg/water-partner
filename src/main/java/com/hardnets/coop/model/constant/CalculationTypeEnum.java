@@ -2,6 +2,8 @@ package com.hardnets.coop.model.constant;
 
 /**
  * Enumera los tipos de cálculos que están disponibles
+ *
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
  */
 public enum CalculationTypeEnum {
     /**
@@ -15,5 +17,5 @@ public enum CalculationTypeEnum {
     /**
      * Calculo por cobro de excedente (sobre consumo)
      */
-    EXCESS;
+    EXCESS
 }

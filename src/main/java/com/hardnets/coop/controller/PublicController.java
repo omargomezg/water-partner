@@ -13,7 +13,7 @@ import com.hardnets.coop.model.flow.UrlReturn;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.FlowService;
+import com.hardnets.coop.service.PaymentService;
 import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,6 +42,8 @@ import java.util.Date;
 /**
  * Todos los métodos públicos que no requieren autentificación inicialmente
  * se encontraran en este controller
+ *
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
  */
 @Log4j2
 @AllArgsConstructor
@@ -54,7 +56,7 @@ public class PublicController {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
     private final ClientService clientService;
-    private final FlowService flowService;
+    private final PaymentService flowService;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
@@ -68,6 +70,9 @@ public class PublicController {
             response.setEmail(user.getEmail());
             response.setFullName(String.format("%s %s", user.getNames().split(" ")[0], user.getLastName()));
             response.setToken(jwtTokenUtil.generateAccessToken(user));
+            response.setCompanyName(user.getCompany().getFullName());
+            response.setRole(user.getRole());
+            response.setShortCompanyName(user.getCompany().getShortName());
             user.setLastLogin(new Date());
             userRepository.save(user);
             return ResponseEntity.ok()

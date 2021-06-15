@@ -17,6 +17,9 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Log4j2
 @AllArgsConstructor
 @RestController
@@ -41,11 +44,16 @@ public class WaterMeterController {
 
     @PostMapping("/v1/water-meter")
     public ResponseEntity<WaterMeterDto> addWaterMeter(@RequestBody @Valid WaterMeterDto waterMeter) {
-        return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
+        if (waterMeter.getId() > 0) {
+            waterMeterService.update(waterMeter);
+            return ResponseEntity.ok(waterMeter);
+        } else {
+            return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
+        }
     }
 
     /**
-     * Permite actualizar varios medidores con una sola peticion
+     * Permite actualizar varios medidores con una sola petición
      *
      * @param meterDtos Una lista de medidores
      * @return

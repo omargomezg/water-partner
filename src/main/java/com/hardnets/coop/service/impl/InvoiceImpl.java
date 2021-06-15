@@ -34,4 +34,24 @@ public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
     public void sendToClient(Long id) {
 
     }
+
+    @Override
+    public void emitDocumentTaxElectronic() {
+
+    }
+
+    @Override
+    public void generateDte() {
+
+    }
+
+    @Override
+    public void updateStatusDte(String trackId) {
+
+    }
+
+    @Override
+    public void generatePdf() {
+
+    }
 }

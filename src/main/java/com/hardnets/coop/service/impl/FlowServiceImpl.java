@@ -8,7 +8,7 @@ import com.hardnets.coop.model.entity.PaymentEntity;
 import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.repository.PaymentRepository;
-import com.hardnets.coop.service.FlowService;
+import com.hardnets.coop.service.PaymentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +30,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Log4j2
 @Service
-public class FlowServiceImpl implements FlowService {
+public class FlowServiceImpl implements PaymentService {
 
 
     private static final Byte PENDING_PAY = 1;
@@ -41,8 +44,12 @@ public class FlowServiceImpl implements FlowService {
 
     @Value("${flow.secretKeyForSha256HMAC}")
     private String secretKeyForSha256;
+
+    //TODO obtener desde BD
     @Value("${flow.key}")
     private String flowApiKey;
+
+    //TODO obtener desde BD
     @Value("${flow.token}")
     private String flowToken;
     @Value("${app.url}")

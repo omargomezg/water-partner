@@ -1,20 +1,4 @@
 insert into dropdownlist (id, value, parent_id, code, list_type)
-values (1, 'Tarificador', null, '', 'PROFILE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (2, 'Administrador', null, '', 'PROFILE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (3, 'Recaudador', null, '', 'PROFILE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (4, 'Finanzas', null, '', 'PROFILE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
 values (5, 'Socio', null, '', 'PERSON_TYPE')
 on conflict do nothing;
 
@@ -76,4 +60,35 @@ on conflict do nothing;
 
 insert into dropdownlist (id, value, parent_id, code, list_type)
 values (21, '25', null, '25', 'WATER_METER_SIZE')
+on conflict do nothing;
+
+insert into company (id, fullName, shortName, identifier)
+values (nextval('hibernate_sequence'), 'Comité de Agua Potable Rural Curiñanco', 'APR Curiñanco', '737419002')
+on conflict do nothing;
+
+insert into attribute (id, key, value, company_id)
+values (nextval('hibernate_sequence'), 'flow_key', '5B656F4B-448C-42CB-98B5-8E7CDB96L7DA', (
+    select id
+    from company
+    where identifier = '737419002'
+    LIMIT 1
+))
+on conflict do nothing;
+
+insert into attribute (id, key, value, company_id)
+values (nextval('hibernate_sequence'), 'flow_token', 'DujitxSHfwH6Y99gw0adoK9tPqDHbsq2', (
+    select id
+    from company
+    where identifier = '737419002'
+    LIMIT 1
+))
+on conflict do nothing;
+
+insert into attribute (id, key, value, company_id)
+values (nextval('hibernate_sequence'), 'libreDte_hash', '122a8472e2a2016e552a7462ad9d61f3', (
+    select id
+    from company
+    where identifier = '737419002'
+    LIMIT 1
+))
 on conflict do nothing;

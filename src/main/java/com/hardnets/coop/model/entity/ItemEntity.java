@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hardnets.coop.model.constant.CalculationTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,6 +57,7 @@ public class ItemEntity extends BaseEntity {
     /**
      * Tipo de usuario al que aplica el item
      */
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_type_id", referencedColumnName = "id")
     private DropDownListEntity assignedTo;

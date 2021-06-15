@@ -13,8 +13,10 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Service que implementa métodos para pago a través de flow
  * https://www.flow.cl/docs/api.html
+ *
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
  */
-public interface FlowService {
+public interface PaymentService {
 
     /**
      * Crea una orden de pago en Flow y recibe como respuesta la url para redirigir el browser del pagador y el token

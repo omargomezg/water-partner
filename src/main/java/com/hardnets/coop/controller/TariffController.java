@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @RestController
 public class TariffController {
 

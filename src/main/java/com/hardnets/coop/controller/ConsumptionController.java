@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Log4j2
 @Api("All client operations")
 @AllArgsConstructor

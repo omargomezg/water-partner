@@ -11,4 +11,25 @@ public interface SaleDocumentService<T> {
     void get(Long id);
 
     void sendToClient(Long id);
+
+    /**
+     * Emite un documento temporal en SII
+     */
+    void emitDocumentTaxElectronic();
+
+    /**
+     * Genera un Documento en SII, antes denominado temporal
+     */
+    void generateDte();
+
+    /**
+     * Consultar el estado del envío en SII del documento, puede estar aceptado, rechazado o
+     * aceptado con reparos
+     */
+    void updateStatusDte(String trackId);
+
+    /**
+     * Genera el documento Pdf del documento electrónico
+     */
+    void generatePdf();
 }

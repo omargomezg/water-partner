@@ -16,6 +16,9 @@ import javax.persistence.Table;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author Omar Gómez - omar.fdo.gomez@gmail.com
+ */
 @Getter
 @Setter
 @Entity
