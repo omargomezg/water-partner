@@ -55,7 +55,7 @@ public class ClientController {
         return new ResponseEntity<>(clientService.create(client), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Update an specific user", notes = "The primary key is rut, for example: '12345678-9'")
+    @ApiOperation(value = "Update an specific user", notes = "The primary key is rut, for example: '123456789'")
     @PutMapping("/v1/client")
     public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);

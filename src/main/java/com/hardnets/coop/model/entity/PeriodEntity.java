@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,6 +37,12 @@ public class PeriodEntity extends BaseEntity {
     private Date endDate;
 
     /**
+     * Es el numero de mes de consumo en el periodo
+     */
+    @Column
+    private Byte currentMonth;
+
+    /**
      * Indica el estado de un periodo el cual puede ser:
      * - ACTIVE: Abierto, por cuanto puede recibir lecturas para el mes
      * - CLOSED: Cerrado, cuando cambia a este estado se generan las boletas/facturas
@@ -43,6 +50,7 @@ public class PeriodEntity extends BaseEntity {
     @Column
     private String status;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "period", fetch = FetchType.LAZY)
     private Set<ConsumptionEntity> consumptions;
 

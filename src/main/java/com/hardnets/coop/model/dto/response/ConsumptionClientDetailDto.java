@@ -13,10 +13,12 @@ public class ConsumptionClientDetailDto {
     private Long consumption;
     private Long amount;
     private Date readingDate;
+    private Byte currentMonth;
 
-    public ConsumptionClientDetailDto(Date readingDate, Date endDate, Long consumption) {
+    public ConsumptionClientDetailDto(Date readingDate, Date endDate, Long consumption, Byte currentMonth) {
         this.readingDate = readingDate;
         this.endDate = endDate;
         this.consumption = consumption;
+        this.currentMonth = currentMonth;
     }
 }

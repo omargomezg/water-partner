@@ -1,7 +1,9 @@
 package com.hardnets.coop.model.libreDte.boletaTerceros;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -9,6 +11,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class DetalleBoletaTerceros {
 
     /**
@@ -28,4 +32,5 @@ public class DetalleBoletaTerceros {
      */
     @JsonProperty(value = "PrcItem")
     private Long unitAmount;
+
 }

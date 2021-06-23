@@ -1,6 +1,5 @@
 package com.hardnets.coop.model.dto;
 
-import com.hardnets.coop.model.entity.ClientEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -79,36 +78,9 @@ public class ClientDto {
         generateFullName();
     }
 
-    public ClientDto(ClientEntity client) {
-        this.setRut(client.getRut());
-        this.setNames(client.getNames());
-        this.setMiddleName(client.getMiddleName());
-        this.setLastName(client.getLastName());
-        this.setBusinessName(client.getBusinessName());
-        this.setBusinessActivity(client.getBusinessActivity());
-        this.setBirthDate(client.getBirthDate());
-        this.setProfession(client.getProfession());
-        this.setDateOfAdmission(client.getDateOfAdmission());
-        this.getClientType().setId(client.getClientType().getId());
-        if (client.getClientType() != null) {
-            this.getClientType().setValue(client.getClientType().getValue());
-        }
-        this.setEmail(client.getEmail());
-        this.setIsActive(client.getEnabled());
-        this.setTelephone(client.getTelephone());
-        try {
-            if (client.getWaterMeter() != null) {
-                client.getWaterMeter().forEach(item -> this.getWaterMeters().add(item.getNumber()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        generateFullName();
-    }
-
     private void generateFullName() {
         if (getBusinessName().isEmpty())
-            setFullName(String.format("%s %s %s", getNames(), getMiddleName() != null ? getMiddleName(): "", getLastName()));
+            setFullName(String.format("%s %s %s", getNames(), getMiddleName() != null ? getMiddleName() : "", getLastName()));
         else
             setFullName(getBusinessName());
     }

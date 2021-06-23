@@ -44,7 +44,7 @@ public class UserController {
 
     @PutMapping("/v1/user")
     public ResponseEntity<?> updateUser() {
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok("");
     }
 
 }

@@ -106,7 +106,6 @@ public class ConsumptionService {
     }
 
     private Long getLastRecordConsumption(String numberWaterMeter, Optional<PeriodEntity> period) {
-        List<PeriodEntity> periods = periodRepository.findAll();
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findByNumber(numberWaterMeter);
         if (period.isPresent() && waterMeter.isPresent()) {
             ConsumptionEntity consumption = consumptionRepository.findFirstByPeriodAndWaterMeter(period.get(), waterMeter.get());

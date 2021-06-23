@@ -61,7 +61,7 @@ public class ClientEntity extends PersonEntity {
             mappedBy = "client",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private Set<WaterMeterEntity> waterMeter;
+    private Set<WaterMeterEntity> waterMeter = new HashSet<>();
 
     public ClientEntity(ClientDto client) {
         super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());

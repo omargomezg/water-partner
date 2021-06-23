@@ -54,7 +54,7 @@ public class ConfigurationController {
 
     @GetMapping("/test-libre-dte")
     public ResponseEntity<Boolean> testLibreDte() {
-        saleDocumentService.emitDocumentTaxElectronic();
+        saleDocumentService.emitDocumentTaxElectronic(103L);
         return ResponseEntity.ok(true);
     }
 

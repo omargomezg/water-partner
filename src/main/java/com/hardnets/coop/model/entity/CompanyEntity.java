@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -35,5 +36,8 @@ public class CompanyEntity extends BaseEntity {
      */
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GenericAttributeEntity> attributes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    private List<BillEntity> Invoices;
 
 }

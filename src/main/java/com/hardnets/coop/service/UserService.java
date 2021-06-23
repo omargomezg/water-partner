@@ -1,5 +1,6 @@
 package com.hardnets.coop.service;
 
+import com.hardnets.coop.exception.UserException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
@@ -45,24 +46,28 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto getByRut(String rut) throws UserNotFoundException {
-        UserEntity user = userRepository.findById(rut).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity user = userRepository.findByRut(rut)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return newUserDto(user);
     }
 
     @Transactional
     public UserDto create(CreateUserDto userDto) throws Exception {
-        UserEntity user = new UserEntity(
-                passwordEncoder.encode(userDto.getPassword()),
-                userDto.getRole(),
-                null
-        );
-        user.setRut(userDto.getRut());
-        user.setNames(userDto.getNames());
-        user.setMiddleName(userDto.getMiddleName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        UserEntity dbUser = userRepository.save(user);
-        return newUserDto(dbUser);
+        if (userRepository.findByRutOrEmail(userDto.getRut(), userDto.getEmail()).isEmpty()) {
+            UserEntity user = new UserEntity(
+                    passwordEncoder.encode(userDto.getPassword()),
+                    userDto.getRole(),
+                    null
+            );
+            user.setRut(userDto.getRut());
+            user.setNames(userDto.getNames());
+            user.setMiddleName(userDto.getMiddleName());
+            user.setLastName(userDto.getLastName());
+            user.setEmail(userDto.getEmail());
+            UserEntity dbUser = userRepository.save(user);
+            return newUserDto(dbUser);
+        }
+        throw new UserException("User rut or email already exists");
     }
 
     @Override

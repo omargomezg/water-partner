@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
@@ -21,6 +23,10 @@ public abstract class SalesDocumentEntity {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private CompanyEntity company;
 
     /**
      * Indica el estado actual de un documento (boleta)

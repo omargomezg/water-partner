@@ -14,8 +14,10 @@ public interface SaleDocumentService<T> {
 
     /**
      * Emite un documento temporal en SII
+     *
+     * @param id Id del documento
      */
-    void emitDocumentTaxElectronic();
+    void emitDocumentTaxElectronic(Long id);
 
     /**
      * Genera un Documento en SII, antes denominado temporal

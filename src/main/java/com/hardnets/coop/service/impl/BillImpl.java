@@ -2,10 +2,12 @@ package com.hardnets.coop.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hardnets.coop.exception.BillNotFoundException;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
+import com.hardnets.coop.model.entity.LibreDteEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.libreDte.boletaTerceros.BoletaTercerosRequest;
 import com.hardnets.coop.model.libreDte.boletaTerceros.DetalleBoletaTerceros;
@@ -14,22 +16,16 @@ import com.hardnets.coop.model.libreDte.constant.DocumentTypeEnum;
 import com.hardnets.coop.repository.BillDetailRepository;
 import com.hardnets.coop.repository.BillRepository;
 import com.hardnets.coop.repository.ConsumptionRepository;
+import com.hardnets.coop.repository.LibreDteRepository;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.SaleDocumentService;
+import com.hardnets.coop.service.SiiService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Tareas relacionadas a la gestión de boletas de servicios
@@ -44,6 +40,8 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     private final BillRepository billRepository;
     private final BillDetailRepository billDetailRepository;
     private final BillDetailService billDetailService;
+    private final LibreDteRepository libreDteRepository;
+    private final SiiService siiService;
 
     @Override
     public BillEntity getById(Long id) {
@@ -55,31 +53,45 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
 
     }
 
+    @Async
     @Override
-    public void emitDocumentTaxElectronic() {
+    public void emitDocumentTaxElectronic(Long billId) {
+        BillEntity bill = billRepository.findById(billId).orElseThrow(() -> new BillNotFoundException(billId.toString()));
         ObjectMapper objectMapper = new ObjectMapper();
         BoletaTercerosRequest boleta = new BoletaTercerosRequest();
-        DetalleBoletaTerceros detalle = new DetalleBoletaTerceros();
-        detalle.setDescription("Consumo de agua potable");
-        detalle.setQuantity(1L);
-        detalle.setUnitAmount(2300L);
-        boleta.getDetalle().add(detalle);
+        bill.getDetail().forEach(detail -> boleta.getDetalle().add(setDetail(detail)));
         boleta.getEncabezado().getDocumento().setTipoDTE(DocumentTypeEnum.DTE.getValue());
         boleta.getEncabezado().getDocumento().setFolio(1);
-        boleta.getEncabezado().getCompany().setRut("73741900-2");
-        boleta.getEncabezado().getClient().setRut("14081226-9");
-        String result = callGet(boleta);
+        boleta.getEncabezado().getCompany().setRut(
+                bill.getCompany().getIdentifier()
+        );
+        boleta.getEncabezado().getClient().setRut(
+                bill.getClient().getRut()
+        );
+        String result = siiService.emitTemporalDte(boleta, bill.getCompany());
         try {
             Response response = objectMapper.readValue(result, Response.class);
-            Optional<BillEntity> bill = billRepository.findById(101L);
-            if (bill.isPresent()) {
-                bill.get().getIntegration().setHash(response.getHash());
-                billRepository.save(bill.get());
-            }
-            System.out.printf(response.toString());
+            createIntegrationData(bill, response);
+            bill.getIntegration().setHash(response.getHash());
+            billRepository.save(bill);
         } catch (JsonProcessingException jsonMappingException) {
             log.error(jsonMappingException);
         }
+    }
+
+    private DetalleBoletaTerceros setDetail(BillDetailEntity detail) {
+        DetalleBoletaTerceros detalle = new DetalleBoletaTerceros();
+        detalle.setDescription(detail.getConcept());
+        detalle.setQuantity(1L);
+        detalle.setUnitAmount(detail.getTotalAmount());
+        return detalle;
+    }
+
+    private void createIntegrationData(BillEntity bill, Response response) {
+        LibreDteEntity libreDte = new LibreDteEntity();
+        libreDte.setHash(response.getHash());
+        libreDte = libreDteRepository.save(libreDte);
+        bill.setIntegration(libreDte);
     }
 
     @Override
@@ -111,7 +123,7 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
                 BillEntity dbBill = billRepository.save(bill);
                 List<BillDetailEntity> detail = billDetailService.getDetail(consumption, dbBill.getId());
                 detail.forEach(billDetailRepository::save);
-                billRepository.save(bill);
+                emitDocumentTaxElectronic(dbBill.getId());
             }
         }
     }
@@ -126,27 +138,4 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
 
     }
 
-    private String callGet(Object object) {
-        String result = "";
-        List<MediaType> acceptableMediaTypes = new ArrayList<>();
-        acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
-        var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(acceptableMediaTypes);
-        var restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(
-                new BasicAuthenticationInterceptor(
-                        "4ow4Ql9BE8tO5LReQIzC2lwx7PyfpiHF",
-                        Base64.getEncoder().encodeToString("X".getBytes())
-                )
-        );
-        ObjectMapper obj = new ObjectMapper();
-        try {
-            HttpEntity<String> entity = new HttpEntity<>(obj.writeValueAsString(object), headers);
-            result = restTemplate.postForObject("https://libredte.cl/api/dte/documentos/emitir?normalizar=1&formato=json&links=0&email=0", entity, String.class);
-        } catch (JsonProcessingException jsonProcessingException) {
-            log.error(jsonProcessingException);
-        }
-        return result;
-    }
 }

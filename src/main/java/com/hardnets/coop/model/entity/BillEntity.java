@@ -2,9 +2,9 @@ package com.hardnets.coop.model.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,6 +16,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "bill")
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class BillEntity extends SalesDocumentEntity {
 
@@ -23,7 +24,7 @@ public class BillEntity extends SalesDocumentEntity {
     @JoinColumn(name = "client_rut", referencedColumnName = "rut", nullable = false)
     private ClientEntity client;
 
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bill")
     private Set<BillDetailEntity> detail = new HashSet<>();
 
     @ManyToOne
@@ -32,5 +33,5 @@ public class BillEntity extends SalesDocumentEntity {
 
     @OneToOne
     @JoinColumn(name = "integration_id", referencedColumnName = "id")
-    private LibreDteEntity integration;
+    private LibreDteEntity integration = new LibreDteEntity();
 }

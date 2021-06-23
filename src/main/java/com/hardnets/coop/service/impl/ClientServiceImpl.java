@@ -62,7 +62,7 @@ public class ClientServiceImpl implements ClientService {
         client.setEmail(clientDto.getEmail());
         client.setTelephone(clientDto.getTelephone());
         ClientEntity dbClient = clientRepository.save(client);
-        return new ClientDto(dbClient);
+        return getClientDto(dbClient);
     }
 
     @Override
@@ -94,11 +94,46 @@ public class ClientServiceImpl implements ClientService {
                 .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
         client.setClientType(clientType);
         ClientEntity dbClient = clientRepository.save(client);
-        return new ClientDto(dbClient);
+        return getClientDto(dbClient);
     }
 
     @Override
     public Collection<PendingPaymentDto> getPendingPayments(String rut) {
         return new ArrayList<>();
+    }
+
+    // TODO usar mapper
+    private ClientDto getClientDto(ClientEntity client) {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setRut(client.getRut());
+        clientDto.setNames(client.getNames());
+        clientDto.setMiddleName(client.getMiddleName());
+        clientDto.setLastName(client.getLastName());
+        clientDto.setBirthDate(client.getBirthDate());
+        clientDto.setDateOfAdmission(client.getDateOfAdmission());
+        clientDto.setBusinessName(client.getBusinessName());
+        clientDto.setBusinessActivity(client.getBusinessActivity());
+        clientDto.setTelephone(client.getTelephone());
+        clientDto.setEmail(client.getEmail());
+        clientDto.setProfession(client.getProfession());
+        clientDto.setIsActive(client.getEnabled());
+        if (client.getClientType() != null) {
+            clientDto.getClientType().setId(client.getClientType().getId());
+            clientDto.getClientType().setValue(client.getClientType().getValue());
+            clientDto.getClientType().setCode(client.getClientType().getCode());
+        }
+        clientDto.setFullName(getFullName(clientDto));
+        client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getNumber()));
+        return clientDto;
+    }
+
+    private String getFullName(ClientDto clientDto) {
+        if (clientDto.getBusinessName() == null) {
+            return String.format("%s %s %s",
+                    clientDto.getNames(),
+                    clientDto.getMiddleName() != null ? clientDto.getMiddleName() : "",
+                    clientDto.getLastName());
+        }
+        return clientDto.getBusinessName();
     }
 }

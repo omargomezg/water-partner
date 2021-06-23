@@ -9,9 +9,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -20,6 +23,12 @@ public class PeriodServiceImpl implements PeriodService {
     public static final String ACTIVE = "ACTIVE";
     private final PeriodRepository periodRepository;
 
+
+    @Override
+    public List<PeriodEntity> findAll() {
+        return periodRepository.findAll().stream().sorted(Comparator.comparing(PeriodEntity::getId).reversed())
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Set<PeriodDto> findAllByYear(int year) {

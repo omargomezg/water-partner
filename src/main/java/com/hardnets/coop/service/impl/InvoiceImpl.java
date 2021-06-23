@@ -36,7 +36,7 @@ public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
     }
 
     @Override
-    public void emitDocumentTaxElectronic() {
+    public void emitDocumentTaxElectronic(Long invoiceId) {
 
     }
 

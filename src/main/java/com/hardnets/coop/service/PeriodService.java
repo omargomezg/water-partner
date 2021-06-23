@@ -4,9 +4,12 @@ import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public interface PeriodService {
+
+    List<PeriodEntity> findAll();
 
     Set<PeriodDto> findAllByYear(int year);
 

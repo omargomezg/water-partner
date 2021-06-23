@@ -1,7 +1,7 @@
 package com.hardnets.coop.model.libreDte.constant;
 
 public enum DocumentTypeEnum {
-    DTE(33);
+    DTE(38);
 
     private final int documentId;
 
