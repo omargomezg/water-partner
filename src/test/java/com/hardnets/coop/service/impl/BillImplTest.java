@@ -42,16 +42,16 @@ public class BillImplTest {
     private SiiService siiService;
 
 
+    @Test
+    public void createAllInPeriod() {
+        bill.emitDocumentTaxElectronic(102L);
+    }
+
     @Before
     public void setup() {
         bill = new BillImpl(periodRepository, consumptionRepository, billRepository, billDetailRepository, billDetailService, libreDteRepository, siiService);
         var bill = getBillEntity();
         when(billRepository.findById(102L)).thenReturn(Optional.of(bill));
-    }
-
-    @Test
-    public void createAllInPeriod() {
-        bill.emitDocumentTaxElectronic(102L);
     }
 
     private BillEntity getBillEntity() {

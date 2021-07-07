@@ -1,21 +1,21 @@
 package com.hardnets.coop.service;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-class UserServiceImplTest {
+public class UserServiceImplTest {
 
     @Test
-    void signup() {
+    public void signup() {
     }
 
     @Test
-    void updateProfile() {
+    public void updateProfile() {
     }
 
     @Test
-    void changePassword() {
+    public void changePassword() {
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Log4j2
@@ -89,7 +90,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto create(ClientDto clientDto) {
-        ClientEntity client = new ClientEntity(clientDto);
+        var client = getClientEntity(clientDto);
         DropDownListEntity clientType = dropDownListRepository.findById(clientDto.getClientType().getId())
                 .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
         client.setClientType(clientType);
@@ -102,9 +103,25 @@ public class ClientServiceImpl implements ClientService {
         return new ArrayList<>();
     }
 
+    private ClientEntity getClientEntity(ClientDto clientDto) {
+        var client = new ClientEntity();
+        client.setRut(clientDto.getRut());
+        client.setNames(clientDto.getNames());
+        client.setMiddleName(clientDto.getMiddleName());
+        client.setLastName(clientDto.getLastName());
+        client.setEmail(clientDto.getEmail());
+        client.setBirthDate(clientDto.getBirthDate());
+        client.setDateOfAdmission(clientDto.getDateOfAdmission());
+        client.setTelephone(clientDto.getTelephone());
+        client.setBusinessActivity(clientDto.getBusinessActivity());
+        client.setBusinessName(clientDto.getBusinessName());
+        client.setProfession(clientDto.getProfession());
+        return client;
+    }
+
     // TODO usar mapper
     private ClientDto getClientDto(ClientEntity client) {
-        ClientDto clientDto = new ClientDto();
+        var clientDto = new ClientDto();
         clientDto.setRut(client.getRut());
         clientDto.setNames(client.getNames());
         clientDto.setMiddleName(client.getMiddleName());
@@ -117,7 +134,7 @@ public class ClientServiceImpl implements ClientService {
         clientDto.setEmail(client.getEmail());
         clientDto.setProfession(client.getProfession());
         clientDto.setIsActive(client.getEnabled());
-        if (client.getClientType() != null) {
+        if (Objects.nonNull(client.getClientType())) {
             clientDto.getClientType().setId(client.getClientType().getId());
             clientDto.getClientType().setValue(client.getClientType().getValue());
             clientDto.getClientType().setCode(client.getClientType().getCode());
@@ -128,12 +145,14 @@ public class ClientServiceImpl implements ClientService {
     }
 
     private String getFullName(ClientDto clientDto) {
-        if (clientDto.getBusinessName() == null) {
-            return String.format("%s %s %s",
-                    clientDto.getNames(),
-                    clientDto.getMiddleName() != null ? clientDto.getMiddleName() : "",
-                    clientDto.getLastName());
+        if (Objects.nonNull(clientDto.getBusinessName())) {
+            return clientDto.getBusinessName();
         }
-        return clientDto.getBusinessName();
+        return new StringBuilder()
+                .append(clientDto.getNames())
+                .append(" ")
+                .append(clientDto.getMiddleName() != null ? clientDto.getMiddleName() + " " : "")
+                .append(clientDto.getLastName())
+                .toString();
     }
 }

@@ -3,7 +3,7 @@ package com.hardnets.coop.controller;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,10 +12,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -37,7 +37,8 @@ class ClientControllerTest {
 
     @Test
     void getUsers() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client")
+        //when().thenReturn();
+        MvcResult result = mockMvc.perform(get("/v1/client")
                 .with(user("user")))
                 .andExpect(status().isOk())
                 .andReturn();

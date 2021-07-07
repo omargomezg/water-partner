@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,9 +71,61 @@ public class ClientServiceImplTest {
     }
 
     @Test
-    public void create() {
+    public void create_success_partner() {
         ClientDto client = new ClientDto();
         client.setEmail("omar.fdo.gomez@gmail.com");
-        clientService.create(client);
+        client.setNames("Omar Fernando");
+        client.setLastName("Gómez");
+        client.setMiddleName("Gómez");
+
+        GenericListDto clientType = new GenericListDto();
+
+        clientType.setId(1L);
+        clientType.setCode("PARTNER");
+        client.setClientType(clientType);
+
+        ClientEntity clientEntity = getClientEntity(client);
+        clientEntity.setRut("234452345");
+        when(dropDownListRepository.findById(clientType.getId())).thenReturn(Optional.of(mock(DropDownListEntity.class)));
+        when(clientRepository.save(any(ClientEntity.class))).thenReturn(clientEntity);
+        ClientDto response = clientService.create(client);
+        assertEquals("Omar Fernando Gómez Gómez", response.getFullName());
+    }
+
+    @Test
+    public void create_success_business_client() {
+        ClientDto client = new ClientDto();
+        client.setEmail("omar.fdo.gomez@gmail.com");
+        client.setBusinessActivity("Servicios Varios");
+        client.setBusinessName("Sociedad Ltda.");
+
+        GenericListDto clientType = new GenericListDto();
+
+        clientType.setId(2L);
+        clientType.setCode("PUBLIC");
+        client.setClientType(clientType);
+
+        ClientEntity clientEntity = getClientEntity(client);
+        clientEntity.setRut("234452345");
+        when(dropDownListRepository.findById(clientType.getId())).thenReturn(Optional.of(mock(DropDownListEntity.class)));
+        when(clientRepository.save(any(ClientEntity.class))).thenReturn(clientEntity);
+        ClientDto response = clientService.create(client);
+        assertEquals("Sociedad Ltda.", response.getFullName());
+    }
+
+    private ClientEntity getClientEntity(ClientDto clientDto) {
+        ClientEntity client = new ClientEntity();
+        client.setRut(clientDto.getRut());
+        client.setNames(clientDto.getNames());
+        client.setMiddleName(clientDto.getMiddleName());
+        client.setLastName(clientDto.getLastName());
+        client.setEmail(clientDto.getEmail());
+        client.setBirthDate(clientDto.getBirthDate());
+        client.setDateOfAdmission(clientDto.getDateOfAdmission());
+        client.setTelephone(clientDto.getTelephone());
+        client.setBusinessActivity(clientDto.getBusinessActivity());
+        client.setBusinessName(clientDto.getBusinessName());
+        client.setProfession(clientDto.getProfession());
+        return client;
     }
 }

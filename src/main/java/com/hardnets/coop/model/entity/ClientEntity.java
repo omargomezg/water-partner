@@ -1,7 +1,7 @@
 package com.hardnets.coop.model.entity;
 
-import com.hardnets.coop.model.dto.ClientDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -22,6 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "clients")
 public class ClientEntity extends PersonEntity {
 
@@ -50,31 +51,18 @@ public class ClientEntity extends PersonEntity {
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
-    private Set<BillEntity> Bills;
+    private Set<BillEntity> bills;
 
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
-    private Set<InvoiceEntity> Invoices;
+    private Set<InvoiceEntity> invoices;
 
     @OneToMany(
             mappedBy = "client",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private Set<WaterMeterEntity> waterMeter = new HashSet<>();
-
-    public ClientEntity(ClientDto client) {
-        super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());
-        setDateOfAdmission(client.getDateOfAdmission());
-        setTelephone(client.getTelephone());
-        setBusinessActivity(client.getBusinessActivity());
-        setBusinessName(client.getBusinessName());
-        setProfession(client.getProfession());
-    }
-
-    public ClientEntity() {
-        this.waterMeter = new HashSet<>();
-    }
 
     public String getFullName() {
         String fullName;

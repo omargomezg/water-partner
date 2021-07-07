@@ -37,8 +37,8 @@ import java.util.List;
 @Service
 public class FlowServiceImpl implements PaymentService {
 
-
     private static final Byte PENDING_PAY = 1;
+
     @Autowired
     PaymentRepository paymentRepository;
 
