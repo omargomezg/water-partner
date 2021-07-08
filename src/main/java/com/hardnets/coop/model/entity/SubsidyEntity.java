@@ -50,4 +50,8 @@ public class SubsidyEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "watermeter_id")
     private WaterMeterEntity waterMeter;
+
+    @ManyToOne
+    @JoinColumn(name = "decree_id")
+    private DecreeEntity decree;
 }

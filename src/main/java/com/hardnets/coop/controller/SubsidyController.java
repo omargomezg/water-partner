@@ -1,5 +1,6 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.model.dto.request.UserSubsidyRequest;
 import com.hardnets.coop.model.dto.response.SubsidyDto;
 import com.hardnets.coop.service.SubsidyService;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class SubsidyController {
     }
 
     @PutMapping("/v1/subsidy/water-meter")
-    public ResponseEntity<?> updateClientSubsidy(@RequestBody @Valid SubsidyDto subsidy) {
+    public ResponseEntity<?> updateClientSubsidy(@RequestBody @Valid UserSubsidyRequest subsidy) {
         subsidyService.update(subsidy);
         return ResponseEntity.ok().build();
     }
