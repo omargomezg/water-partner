@@ -128,7 +128,9 @@ public class WaterMeterService {
                 .orElseThrow(() -> new UserNotFoundException("User by rut " + rut + " was not" + " found"));
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
-            Optional<SubsidyEntity> subsidy = subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateBefore(dbRelatedMeter, true, new Date());
+            Optional<SubsidyEntity> subsidy =
+                    subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter, true,
+                            new Date());
             Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getSize().getId(), client.getClientType().getId());
             RelatedWaterMetersDto related = new RelatedWaterMetersDto(
                     dbRelatedMeter.getId(),

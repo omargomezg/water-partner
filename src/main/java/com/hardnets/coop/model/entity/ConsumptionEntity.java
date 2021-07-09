@@ -39,5 +39,4 @@ public class ConsumptionEntity extends BaseEntity {
     @JoinColumn(name = "period_id", nullable = false)
     private PeriodEntity period;
 
-
 }
