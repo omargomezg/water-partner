@@ -31,7 +31,7 @@ public class SubsidyService {
      * @return Un subsidio
      */
     public SubsidyDto findByWaterMeterId(Long waterMeterId) {
-        SubsidyEntity subsidy = subsidyRepository.findByIsActiveAndWaterMeterId(waterMeterId)
+        SubsidyEntity subsidy = subsidyRepository.findByIsActiveAndWaterMeterId(waterMeterId, new Date())
                 .orElse(new SubsidyEntity());
         SubsidyDto dto = parseToDto(subsidy);
         if (Objects.nonNull(subsidy.getWaterMeter())) {
@@ -48,8 +48,8 @@ public class SubsidyService {
     }
 
     public SubsidyEntity update(UserSubsidyRequest request) {
-        var subsidyEntity = subsidyRepository.findById(request.getSubsidy().getId())
-                .orElse(new SubsidyEntity());
+        var id = request.getSubsidy().getId() == null ? 0 :request.getSubsidy().getId();
+        var subsidyEntity = subsidyRepository.findById(id).orElse(new SubsidyEntity());
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(request.getWaterMeter().getId());
         waterMeter.ifPresent(subsidyEntity::setWaterMeter);
         DecreeEntity decree = decreeRepository.findFirstByNumberEquals(request.getDecree().getNumber())
