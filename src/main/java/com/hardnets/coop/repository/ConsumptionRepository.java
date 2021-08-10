@@ -37,5 +37,5 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
             countQuery = "select count(c) from ConsumptionEntity c inner join c.waterMeter.client cl where cl.rut = :rut and c.consumption > 0")
     Page<ConsumptionClientDetailDto> findAllByClient(@Param("rut") String rut, Pageable pageable);
 
-    ConsumptionEntity findFirstByPeriodAndWaterMeter(PeriodEntity period, WaterMeterEntity waterMeter);
+    ConsumptionEntity findFirstByPeriod_IdAndWaterMeter_Id(Long periodId, Long waterMeterId);
 }

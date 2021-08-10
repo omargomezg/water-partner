@@ -129,7 +129,7 @@ public class WaterMeterService {
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
             Optional<SubsidyEntity> subsidy =
-                    subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter, true,
+                    subsidyRepository.findAllByWaterMeter_IdAndIsActiveAndEndingDateAfter(dbRelatedMeter.getId(), true,
                             new Date());
             Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getSize().getId(), client.getClientType().getId());
             RelatedWaterMetersDto related = new RelatedWaterMetersDto(

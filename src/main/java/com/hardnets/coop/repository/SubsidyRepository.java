@@ -17,7 +17,7 @@ public interface SubsidyRepository extends JpaRepository<SubsidyEntity, Long> {
             ":endDate")
     Optional<SubsidyEntity> findByIsActiveAndWaterMeterId(@Param("id") Long number, @Param("endDate") Date endDate);
 
-    Optional<SubsidyEntity> findAllByWaterMeterAndIsActiveAndEndingDateAfter(WaterMeterEntity waterMeter,
-                                                                               Boolean isActive, Date date);
+    Optional<SubsidyEntity> findAllByWaterMeter_IdAndIsActiveAndEndingDateAfter(Long waterMeterId,
+                                                                                Boolean isActive, Date date);
 
 }
