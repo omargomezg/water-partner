@@ -37,11 +37,19 @@ public class ConsumptionController {
     private final ConsumptionService consumptionService;
     private final PeriodService periodService;
 
+    /**
+     * Obtiene un listado de medidores mas su ultima lectura
+     * @param waterMeterNumber
+     * @param rut
+     * @param consumptionPending
+     * @return
+     */
     @GetMapping("/v1/consumption/related-water-meters")
     public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
                                                                                  @RequestParam(required = false) String rut,
+                                                                                 @RequestParam(required = false) String sector,
                                                                                  @RequestParam(name = "pending") boolean consumptionPending) {
-        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, consumptionPending));
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, consumptionPending));
     }
 
     /**

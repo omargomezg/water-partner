@@ -3,6 +3,7 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.ReadingsDto;
+import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.DetailItemDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
@@ -118,7 +119,7 @@ public class ConsumptionService {
     public ConsumptionClientDto findAllByClient(String rut, Integer pageIndex, Integer pageSize) {
         ClientEntity client = clientRepository.findByRut(rut).orElseThrow(() -> new ClientNotFoundException(rut));
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page page = consumptionRepository.findAllByClient(rut, pageable);
+        Page<ConsumptionClientDetailDto> page = consumptionRepository.findAllByClient(rut, pageable);
         ConsumptionClientDto pageDto = new ConsumptionClientDto();
         pageDto.setFullName(client.getFullName());
         pageDto.setTotalHits(1L);
