@@ -4,6 +4,7 @@ import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -17,9 +18,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Log4j2
@@ -62,7 +63,7 @@ public class ClientServiceImpl implements ClientService {
         client.setEmail(clientDto.getEmail());
         client.setTelephone(clientDto.getTelephone());
         ClientEntity dbClient = clientRepository.save(client);
-        return new ClientDto(dbClient);
+        return mapToClientDTO(dbClient);
     }
 
     @Override
@@ -94,11 +95,47 @@ public class ClientServiceImpl implements ClientService {
                 .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
         client.setClientType(clientType);
         ClientEntity dbClient = clientRepository.save(client);
-        return new ClientDto(dbClient);
+        return mapToClientDTO(dbClient);
     }
 
     @Override
     public Collection<PendingPaymentDto> getPendingPayments(String rut) {
-        return new ArrayList<>();
+        return null;
+    }
+
+    private ClientDto mapToClientDTO(ClientEntity client) {
+        ClientDto clientDto = ClientDto.builder()
+                .rut(client.getRut())
+                .names(client.getNames())
+                .middleName(client.getMiddleName())
+                .lastName(client.getLastName())
+                .businessName(client.getBusinessName())
+                .businessActivity(client.getBusinessActivity())
+                .birthDate(client.getBirthDate())
+                .profession(client.getProfession())
+                .dateOfAdmission(client.getDateOfAdmission())
+                .email(client.getEmail())
+                .isActive(client.getEnabled())
+                .telephone(client.getTelephone())
+                .build();
+        clientDto.setFullName(getFullName(clientDto));
+        if (Objects.nonNull(client.getClientType())) {
+            GenericListDto clientType = GenericListDto.builder()
+                    .id(client.getClientType().getId())
+                    .value(client.getClientType().getValue())
+                    .build();
+            clientDto.setClientType(clientType);
+        }
+        if (Objects.nonNull(client.getWaterMeter())) {
+            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getNumber()));
+        }
+        return clientDto;
+    }
+
+    private String getFullName(ClientDto client) {
+        if (Objects.nonNull(client.getBusinessName()))
+            return client.getBusinessName();
+        else
+            return String.format("%s %s %s", client.getNames(), client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
     }
 }
