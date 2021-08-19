@@ -47,12 +47,12 @@ public class WaterMeterController {
     /**
      * Permite actualizar varios medidores con una sola peticion
      *
-     * @param meterDtos Una lista de medidores
+     * @param meters Una lista de medidores
      * @return
      */
-    @PutMapping("/v1/water-meter/masive")
-    public ResponseEntity<?> update(@RequestBody @Valid List<WaterMeterDto> meterDtos) {
-        waterMeterService.update(meterDtos);
+    @PutMapping("/v1/water-meter/massive")
+    public ResponseEntity<?> update(@RequestBody @Valid List<WaterMeterDto> meters) {
+        waterMeterService.update(meters);
         return ResponseEntity.ok("");
     }
 

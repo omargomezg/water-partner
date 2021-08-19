@@ -1,7 +1,7 @@
 package com.hardnets.coop.model.dto;
 
-import com.hardnets.coop.model.entity.ClientEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +14,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ClientDto {
     @NotNull(message = "Rut cannot be null")
     private String rut;
@@ -36,7 +37,8 @@ public class ClientDto {
 
     private Date dateOfAdmission;
 
-    private GenericListDto clientType = new GenericListDto();
+    @NotNull(message = "Client Type is required")
+    private GenericListDto clientType;
 
     @Email
     private String email;
@@ -76,33 +78,6 @@ public class ClientDto {
         getClientType().setValue(clientType);
         getClientType().setCode(code);
         setIsActive(isActive);
-        generateFullName();
-    }
-
-    public ClientDto(ClientEntity client) {
-        this.setRut(client.getRut());
-        this.setNames(client.getNames());
-        this.setMiddleName(client.getMiddleName());
-        this.setLastName(client.getLastName());
-        this.setBusinessName(client.getBusinessName());
-        this.setBusinessActivity(client.getBusinessActivity());
-        this.setBirthDate(client.getBirthDate());
-        this.setProfession(client.getProfession());
-        this.setDateOfAdmission(client.getDateOfAdmission());
-        this.getClientType().setId(client.getClientType().getId());
-        if (client.getClientType() != null) {
-            this.getClientType().setValue(client.getClientType().getValue());
-        }
-        this.setEmail(client.getEmail());
-        this.setIsActive(client.getEnabled());
-        this.setTelephone(client.getTelephone());
-        try {
-            if (client.getWaterMeter() != null) {
-                client.getWaterMeter().forEach(item -> this.getWaterMeters().add(item.getNumber()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         generateFullName();
     }
 

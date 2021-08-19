@@ -1,23 +1,20 @@
 package com.hardnets.coop.model.dto;
 
-import com.sun.istack.Nullable;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 public class GenericListDto {
     private Long id;
 
     @Nullable
-    private String value = "";
+    private String value;
 
     @Nullable
-    private String code = "";
+    private String code;
 
-    public GenericListDto(Long id) {
-        setId(id);
-    }
 }

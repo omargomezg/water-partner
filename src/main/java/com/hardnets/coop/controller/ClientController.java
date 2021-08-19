@@ -5,7 +5,6 @@ import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.SubsidyService;
 import com.hardnets.coop.service.WaterMeterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +31,6 @@ public class ClientController {
 
     private final ClientService clientService;
     private final WaterMeterService waterMeterService;
-    private final SubsidyService subsidyService;
 
     @GetMapping("/v1/client")
     public ResponseEntity<Collection<ClientDto>> getUsers(@RequestParam(required = false) String rut,

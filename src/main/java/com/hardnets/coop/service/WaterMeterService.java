@@ -161,10 +161,10 @@ public class WaterMeterService {
         return true;
     }
 
-    public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, boolean pendingConsumption) {
+    public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector, boolean pendingConsumption) {
         Optional<PeriodEntity> periodEntity = periodRepository.findByStatus("ACTIVE");
         if (periodEntity.isPresent())
-            return waterMeterRepository.findAllByCustomFilters(number, rut, periodEntity.get().getId(), pendingConsumption);
+            return waterMeterRepository.findAllByCustomFilters(number, rut, sector, periodEntity.get().getId(), pendingConsumption);
         return new ArrayList<>();
     }
 
