@@ -1,5 +1,6 @@
 package com.hardnets.coop.config;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.UserEntity;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class ProjectConfig {
 
     private static final String PROFILE = "PROFILE";
+    private static final String CLIENT_TYPE = "CLIENT_TYPE";
     private final UserRepository userRepository;
     private final DropDownListRepository dropDownListRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,6 +31,7 @@ public class ProjectConfig {
     public void checkStartup() {
         log.info("Inicia validación de data");
         checkProfiles();
+        checkClientType();
         checkAdministrator();
         log.info("Fin validación de data");
 
@@ -54,25 +57,39 @@ public class ProjectConfig {
 
     private void checkProfiles() {
         if (dropDownListRepository.findByCode(ProfileEnum.ADMINISTRATOR.label).isEmpty()) {
-            createProfile("Administrador", ProfileEnum.ADMINISTRATOR, PROFILE);
+            createProfile("Administrador", ProfileEnum.ADMINISTRATOR.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.FINANCE.label).isEmpty()) {
-            createProfile("Finanzas", ProfileEnum.FINANCE, PROFILE);
+            createProfile("Finanzas", ProfileEnum.FINANCE.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.RAISING.label).isEmpty()) {
-            createProfile("Recaudación", ProfileEnum.RAISING, PROFILE);
+            createProfile("Recaudación", ProfileEnum.RAISING.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.BILLING.label).isEmpty()) {
-            createProfile("Tarificador", ProfileEnum.BILLING, PROFILE);
+            createProfile("Tarificador", ProfileEnum.BILLING.label, PROFILE);
         }
         dropDownListRepository.findAllByDropDownListType(PROFILE).forEach(item -> log.info("Profile created: {} {}", item.getValue(), item.getCode()));
     }
 
-    private void createProfile(String value, ProfileEnum profile, String dropType) {
+    private void checkClientType(){
+        if (dropDownListRepository.findByCode(ClientTypeEnum.PARTNER.label).isEmpty()) {
+            createProfile("Socio", ClientTypeEnum.PARTNER.label, CLIENT_TYPE);
+        }
+        if (dropDownListRepository.findByCode(ClientTypeEnum.PUBLIC.label).isEmpty()) {
+            createProfile("Publico", ClientTypeEnum.PUBLIC.label, CLIENT_TYPE);
+        }
+        if (dropDownListRepository.findByCode(ClientTypeEnum.PRIVATE.label).isEmpty()) {
+            createProfile("Privado", ClientTypeEnum.PRIVATE.label, CLIENT_TYPE);
+        }
+        dropDownListRepository.findAllByDropDownListType(CLIENT_TYPE).forEach(item -> log.info("Client type created: {} {}",
+                item.getValue(), item.getCode()));
+    }
+
+    private void createProfile(String value, String code, String dropType) {
         DropDownListEntity dropDownListEntity = new DropDownListEntity();
         dropDownListEntity.setDropDownListType(dropType);
         dropDownListEntity.setItems(new ArrayList<>());
-        dropDownListEntity.setCode(profile.label);
+        dropDownListEntity.setCode(code);
         dropDownListEntity.setValue(value);
         dropDownListRepository.save(dropDownListEntity);
     }
