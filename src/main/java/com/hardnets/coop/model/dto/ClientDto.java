@@ -49,20 +49,18 @@ public class ClientDto {
 
     private Set<String> waterMeters = new HashSet<>();
 
-    public ClientDto(String rut, String names, String middleName, String lastName, String businessName, String clientType, Long clientTypeId, String code) {
+    public ClientDto(String rut, String names, String middleName, String lastName, String businessName, String value, Long clientTypeId, String code) {
         setRut(rut);
         setNames(names);
         setMiddleName(middleName);
         setLastName(lastName);
         setBusinessName(businessName);
-        getClientType().setId(clientTypeId);
-        getClientType().setValue(clientType);
-        getClientType().setCode(code);
+        clientType = GenericListDto.builder().id(clientTypeId).value(value).code(code).build();
         generateFullName();
     }
 
     public ClientDto(String rut, String names, String middleName, String lastName, Date birthDate, Date dateOfAdmission,
-                     String businessName, String businessActivity, String telephone, String email, String clientType,
+                     String businessName, String businessActivity, String telephone, String email, String value,
                      Long clientTypeId, String code, boolean isActive) {
         setRut(rut);
         setNames(names);
@@ -74,9 +72,7 @@ public class ClientDto {
         setBusinessActivity(businessActivity);
         setTelephone(telephone);
         setEmail(email);
-        getClientType().setId(clientTypeId);
-        getClientType().setValue(clientType);
-        getClientType().setCode(code);
+        clientType = GenericListDto.builder().id(clientTypeId).value(value).code(code).build();
         setIsActive(isActive);
         generateFullName();
     }

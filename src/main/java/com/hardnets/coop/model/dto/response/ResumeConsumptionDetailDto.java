@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.dto.response;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,11 @@ import java.util.List;
 public class ResumeConsumptionDetailDto {
     private String numberWaterMeter;
     private String rut;
+    private String names;
+    private String middleName;
+    private String lastName;
     private String fullName;
+    private ClientTypeEnum clientType;
     private Long lastRecord;
     private Long actualRecord;
     private Long amountToPaid;
@@ -26,10 +31,10 @@ public class ResumeConsumptionDetailDto {
         this.rut = rut;
         this.actualRecord = actualRecord;
         this.consumptionId = consumptionId;
-        if (clientCode.equals("PARTNER")) {
-            setFullName(String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName));
-        } else {
-            setFullName(businessName);
-        }
+        this.names = names;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        clientType = ClientTypeEnum.valueOf(clientCode);
+        this.fullName = clientCode.equals(ClientTypeEnum.PRIVATE) ? businessName : String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName);
     }
 }

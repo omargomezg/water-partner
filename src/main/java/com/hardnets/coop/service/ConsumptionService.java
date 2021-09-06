@@ -1,6 +1,7 @@
 package com.hardnets.coop.service;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
@@ -80,29 +81,27 @@ public class ConsumptionService {
 
     public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
         ResumeConsumptionDto response = new ResumeConsumptionDto();
-        Optional<PeriodEntity> period = periodRepository.findById(periodId);
+        PeriodEntity period = periodRepository.findById(periodId).orElseThrow(PeriodException::new);
         PeriodEntity lastPeriod = periodRepository.findFirstByIdNot(periodId);
-        if (period.isPresent()) {
-            response.setStatus(period.get().getStatus());
-            response.setStartDate(period.get().getStartDate());
-            response.setEndDate(period.get().getEndDate());
+        response.setStatus(period.getStatus());
+        response.setStartDate(period.getStartDate());
+        response.setEndDate(period.getEndDate());
 
-            Pageable pageable = PageRequest.of(pageIndex, pageSize);
-            Page page = consumptionRepository.findAllByPeriod(period.get().getId(), pageable);
-            response.setDetail(page.getContent());
-            response.getDetail().parallelStream().forEach(item -> {
-                var lastRecord = getLastRecordConsumption(item.getNumberWaterMeter(), Optional.of(lastPeriod));
-                item.setLastRecord(lastRecord);
-                Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
-                if (consumption.isPresent()) {
-                    List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);
-                    item.setAmountToPaid(billDetails.stream().mapToLong(SalesDocumentDetailEntity::getTotalAmount).sum());
-                    List<DetailItemDto> detail = billDetails.stream().map(billDetail -> new DetailItemDto(billDetail.getConcept(), billDetail.getTotalAmount())).collect(Collectors.toList());
-                    item.getDetail().addAll(detail);
-                }
-            });
-            response.setTotalHits(page.getTotalElements());
-        }
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        Page page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
+        response.setDetail(page.getContent());
+        response.getDetail().parallelStream().forEach(item -> {
+            var lastRecord = getLastRecordConsumption(item.getNumberWaterMeter(), Optional.of(lastPeriod));
+            item.setLastRecord(lastRecord);
+            Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
+            if (consumption.isPresent()) {
+                List<BillDetailEntity> billDetails = billDetailService.getDetail(consumption.get(), null);
+                item.setAmountToPaid(billDetails.stream().mapToLong(SalesDocumentDetailEntity::getTotalAmount).sum());
+                List<DetailItemDto> detail = billDetails.stream().map(billDetail -> new DetailItemDto(billDetail.getConcept(), billDetail.getTotalAmount())).collect(Collectors.toList());
+                item.getDetail().addAll(detail);
+            }
+        });
+        response.setTotalHits(page.getTotalElements());
         return response;
     }
 
