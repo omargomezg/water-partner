@@ -3,6 +3,7 @@ package com.hardnets.coop.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.dto.request.UserSignupRequest;
 import com.hardnets.coop.model.dto.response.LoginDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
@@ -85,7 +86,7 @@ public class PublicController {
     }
 
     @PostMapping("/auth/create")
-    public ResponseEntity<?> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
         if (userService.getUsers().size() > 0) {
             throw new HandleException("Cannot create user without authentication");
         }
