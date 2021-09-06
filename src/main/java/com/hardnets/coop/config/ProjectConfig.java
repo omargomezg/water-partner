@@ -1,6 +1,7 @@
 package com.hardnets.coop.config;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
+import com.hardnets.coop.model.constant.MeasureEnum;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.UserEntity;
@@ -23,6 +24,7 @@ public class ProjectConfig {
 
     private static final String PROFILE = "PROFILE";
     private static final String CLIENT_TYPE = "CLIENT_TYPE";
+    private static final String WATER_METER_SIZE = "WATER_METER_SIZE";
     private final UserRepository userRepository;
     private final DropDownListRepository dropDownListRepository;
     private final PasswordEncoder passwordEncoder;
@@ -32,9 +34,23 @@ public class ProjectConfig {
         log.info("Inicia validación de data");
         checkProfiles();
         checkClientType();
+        checkWaterMeterMeasures();
         checkAdministrator();
         log.info("Fin validación de data");
+    }
 
+    private void checkWaterMeterMeasures() {
+        if (dropDownListRepository.findByCode(MeasureEnum.THIRTEEN.label).isEmpty()) {
+            saveDropDownEntity(MeasureEnum.THIRTEEN.label, MeasureEnum.THIRTEEN.label, WATER_METER_SIZE);
+        }
+        if (dropDownListRepository.findByCode(MeasureEnum.NINETEEN.label).isEmpty()) {
+            saveDropDownEntity(MeasureEnum.NINETEEN.label, MeasureEnum.NINETEEN.label, WATER_METER_SIZE);
+        }
+        if (dropDownListRepository.findByCode(MeasureEnum.TWENTY_FIVE.label).isEmpty()) {
+            saveDropDownEntity(MeasureEnum.TWENTY_FIVE.label, MeasureEnum.TWENTY_FIVE.label, WATER_METER_SIZE);
+        }
+        dropDownListRepository.findAllByDropDownListType(WATER_METER_SIZE)
+                .forEach(item -> log.info("Measure created: {}", item.getCode()));
     }
 
     private void checkAdministrator() {
@@ -57,35 +73,35 @@ public class ProjectConfig {
 
     private void checkProfiles() {
         if (dropDownListRepository.findByCode(ProfileEnum.ADMINISTRATOR.label).isEmpty()) {
-            createProfile("Administrador", ProfileEnum.ADMINISTRATOR.label, PROFILE);
+            saveDropDownEntity("Administrador", ProfileEnum.ADMINISTRATOR.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.FINANCE.label).isEmpty()) {
-            createProfile("Finanzas", ProfileEnum.FINANCE.label, PROFILE);
+            saveDropDownEntity("Finanzas", ProfileEnum.FINANCE.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.RAISING.label).isEmpty()) {
-            createProfile("Recaudación", ProfileEnum.RAISING.label, PROFILE);
+            saveDropDownEntity("Recaudación", ProfileEnum.RAISING.label, PROFILE);
         }
         if (dropDownListRepository.findByCode(ProfileEnum.BILLING.label).isEmpty()) {
-            createProfile("Tarificador", ProfileEnum.BILLING.label, PROFILE);
+            saveDropDownEntity("Tarificador", ProfileEnum.BILLING.label, PROFILE);
         }
         dropDownListRepository.findAllByDropDownListType(PROFILE).forEach(item -> log.info("Profile created: {} {}", item.getValue(), item.getCode()));
     }
 
     private void checkClientType(){
         if (dropDownListRepository.findByCode(ClientTypeEnum.PARTNER.label).isEmpty()) {
-            createProfile("Socio", ClientTypeEnum.PARTNER.label, CLIENT_TYPE);
+            saveDropDownEntity("Socio", ClientTypeEnum.PARTNER.label, CLIENT_TYPE);
         }
         if (dropDownListRepository.findByCode(ClientTypeEnum.PUBLIC.label).isEmpty()) {
-            createProfile("Publico", ClientTypeEnum.PUBLIC.label, CLIENT_TYPE);
+            saveDropDownEntity("Publico", ClientTypeEnum.PUBLIC.label, CLIENT_TYPE);
         }
         if (dropDownListRepository.findByCode(ClientTypeEnum.PRIVATE.label).isEmpty()) {
-            createProfile("Privado", ClientTypeEnum.PRIVATE.label, CLIENT_TYPE);
+            saveDropDownEntity("Privado", ClientTypeEnum.PRIVATE.label, CLIENT_TYPE);
         }
         dropDownListRepository.findAllByDropDownListType(CLIENT_TYPE).forEach(item -> log.info("Client type created: {} {}",
                 item.getValue(), item.getCode()));
     }
 
-    private void createProfile(String value, String code, String dropType) {
+    private void saveDropDownEntity(String value, String code, String dropType) {
         DropDownListEntity dropDownListEntity = new DropDownListEntity();
         dropDownListEntity.setDropDownListType(dropType);
         dropDownListEntity.setItems(new ArrayList<>());

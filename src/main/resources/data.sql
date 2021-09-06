@@ -39,15 +39,4 @@ insert into dropdownlist (id, value, parent_id, code, list_type)
 values (18, 'Curiñanco Sur', null, '', 'COORDINATES')
 on conflict do nothing;
 
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (19, '13', null, '13', 'WATER_METER_SIZE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (20, '19', null, '19', 'WATER_METER_SIZE')
-on conflict do nothing;
-
-insert into dropdownlist (id, value, parent_id, code, list_type)
-values (21, '25', null, '25', 'WATER_METER_SIZE')
-on conflict do nothing;
 */
