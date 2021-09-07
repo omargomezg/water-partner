@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.dto;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,7 +39,7 @@ public class ClientDto {
     private Date dateOfAdmission;
 
     @NotNull(message = "Client Type is required")
-    private GenericListDto clientType;
+    private String clientType;
 
     @Email
     private String email;
@@ -49,19 +50,20 @@ public class ClientDto {
 
     private Set<String> waterMeters = new HashSet<>();
 
-    public ClientDto(String rut, String names, String middleName, String lastName, String businessName, String value, Long clientTypeId, String code) {
+    public ClientDto(String rut, String names, String middleName, String lastName, String businessName,
+                     ClientTypeEnum clientType) {
         setRut(rut);
         setNames(names);
         setMiddleName(middleName);
         setLastName(lastName);
         setBusinessName(businessName);
-        clientType = GenericListDto.builder().id(clientTypeId).value(value).code(code).build();
+        setClientType(clientType.label);
         generateFullName();
     }
 
     public ClientDto(String rut, String names, String middleName, String lastName, Date birthDate, Date dateOfAdmission,
-                     String businessName, String businessActivity, String telephone, String email, String value,
-                     Long clientTypeId, String code, boolean isActive) {
+                     String businessName, String businessActivity, String telephone, String email, ClientTypeEnum clientType,
+                     boolean isActive) {
         setRut(rut);
         setNames(names);
         setMiddleName(middleName);
@@ -72,7 +74,7 @@ public class ClientDto {
         setBusinessActivity(businessActivity);
         setTelephone(telephone);
         setEmail(email);
-        clientType = GenericListDto.builder().id(clientTypeId).value(value).code(code).build();
+        setClientType(clientType.label);
         setIsActive(isActive);
         generateFullName();
     }

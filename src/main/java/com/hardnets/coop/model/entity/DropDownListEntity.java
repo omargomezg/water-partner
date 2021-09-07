@@ -22,9 +22,6 @@ import java.util.Set;
 @Table(name = "dropdownlist")
 public class DropDownListEntity extends BaseEntity {
 
-    @OneToMany(mappedBy = "size", fetch = FetchType.LAZY)
-    @JsonBackReference
-    Set<WaterMeterEntity> waterMeters;
 
     @Column(nullable = false)
     private String value;

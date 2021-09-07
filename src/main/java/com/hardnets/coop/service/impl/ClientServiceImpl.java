@@ -1,16 +1,13 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.ClientEntity;
-import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.repository.ClientRepository;
-import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
@@ -31,17 +28,14 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final WaterMeterRepository waterMeterRepository;
-    private final DropDownListRepository dropDownListRepository;
 
     @Override
     public ClientDto update(ClientDto clientDto) {
         ClientEntity client = clientRepository.findByRut(clientDto.getRut())
                 .orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
-        DropDownListEntity clientType = dropDownListRepository.findById(clientDto.getClientType().getId())
-                .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
-
-        client.setClientType(clientType);
-        if (clientType.getCode().equals("PARTNER")) {
+        ClientTypeEnum clientTypeEnum = ClientTypeEnum.valueOf(clientDto.getClientType());
+        client.setClientType(clientTypeEnum);
+        if (clientTypeEnum.equals(ClientTypeEnum.PARTNER)) {
             client.setBirthDate(clientDto.getBirthDate());
             client.setNames(clientDto.getNames());
             client.setLastName(clientDto.getLastName());
@@ -91,9 +85,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDto create(ClientDto clientDto) {
         ClientEntity client = new ClientEntity(clientDto);
-        DropDownListEntity clientType = dropDownListRepository.findById(clientDto.getClientType().getId())
-                .orElseThrow(() -> new DropDownNotFoundException("Client type not found"));
-        client.setClientType(clientType);
+        client.setClientType(ClientTypeEnum.valueOf(clientDto.getClientType()));
         ClientEntity dbClient = clientRepository.save(client);
         return mapToClientDTO(dbClient);
     }
@@ -119,14 +111,8 @@ public class ClientServiceImpl implements ClientService {
                 .telephone(client.getTelephone())
                 .build();
         clientDto.setFullName(getFullName(clientDto));
-        if (Objects.nonNull(client.getClientType())) {
-            GenericListDto clientType = GenericListDto.builder()
-                    .id(client.getClientType().getId())
-                    .value(client.getClientType().getValue())
-                    .build();
-            clientDto.setClientType(clientType);
-        }
-        if (Objects.nonNull(client.getWaterMeter())) {
+        clientDto.setClientType(client.getClientType().label);
+        if (Objects.nonNull(client.getWaterMeter()) && Objects.nonNull(clientDto.getWaterMeters())) {
             client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getNumber()));
         }
         return clientDto;

@@ -47,8 +47,8 @@ public class ItemCalculationService {
      */
     public Long getConsumptionAmount(ConsumptionEntity consumption) {
         if (consumption.getWaterMeter().getClient() != null) {
-            Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(consumption.getWaterMeter().getSize().getId()
-                    , consumption.getWaterMeter().getClient().getClientType().getId());
+            Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(consumption.getWaterMeter().getDiameter()
+                    , consumption.getWaterMeter().getClient().getClientType());
             if (tariff.isPresent()) {
                 Integer flatFee = tariff.get().getFlatFee();
                 var monthConsumption = consumption.getConsumption();

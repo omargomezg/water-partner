@@ -1,5 +1,6 @@
 package com.hardnets.coop.service.impl;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
@@ -37,12 +38,9 @@ class ClientServiceImplTest {
     @MockBean
     private WaterMeterRepository waterMeterRepository;
 
-    @MockBean
-    private DropDownListRepository dropDownListRepository;
-
     @BeforeEach
     void init() {
-        clientService = new ClientServiceImpl(clientRepository, waterMeterRepository, dropDownListRepository);
+        clientService = new ClientServiceImpl(clientRepository, waterMeterRepository);
     }
 
     @Test
@@ -68,8 +66,6 @@ class ClientServiceImplTest {
     void create_success() {
         ClientDto client = getClient();
         client.setEmail("omar.fdo.gomez@gmail.com");
-        DropDownListEntity clientType = mock(DropDownListEntity.class);
-        when(dropDownListRepository.findById(client.getClientType().getId())).thenReturn(Optional.of(clientType));
         when(clientRepository.save(any())).thenReturn(mapToClientEntity(client));
         ClientDto result = clientService.create(client);
         assertEquals("omar.fdo.gomez@gmail.com", result.getEmail());
@@ -82,14 +78,9 @@ class ClientServiceImplTest {
     }
 
     private ClientDto getClient() {
-        GenericListDto clientType = GenericListDto.builder()
-                .id(12L)
-                .value("Socio")
-                .code("PARTNER")
-                .build();
         return ClientDto.builder()
                 .rut("14081226-9")
-                .clientType(clientType)
+                .clientType(ClientTypeEnum.PARTNER.label)
                 .build();
     }
 }

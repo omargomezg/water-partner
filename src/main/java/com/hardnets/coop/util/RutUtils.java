@@ -20,4 +20,31 @@ public class RutUtils {
         }
         return String.valueOf(fRut[0] + "." + fRut[1] + "." + fRut[2] + "-" + fRut[3]);
     }
+
+    public static boolean validateRut(String rut) {
+
+        boolean validacion = false;
+        if (rut.length() > 0) {
+            try {
+                rut = rut.toUpperCase();
+                rut = rut.replace(".", "");
+                rut = rut.replace("-", "");
+                int rutAux = Integer.parseInt(rut.substring(0, rut.length() - 1));
+
+                char dv = rut.charAt(rut.length() - 1);
+
+                int m = 0, s = 1;
+                for (; rutAux != 0; rutAux /= 10) {
+                    s = (s + rutAux % 10 * (9 - m++ % 6)) % 11;
+                }
+                if (dv == (char) (s != 0 ? s + 47 : 75)) {
+                    validacion = true;
+                }
+
+            } catch (java.lang.NumberFormatException e) {
+            } catch (Exception e) {
+            }
+        }
+        return validacion;
+    }
 }

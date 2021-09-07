@@ -18,14 +18,15 @@ public class ResumeConsumptionDetailDto {
     private String middleName;
     private String lastName;
     private String fullName;
-    private ClientTypeEnum clientType;
+    private String clientType;
     private Long lastRecord;
     private Long actualRecord;
     private Long amountToPaid;
     private Long consumptionId;
     private List<DetailItemDto> detail = new ArrayList<>();
 
-    public ResumeConsumptionDetailDto(String numberWaterMeter, String rut, String clientCode, String names, String middleName, String lastName,
+    public ResumeConsumptionDetailDto(String numberWaterMeter, String rut, ClientTypeEnum clientType, String names,
+                                      String middleName, String lastName,
                                       String businessName, Long actualRecord, Long consumptionId) {
         this.numberWaterMeter = numberWaterMeter;
         this.rut = rut;
@@ -34,7 +35,7 @@ public class ResumeConsumptionDetailDto {
         this.names = names;
         this.middleName = middleName;
         this.lastName = lastName;
-        clientType = ClientTypeEnum.valueOf(clientCode);
-        this.fullName = clientCode.equals(ClientTypeEnum.PRIVATE) ? businessName : String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName);
+        this.clientType = clientType.label;
+        this.fullName = clientType.equals(ClientTypeEnum.PRIVATE) ? businessName : String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName);
     }
 }

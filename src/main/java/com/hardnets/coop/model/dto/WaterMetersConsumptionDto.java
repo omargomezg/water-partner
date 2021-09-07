@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.dto;
 
+import com.hardnets.coop.model.constant.DiameterEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class WaterMetersConsumptionDto {
     private Long id;
     private String number;
-    private String millimeters;
+    private DiameterEnum diameter;
     private Date dischargeDate;
     private String sector;
     private String client;

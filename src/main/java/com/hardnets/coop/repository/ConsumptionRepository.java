@@ -21,7 +21,7 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
     List<ReadingsDto> findAllByWaterMeter(Long waterMeterId);
 
     @Query(value = "select new com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto(wm.number, c.waterMeter.client.rut, " +
-            "c.waterMeter.client.clientType.code, c.waterMeter.client.names, c.waterMeter.client.middleName, c.waterMeter.client.lastName, " +
+            "c.waterMeter.client.clientType, c.waterMeter.client.names, c.waterMeter.client.middleName, c.waterMeter.client.lastName, " +
             "c.waterMeter.client.businessName, c.consumption, c.id) from ConsumptionEntity c inner join c.waterMeter wm where c.period.id = ?1",
             countQuery = "select count(c) from ConsumptionEntity c where c.period.id = ?1"
     )

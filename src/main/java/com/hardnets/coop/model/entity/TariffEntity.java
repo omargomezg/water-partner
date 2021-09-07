@@ -1,11 +1,15 @@
 package com.hardnets.coop.model.entity;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
+import com.hardnets.coop.model.constant.DiameterEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -42,15 +46,13 @@ public class TariffEntity extends BaseEntity {
     /**
      * Tipo de cliente
      */
-    @ManyToOne
-    @JoinColumn(name = "clienttype_id")
-    private DropDownListEntity clientType;
+    @Enumerated(EnumType.STRING)
+    private ClientTypeEnum clientType;
 
     /**
      * Tamaño en milímetros del medidor al que aplica la tarifa
      */
-    @ManyToOne
-    @JoinColumn(name = "size_id")
-    private DropDownListEntity size;
+    @Enumerated(EnumType.STRING)
+    private DiameterEnum diameter;
 
 }

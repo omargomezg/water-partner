@@ -12,14 +12,14 @@ public class TariffDto {
     private Long id;
     private Float cubicMeter;
     private Integer flatFee;
-    private Long clientId;
-    private Long sizeId;
+    private String clientType;
+    private String diameter;
 
     public TariffDto(TariffEntity tariffEntity) {
         setCubicMeter(tariffEntity.getCubicMeter());
-        setClientId(tariffEntity.getClientType().getId());
+        setClientType(tariffEntity.getClientType().label);
         setFlatFee(tariffEntity.getFlatFee());
         setId(tariffEntity.getId());
-        setSizeId(tariffEntity.getSize().getId());
+        setDiameter(tariffEntity.getDiameter().label);
     }
 }

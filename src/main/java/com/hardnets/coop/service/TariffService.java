@@ -1,11 +1,11 @@
 package com.hardnets.coop.service;
 
 import com.hardnets.coop.exception.TariffNotFoundException;
+import com.hardnets.coop.model.constant.ClientTypeEnum;
+import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.dto.AllTariffsDto;
 import com.hardnets.coop.model.dto.TariffDto;
-import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
-import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class TariffService {
 
     private final TariffRepository tariffRepository;
-    private final DropDownListRepository dropDownListRepository;
 
     public TariffDto findById(Long id) {
         TariffEntity tariff = tariffRepository.findById(id)
@@ -37,18 +36,12 @@ public class TariffService {
     }
 
     public TariffDto create(TariffDto tariffDto) {
-        DropDownListEntity clientType = dropDownListRepository.findById(tariffDto.getClientId()).orElseThrow(
-                () -> new TariffNotFoundException(String.format("Client type with id %s found", tariffDto.getClientId()))
-        );
-        DropDownListEntity size = dropDownListRepository.findById(tariffDto.getSizeId()).orElseThrow(
-                () -> new TariffNotFoundException(String.format("Size with id %s found", tariffDto.getSizeId()))
-        );
         TariffEntity tariff = new TariffEntity();
         tariff.setCubicMeter(tariffDto.getCubicMeter());
         tariff.setFlatFee(tariffDto.getFlatFee());
-        tariff.setClientType(clientType);
+        tariff.setClientType(ClientTypeEnum.valueOf(tariffDto.getClientType()));
         tariff.setLastUpdate(Instant.now());
-        tariff.setSize(size);
+        tariff.setDiameter(DiameterEnum.valueOf(tariffDto.getDiameter()));
         TariffEntity dbTariff = tariffRepository.save(tariff);
         return new TariffDto(dbTariff);
     }
@@ -57,17 +50,11 @@ public class TariffService {
         TariffEntity dbTariff = tariffRepository.findById(tariffDto.getId()).orElseThrow(
                 () -> new TariffNotFoundException(String.format("Tariff not with id %s found", tariffDto.getId()))
         );
-        DropDownListEntity clientType = dropDownListRepository.findById(tariffDto.getClientId()).orElseThrow(
-                () -> new TariffNotFoundException(String.format("Client type with id %s found", tariffDto.getClientId()))
-        );
-        DropDownListEntity size = dropDownListRepository.findById(tariffDto.getSizeId()).orElseThrow(
-                () -> new TariffNotFoundException(String.format("Size with id %s found", tariffDto.getSizeId()))
-        );
         dbTariff.setCubicMeter(tariffDto.getCubicMeter());
-        dbTariff.setClientType(clientType);
+        dbTariff.setClientType(ClientTypeEnum.valueOf(tariffDto.getClientType()));
         dbTariff.setFlatFee(tariffDto.getFlatFee());
         dbTariff.setLastUpdate(Instant.now());
-        dbTariff.setSize(size);
+        dbTariff.setDiameter(DiameterEnum.valueOf(tariffDto.getDiameter()));
         TariffEntity result = tariffRepository.save(dbTariff);
         return new TariffDto(result);
     }

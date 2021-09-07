@@ -1,7 +1,8 @@
 package com.hardnets.coop.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.constant.StatusEnum;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,12 +12,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -33,7 +37,7 @@ public class WaterMeterEntity extends BaseEntity {
     private String number;
 
     @Column(nullable = false)
-    private String trademark;
+    private String trademark = "";
 
     @Column
     private String sector;
@@ -52,28 +56,25 @@ public class WaterMeterEntity extends BaseEntity {
     @JoinColumn(name = "client_rut", referencedColumnName = "rut")
     private ClientEntity client;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "size_id", nullable = false)
-    private DropDownListEntity size;
+    @Enumerated(EnumType.STRING)
+    private DiameterEnum diameter;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private DropDownListEntity status;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
-    private Set<InvoiceEntity> invoices;
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    private Set<InvoiceEntity> invoices = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
-    private Set<BillEntity> bills;
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    private Set<BillEntity> bills = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
     @JsonManagedReference
-    private Set<SubsidyEntity> subsidies;
+    private Set<SubsidyEntity> subsidies = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
     @JsonManagedReference
-    private Set<ConsumptionEntity> consumptions;
+    private Set<ConsumptionEntity> consumptions = new HashSet<>();
 
 
 }

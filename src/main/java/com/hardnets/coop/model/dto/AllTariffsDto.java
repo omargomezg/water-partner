@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class AllTariffsDto {
     private Long id;
-    private String waterMeterSize;
+    private String diameter;
     private Integer flatFee;
     private Float cubicMeter;
     private String clientType;
@@ -20,10 +20,10 @@ public class AllTariffsDto {
 
     public AllTariffsDto(TariffEntity tariffEntity) {
         setId(tariffEntity.getId());
-        setClientType(tariffEntity.getClientType().getValue());
+        setClientType(tariffEntity.getClientType().label);
         setCubicMeter(tariffEntity.getCubicMeter());
         setFlatFee(tariffEntity.getFlatFee());
-        setWaterMeterSize(tariffEntity.getSize().getValue());
+        setDiameter(tariffEntity.getDiameter().label);
         setLastUpdate(tariffEntity.getLastUpdate());
     }
 }

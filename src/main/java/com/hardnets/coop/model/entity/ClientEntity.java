@@ -1,12 +1,17 @@
 package com.hardnets.coop.model.entity;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,16 +34,15 @@ public class ClientEntity extends PersonEntity {
     private String telephone;
 
     @Column
-    private String businessName;
+    private String businessName = "";
 
     @Column
-    private String businessActivity;
+    private String businessActivity = "";
 
     private String profession;
 
-    @ManyToOne
-    @JoinColumn(name = "clienttype_id")
-    private DropDownListEntity clientType;
+    @Enumerated(EnumType.STRING)
+    private ClientTypeEnum clientType;
 
     @ManyToOne
     @JoinColumn(name = "subsidy_id")
@@ -51,14 +55,12 @@ public class ClientEntity extends PersonEntity {
 
     @OneToMany(
             mappedBy = "client",
-            fetch = FetchType.LAZY)
-    private Set<InvoiceEntity> invoices;
+            fetch = FetchType.EAGER)
+    private Set<InvoiceEntity> invoices = new HashSet<>();
 
     @OneToMany(
-            mappedBy = "client",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private Set<WaterMeterEntity> waterMeter;
+            mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<WaterMeterEntity> waterMeter = new HashSet<>();
 
     public ClientEntity(ClientDto client) {
         super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());
@@ -75,7 +77,7 @@ public class ClientEntity extends PersonEntity {
 
     public String getFullName() {
         String fullName;
-        if (this.clientType.getCode().equals("PARTNER")) {
+        if (this.clientType.equals(ClientTypeEnum.PARTNER)) {
             fullName = String.format("%s %s %s", this.getNames(), this.getMiddleName(), this.getLastName());
         } else {
             fullName = this.getBusinessName();

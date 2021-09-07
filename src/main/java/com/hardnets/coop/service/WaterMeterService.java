@@ -4,6 +4,7 @@ import com.hardnets.coop.exception.DropDownNotFoundException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
@@ -68,18 +69,14 @@ public class WaterMeterService {
     }
 
     public WaterMeterDto create(WaterMeterDto waterMeterDto) {
-        DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
-                .orElseThrow(() -> new DropDownNotFoundException("Size not found"));
-        DropDownListEntity status = dropDownListRepository.findByCode("NEW")
-                .orElseThrow(() -> new DropDownNotFoundException("Status not found"));
         WaterMeterEntity waterMeter = new WaterMeterEntity();
         waterMeter.setDescription(waterMeterDto.getComment());
         waterMeter.setNumber(waterMeterDto.getNumber());
         waterMeter.setTrademark(waterMeterDto.getTrademark());
         waterMeter.setSector(waterMeterDto.getSector());
-        waterMeter.setSize(size);
+        waterMeter.setDiameter(waterMeterDto.getDiameter());
         waterMeter.setCreated(new Date());
-        waterMeter.setStatus(status);
+        waterMeter.setStatus(StatusEnum.NEW);
         return new WaterMeterDto(
                 waterMeterRepository.save(waterMeter)
         );
@@ -119,11 +116,12 @@ public class WaterMeterService {
             Optional<SubsidyEntity> subsidy =
                     subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter, true,
                             new Date());
-            Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getSize().getId(), client.getClientType().getId());
+            Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getDiameter(),
+                    client.getClientType());
             RelatedWaterMetersDto related = new RelatedWaterMetersDto(
                     dbRelatedMeter.getId(),
                     dbRelatedMeter.getNumber(),
-                    dbRelatedMeter.getSize().getValue(),
+                    dbRelatedMeter.getDiameter(),
                     dbRelatedMeter.getCreated(),
                     dbRelatedMeter.getSector(),
                     tariff.isPresent() ? tariff.get().getFlatFee() : 0,
@@ -144,17 +142,13 @@ public class WaterMeterService {
                 throw new HandleException("Water meter already related to user " + result.getClient().getFullName());
             }
         });
-        DropDownListEntity status = dropDownListRepository.findByCode("NEW")
-                .orElseThrow(() -> new DropDownNotFoundException("Status not found"));
-        DropDownListEntity size = dropDownListRepository.findById(waterMeterDto.getSizeId())
-                .orElseThrow(() -> new DropDownNotFoundException("Size not found"));
         WaterMeterEntity wEntity = new WaterMeterEntity();
         wEntity.setNumber(waterMeterNumber);
         wEntity.setTrademark(waterMeterDto.getTrademark());
         wEntity.setCreated(new Date());
         wEntity.setSector(waterMeterDto.getSector());
-        wEntity.setStatus(status);
-        wEntity.setSize(size);
+        wEntity.setStatus(StatusEnum.NEW);
+        wEntity.setDiameter(waterMeterDto.getDiameter());
         wEntity.setDescription(waterMeterDto.getComment());
         wEntity.setClient(client);
         waterMeterRepository.save(wEntity);

@@ -1,5 +1,6 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.service.ClientService;
@@ -86,14 +87,9 @@ class ClientControllerTest {
     }
 
     private ClientDto getClient() {
-        GenericListDto clientType = GenericListDto.builder()
-                .id(12L)
-                .value("Socio")
-                .code("PARTNER")
-                .build();
         return ClientDto.builder()
                 .rut("14081226-9")
-                .clientType(clientType)
+                .clientType(ClientTypeEnum.PARTNER.label)
                 .build();
     }
 }

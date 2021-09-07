@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.dto;
 
+import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ public class WaterMeterDto {
     private Long id;
     private String number;
     private String trademark;
-    private Long sizeId;
+    private DiameterEnum diameter;
     private String comment;
     private String sector;
     private Date updated;
@@ -23,11 +24,12 @@ public class WaterMeterDto {
      */
     private Date dischargeDate;
 
-    public WaterMeterDto(Long id, String number, String trademark, Long sizeId, String comment, String sector, Date updated) {
+    public WaterMeterDto(Long id, String number, String trademark, DiameterEnum diameter, String comment, String sector,
+                         Date updated) {
         this.id = id;
         this.number = number;
         this.trademark = trademark;
-        this.sizeId = sizeId;
+        this.diameter = diameter;
         this.comment = comment;
         this.sector = sector;
         this.updated = updated;
@@ -39,7 +41,7 @@ public class WaterMeterDto {
         this.setTrademark(waterMeter.getTrademark());
         this.setDischargeDate(waterMeter.getCreated());
         this.setComment(waterMeter.getDescription());
-        this.setSizeId(waterMeter.getSize().getId());
+        this.diameter = waterMeter.getDiameter();
         this.setSector(waterMeter.getSector());
         this.setUpdated(waterMeter.getUpdated());
     }
