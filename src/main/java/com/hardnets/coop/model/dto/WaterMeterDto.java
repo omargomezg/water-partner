@@ -37,7 +37,7 @@ public class WaterMeterDto {
 
     public WaterMeterDto(WaterMeterEntity waterMeter) {
         this.setId(waterMeter.getId());
-        this.setNumber(waterMeter.getNumber());
+        this.setNumber(waterMeter.getSerial());
         this.setTrademark(waterMeter.getTrademark());
         this.setDischargeDate(waterMeter.getCreated());
         this.setComment(waterMeter.getDescription());

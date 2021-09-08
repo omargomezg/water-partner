@@ -1,5 +1,6 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
@@ -75,11 +76,11 @@ public class ConsumptionController {
     }
 
     @PostMapping("/v1/consumption/{id}")
-    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Long consumption) {
-        PeriodEntity period = periodService.findByStatus("ACTIVE");
+    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Integer consumption) {
+        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
         Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(), id);
         if (dbConsumption.isPresent()) {
-            dbConsumption.get().setConsumption(consumption);
+            dbConsumption.get().setReading(consumption);
             consumptionService.update(dbConsumption.get());
         } else {
             consumptionService.create(id, consumption, period);

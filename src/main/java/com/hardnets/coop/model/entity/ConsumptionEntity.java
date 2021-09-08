@@ -19,7 +19,7 @@ import java.util.Date;
 public class ConsumptionEntity extends BaseEntity {
 
     @Column
-    private Long consumption;
+    private Integer reading = 0;
 
     @Column
     @CreationTimestamp

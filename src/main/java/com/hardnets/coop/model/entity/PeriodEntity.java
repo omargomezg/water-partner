@@ -1,10 +1,13 @@
 package com.hardnets.coop.model.entity;
 
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,7 +44,8 @@ public class PeriodEntity extends BaseEntity {
      * - CLOSED: Cerrado, cuando cambia a este estado se generan las boletas/facturas
      */
     @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PeriodStatusEnum status;
 
     @OneToMany(mappedBy = "period", fetch = FetchType.LAZY)
     private Set<ConsumptionEntity> consumptions;

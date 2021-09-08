@@ -15,22 +15,26 @@ import java.util.Optional;
 @Repository
 public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Long> {
 
-    Optional<WaterMeterEntity> findByNumber(String number);
+    Optional<WaterMeterEntity> findBySerial(String serial);
 
     Collection<WaterMeterEntity> findAllByClientOrderByUpdatedDesc(ClientEntity clientEntity);
 
-    @Query("select w.number from WaterMeterEntity w where w.client.rut = ?1")
-    Collection<String> finadAllIdsByClient(String rut);
+    @Query("select w.serial from WaterMeterEntity w where w.client.rut = ?1")
+    Collection<String> findAllIdsByClient(String rut);
 
-    @Query("select new com.hardnets.coop.model.dto.WaterMeterDto(wm.id, wm.number, wm.trademark, wm.diameter, wm.description, wm.sector, wm.updated)" +
+    @Query("select new com.hardnets.coop.model.dto.WaterMeterDto(wm.id, wm.serial, wm.trademark, wm.diameter, wm.description, wm.sector, wm.updated)" +
             " from WaterMeterEntity wm where wm.client is null")
     Collection<WaterMeterDto> findAllWhereClientIsNull();
 
-    @Query("select new com.hardnets.coop.model.dto.WaterMetersConsumptionDto(wm.id, wm.number, wm.diameter, " +
-            "wm.created, wm.sector, '', c.consumption) " +
+    @Query("select new com.hardnets.coop.model.dto.WaterMetersConsumptionDto(wm.id, " +
+            "wm.serial, " +
+            "wm.diameter, " +
+            "wm.created, " +
+            "wm.sector, " +
+            "c.reading) " +
             "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-            "where c.period.id = :period and (:number is null or wm.number = :number) and (:rut is null or cl.rut = :rut) " +
-            "and (:pending is false or c.consumption = 0) and (:sector is null or wm.sector = :sector)")
+            "where c.period.id = :period and (:number is null or wm.serial = :number) and (:rut is null or cl.rut = :rut) " +
+            "and (:pending is false or c.reading = 0) and (:sector is null or wm.sector = :sector)")
     Collection<WaterMetersConsumptionDto> findAllByCustomFilters(@Param("number") String number,
                                                                  @Param("rut") String rut,
                                                                  @Param("sector") String sector,

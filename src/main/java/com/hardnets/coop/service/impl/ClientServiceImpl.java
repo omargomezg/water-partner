@@ -64,7 +64,7 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientDto> getUsers(FilterDto filter) {
         List<ClientDto> dbClients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), filter.getName() != null ? filter.getName().toLowerCase() : null);
         dbClients.forEach(client -> {
-            Collection<String> ids = waterMeterRepository.finadAllIdsByClient(client.getRut());
+            Collection<String> ids = waterMeterRepository.findAllIdsByClient(client.getRut());
             if (!ids.isEmpty()) {
                 client.getWaterMeters().addAll(ids);
             }
@@ -113,7 +113,7 @@ public class ClientServiceImpl implements ClientService {
         clientDto.setFullName(getFullName(clientDto));
         clientDto.setClientType(client.getClientType().label);
         if (Objects.nonNull(client.getWaterMeter()) && Objects.nonNull(clientDto.getWaterMeters())) {
-            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getNumber()));
+            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getSerial()));
         }
         return clientDto;
     }

@@ -1,7 +1,10 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.bulk.BulkWaterMeterUserDto;
+import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.service.BulkService;
+import com.hardnets.coop.service.PeriodService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,10 +26,12 @@ import java.util.List;
 public class BulkController {
 
     private final BulkService bulkService;
+    private final PeriodService periodService;
 
     @PostMapping(value = "/water-meter-with-user", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addWaterMeterWithUser(@RequestBody @Valid List<BulkWaterMeterUserDto> records) {
-        bulkService.addWaterMeterWithUser(records);
+        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
+        bulkService.addWaterMeterWithUser(records, period);
         return ResponseEntity.ok().build();
     }
 }

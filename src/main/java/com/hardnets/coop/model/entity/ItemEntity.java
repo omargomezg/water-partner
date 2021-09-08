@@ -33,7 +33,7 @@ public class ItemEntity extends BaseEntity {
     /**
      * En caso de cobrar un monto fijo se debe indicar en esta variable
      */
-    private Long amount;
+    private Integer amount;
 
     /**
      * Es el método utilizado para realizar el calculo del item

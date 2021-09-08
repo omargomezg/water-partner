@@ -29,17 +29,17 @@ public abstract class SalesDocumentDetailEntity {
      *
      */
     @Column
-    private Long baseAmount;
+    private Integer baseAmount;
 
     /**
      * Consumo
      */
     @Column
-    private Long consumption;
+    private Integer consumption;
 
     /**
      * Valor total a cobrar después el calculo en caso de ser necesario
      */
     @Column
-    private Long totalAmount;
+    private Integer totalAmount;
 }

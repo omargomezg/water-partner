@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DetailItemDto {
     private String concept;
-    private Long total;
+    private Integer total;
 }

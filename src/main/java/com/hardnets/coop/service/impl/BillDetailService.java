@@ -41,7 +41,7 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
                 detail.setTotalAmount(item.getAmount());
             } else {
                 if (item.getMethodOfCalculating().equals(CalculationTypeEnum.CONSUMPTION)) {
-                    detail.setConsumption(consumption.getConsumption());
+                    detail.setConsumption(consumption.getReading());
                 }
                 detail.setBaseAmount(item.getAmount());
                 detail.setTotalAmount(
@@ -61,8 +61,8 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
         return billDetail;
     }
 
-    private Long getTotalAmount(CalculationTypeEnum calculationType, ConsumptionEntity consumption) {
-        Long total;
+    private Integer getTotalAmount(CalculationTypeEnum calculationType, ConsumptionEntity consumption) {
+        Integer total;
         switch (calculationType) {
             case SUBSIDY:
                 total = itemCalculationService.getSubsidyAmount(consumption);
@@ -74,14 +74,14 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
                 total = itemCalculationService.getConsumptionAmount(consumption);
                 break;
             default:
-                total = 0L;
+                total = 0;
                 break;
         }
         return total;
     }
 
     private BillDetailEntity getSubsidizedAmount(SubsidyEntity subsidy, ConsumptionEntity consumption) {
-        Long total = getTotalAmount(CalculationTypeEnum.SUBSIDY, consumption) * -1;
+        Integer total = getTotalAmount(CalculationTypeEnum.SUBSIDY, consumption) * -1;
         BillDetailEntity billDetail = new BillDetailEntity();
         billDetail.setConcept("Subsidio " + subsidy.getPercentage() + "% consumo");
         billDetail.setTotalAmount(total);

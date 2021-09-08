@@ -12,23 +12,26 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ResumeConsumptionDetailDto {
-    private String numberWaterMeter;
+    /**
+     * Serial number of water meter
+     */
+    private String serial;
     private String rut;
     private String names;
     private String middleName;
     private String lastName;
     private String fullName;
     private String clientType;
-    private Long lastRecord;
-    private Long actualRecord;
+    private Integer lastRecord;
+    private Integer actualRecord;
     private Long amountToPaid;
     private Long consumptionId;
     private List<DetailItemDto> detail = new ArrayList<>();
 
-    public ResumeConsumptionDetailDto(String numberWaterMeter, String rut, ClientTypeEnum clientType, String names,
+    public ResumeConsumptionDetailDto(String serial, String rut, ClientTypeEnum clientType, String names,
                                       String middleName, String lastName,
-                                      String businessName, Long actualRecord, Long consumptionId) {
-        this.numberWaterMeter = numberWaterMeter;
+                                      String businessName, Integer actualRecord, Long consumptionId) {
+        this.serial = serial;
         this.rut = rut;
         this.actualRecord = actualRecord;
         this.consumptionId = consumptionId;

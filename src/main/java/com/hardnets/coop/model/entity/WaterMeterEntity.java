@@ -31,10 +31,10 @@ import java.util.Set;
 public class WaterMeterEntity extends BaseEntity {
 
     /**
-     * The format could be A2311
+     * Serial number
      */
     @Column
-    private String number;
+    private String serial;
 
     @Column(nullable = false)
     private String trademark = "";

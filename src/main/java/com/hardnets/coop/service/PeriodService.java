@@ -1,9 +1,11 @@
 package com.hardnets.coop.service;
 
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 public interface PeriodService {
@@ -16,7 +18,7 @@ public interface PeriodService {
 
     PeriodEntity save(PeriodEntity periodEntity);
 
-    PeriodEntity findByStatus(String status);
+    PeriodEntity findByStatus(PeriodStatusEnum status);
 
     /**
      * Cierra un periodo y abre uno nuevo

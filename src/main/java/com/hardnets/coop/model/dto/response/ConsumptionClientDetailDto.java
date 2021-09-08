@@ -10,13 +10,13 @@ import java.util.Date;
 public class ConsumptionClientDetailDto {
 
     private Date endDate;
-    private Long consumption;
+    private Integer reading;
     private Long amount;
     private Date readingDate;
 
-    public ConsumptionClientDetailDto(Date readingDate, Date endDate, Long consumption) {
+    public ConsumptionClientDetailDto(Date readingDate, Date endDate, Integer reading) {
         this.readingDate = readingDate;
         this.endDate = endDate;
-        this.consumption = consumption;
+        this.reading = reading;
     }
 }

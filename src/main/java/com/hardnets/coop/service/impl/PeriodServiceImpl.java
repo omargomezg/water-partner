@@ -1,11 +1,13 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.PeriodException;
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -13,11 +15,10 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class PeriodServiceImpl implements PeriodService {
 
-    public static final String ACTIVE = "ACTIVE";
     private final PeriodRepository periodRepository;
 
 
@@ -42,14 +43,14 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public PeriodEntity findByStatus(String status) {
+    public PeriodEntity findByStatus(PeriodStatusEnum status) {
         Optional<PeriodEntity> period = periodRepository.findByStatus(status);
         if (period.isPresent()) {
             return period.get();
         }
-        if (status.equals(ACTIVE)) {
+        if (status.equals(PeriodStatusEnum.ACTIVE)) {
             PeriodEntity newPeriod = new PeriodEntity();
-            newPeriod.setStatus(ACTIVE);
+            newPeriod.setStatus(status);
             newPeriod.setStartDate(new Date());
             return periodRepository.save(newPeriod);
         }
@@ -63,7 +64,7 @@ public class PeriodServiceImpl implements PeriodService {
         );
         Date endDate = new Date();
         period.setEndDate(endDate);
-        period.setStatus("CLOSED");
+        period.setStatus(PeriodStatusEnum.CLOSED);
         periodRepository.save(period);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(endDate);
@@ -78,7 +79,7 @@ public class PeriodServiceImpl implements PeriodService {
     public PeriodEntity create(Date startDate) {
         PeriodEntity newPeriod = new PeriodEntity();
         newPeriod.setStartDate(startDate);
-        newPeriod.setStatus(ACTIVE);
+        newPeriod.setStatus(PeriodStatusEnum.ACTIVE);
         return periodRepository.save(newPeriod);
     }
 }

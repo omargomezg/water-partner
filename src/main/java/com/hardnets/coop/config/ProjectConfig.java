@@ -2,11 +2,13 @@ package com.hardnets.coop.config;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
+import com.hardnets.coop.service.PeriodService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,8 +26,7 @@ public class ProjectConfig {
 
     private static final String PROFILE = "PROFILE";
     private static final String CLIENT_TYPE = "CLIENT_TYPE";
-    private static final String WATER_METER_SIZE = "WATER_METER_SIZE";
-    private static final String  WATER_METER_STATUS = "WATER_METER_STATUS";
+
     private final UserRepository userRepository;
     private final DropDownListRepository dropDownListRepository;
     private final PasswordEncoder passwordEncoder;
@@ -35,32 +36,8 @@ public class ProjectConfig {
         log.info("Inicia validación de data");
         checkProfiles();
         checkClientType();
-        checkWaterMeterMeasures();
-        checkWaterMeterStatus();
         checkAdministrator();
         log.info("Fin validación de data");
-    }
-
-    private void checkWaterMeterStatus() {
-        if (dropDownListRepository.findByCode(DiameterEnum.THIRTEEN.label).isEmpty()) {
-            saveDropDownEntity(DiameterEnum.THIRTEEN.label, DiameterEnum.THIRTEEN.label, WATER_METER_STATUS);
-        }
-        dropDownListRepository.findAllByDropDownListType(WATER_METER_STATUS)
-                .forEach(item -> log.info("Measure created: {}", item.getCode()));
-    }
-
-    private void checkWaterMeterMeasures() {
-        if (dropDownListRepository.findByCode(DiameterEnum.THIRTEEN.label).isEmpty()) {
-            saveDropDownEntity(DiameterEnum.THIRTEEN.label, DiameterEnum.THIRTEEN.label, WATER_METER_SIZE);
-        }
-        if (dropDownListRepository.findByCode(DiameterEnum.NINETEEN.label).isEmpty()) {
-            saveDropDownEntity(DiameterEnum.NINETEEN.label, DiameterEnum.NINETEEN.label, WATER_METER_SIZE);
-        }
-        if (dropDownListRepository.findByCode(DiameterEnum.TWENTY_FIVE.label).isEmpty()) {
-            saveDropDownEntity(DiameterEnum.TWENTY_FIVE.label, DiameterEnum.TWENTY_FIVE.label, WATER_METER_SIZE);
-        }
-        dropDownListRepository.findAllByDropDownListType(WATER_METER_SIZE)
-                .forEach(item -> log.info("Measure created: {}", item.getCode()));
     }
 
     private void checkAdministrator() {

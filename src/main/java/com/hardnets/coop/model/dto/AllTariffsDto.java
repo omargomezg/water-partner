@@ -23,7 +23,7 @@ public class AllTariffsDto {
         setClientType(tariffEntity.getClientType().label);
         setCubicMeter(tariffEntity.getCubicMeter());
         setFlatFee(tariffEntity.getFlatFee());
-        setDiameter(tariffEntity.getDiameter().label);
+        setDiameter(tariffEntity.getDiameter().name());
         setLastUpdate(tariffEntity.getLastUpdate());
     }
 }

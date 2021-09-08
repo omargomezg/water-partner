@@ -2,6 +2,7 @@ package com.hardnets.coop.util;
 
 public class RutUtils {
 
+
     public static String getFormated(String rut) {
         String fRut[] = new String[5];
 

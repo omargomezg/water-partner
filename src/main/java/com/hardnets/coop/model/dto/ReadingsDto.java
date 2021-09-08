@@ -9,12 +9,12 @@ import java.util.Date;
 @Setter
 public class ReadingsDto {
     private Long id;
-    private Long consumption;
+    private Integer reading;
     private Date readingDate;
 
-    public ReadingsDto(Long id, Long consumption, Date readingDate) {
+    public ReadingsDto(Long id, Integer reading, Date readingDate) {
         setId(id);
-        setConsumption(consumption);
+        setReading(reading);
         setReadingDate(readingDate);
     }
 }

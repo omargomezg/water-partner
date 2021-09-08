@@ -28,4 +28,9 @@ public class BulkWaterMeterUserDto {
     @NotNull
     @NotEmpty
     private Integer series;
+
+    @NotNull
+    @NotEmpty
+    private Integer reading;
+
 }

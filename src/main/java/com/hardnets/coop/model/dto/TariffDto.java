@@ -20,6 +20,6 @@ public class TariffDto {
         setClientType(tariffEntity.getClientType().label);
         setFlatFee(tariffEntity.getFlatFee());
         setId(tariffEntity.getId());
-        setDiameter(tariffEntity.getDiameter().label);
+        setDiameter(tariffEntity.getDiameter().name());
     }
 }

@@ -36,7 +36,7 @@ public class SubsidyService {
         SubsidyDto dto = parseToDto(subsidy);
         if (Objects.nonNull(subsidy.getWaterMeter())) {
             var waterMeter = new WaterMeterDto();
-            waterMeter.setNumber(subsidy.getWaterMeter().getNumber());
+            waterMeter.setNumber(subsidy.getWaterMeter().getSerial());
             waterMeter.setId(subsidy.getWaterMeter().getId());
             dto.setWaterMeter(waterMeter);
         }

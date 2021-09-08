@@ -23,38 +23,38 @@ public class ItemCalculationService {
     /**
      * @return el monto subsidiado
      */
-    public Long getSubsidyAmount(ConsumptionEntity consumption) {
+    public Integer getSubsidyAmount(ConsumptionEntity consumption) {
         Optional<SubsidyEntity> subsidy =
                 subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter(), true,
                         new Date());
         if (subsidy.isPresent()) {
             short percentage = subsidy.get().getPercentage();
-            Long total = getConsumptionAmount(consumption);
+            Integer total = getConsumptionAmount(consumption);
             return (total * percentage) / 100;
         }
-        return 0L;
+        return 0;
     }
 
     /**
      * @return el monto a cobrar por exceso de consumo
      */
-    public Long getExcessAmount() {
-        return 0L;
+    public Integer getExcessAmount() {
+        return 0;
     }
 
     /**
      * @return El monto a cobrar por consumo
      */
-    public Long getConsumptionAmount(ConsumptionEntity consumption) {
+    public Integer getConsumptionAmount(ConsumptionEntity consumption) {
         if (consumption.getWaterMeter().getClient() != null) {
             Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(consumption.getWaterMeter().getDiameter()
                     , consumption.getWaterMeter().getClient().getClientType());
             if (tariff.isPresent()) {
                 Integer flatFee = tariff.get().getFlatFee();
-                var monthConsumption = consumption.getConsumption();
+                var monthConsumption = consumption.getReading();
                 return monthConsumption * flatFee;
             }
         }
-        return 0L;
+        return 0;
     }
 }

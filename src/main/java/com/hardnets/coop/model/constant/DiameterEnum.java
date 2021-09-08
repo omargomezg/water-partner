@@ -1,20 +1,20 @@
 package com.hardnets.coop.model.constant;
 
+/**
+ * Es la capacidad definida en milímetros, la cual comunnmente va representada en medidas de 13mm, 19mm, 25mm, 38mm
+ * o superiores.
+ *
+ * @author Omar Gómez
+ */
 public enum DiameterEnum {
-    THIRTEEN("13"),
-    NINETEEN("19"),
-    TWENTY_FIVE("25");
+    THIRTEEN(13),
+    NINETEEN(19),
+    TWENTY_FIVE(25),
+    THIRTY_EIGHT(38);
 
-    public final String label;
+    private final int levelCode;
 
-    private DiameterEnum(String label) {
-        this.label = label;
-    }
-
-    public static DiameterEnum getByLabel(String label){
-        for(DiameterEnum e : DiameterEnum.values()){
-            if(e.label.equals(label)) return e;
-        }
-        return null;
+    private DiameterEnum(int levelCode) {
+        this.levelCode = levelCode;
     }
 }
