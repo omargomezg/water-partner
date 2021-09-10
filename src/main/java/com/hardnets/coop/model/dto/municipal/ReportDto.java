@@ -30,7 +30,7 @@ public class ReportDto {
     /**
      * Decreto
      */
-    private Decree decree;
+    private DecreeDto decree;
 
     /**
      * Puntaje

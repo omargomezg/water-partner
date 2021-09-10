@@ -2,7 +2,7 @@ package com.hardnets.coop.service;
 
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.dto.municipal.BeneficiaryDto;
-import com.hardnets.coop.model.dto.municipal.Decree;
+import com.hardnets.coop.model.dto.municipal.DecreeDto;
 import com.hardnets.coop.model.dto.municipal.MunicipalReportDto;
 import com.hardnets.coop.model.dto.municipal.ReportDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto;
@@ -29,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -58,7 +57,7 @@ public class ReportService {
                                 .address("Curiñanco")
                                 .build())
                         .nameCommune("VALDIVIA")
-                        .decree(new Decree(132423L,new Date()))
+                        .decree(new DecreeDto(132423L,new Date()))
                         .build())
                 .collect(Collectors.toList());
         report.setDetail(detail);
