@@ -4,7 +4,9 @@ import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.CascadeType;
@@ -24,6 +26,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@ToString
+@NoArgsConstructor
 @Table(name = "clients")
 public class ClientEntity extends PersonEntity {
 
@@ -51,7 +55,7 @@ public class ClientEntity extends PersonEntity {
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
-    private Set<BillEntity> bills;
+    private Set<BillEntity> bills = new HashSet<>();
 
     @OneToMany(
             mappedBy = "client",
@@ -69,10 +73,6 @@ public class ClientEntity extends PersonEntity {
         setBusinessActivity(client.getBusinessActivity());
         setBusinessName(client.getBusinessName());
         setProfession(client.getProfession());
-    }
-
-    public ClientEntity() {
-        this.waterMeter = new HashSet<>();
     }
 
     public String getFullName() {

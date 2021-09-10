@@ -30,6 +30,7 @@ public class ProjectConfig {
     private final UserRepository userRepository;
     private final DropDownListRepository dropDownListRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PeriodService periodService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void checkStartup() {
@@ -37,7 +38,12 @@ public class ProjectConfig {
         checkProfiles();
         checkClientType();
         checkAdministrator();
+        openPeriod();
         log.info("Fin validación de data");
+    }
+
+    private void openPeriod() {
+        periodService.findByStatus(PeriodStatusEnum.ACTIVE);
     }
 
     private void checkAdministrator() {

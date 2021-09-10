@@ -15,12 +15,12 @@ import java.util.Optional;
 @Repository
 public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Long> {
 
-    Optional<WaterMeterEntity> findBySerial(String serial);
+    Optional<WaterMeterEntity> findBySerial(Integer serial);
 
     Collection<WaterMeterEntity> findAllByClientOrderByUpdatedDesc(ClientEntity clientEntity);
 
     @Query("select w.serial from WaterMeterEntity w where w.client.rut = ?1")
-    Collection<String> findAllIdsByClient(String rut);
+    Collection<Integer> findAllIdsByClient(String rut);
 
     @Query("select new com.hardnets.coop.model.dto.WaterMeterDto(wm.id, wm.serial, wm.trademark, wm.diameter, wm.description, wm.sector, wm.updated)" +
             " from WaterMeterEntity wm where wm.client is null")

@@ -30,13 +30,13 @@ public class WaterMeterController {
      * @return a list of water meters
      */
     @GetMapping("/v1/water-meter")
-    public ResponseEntity<Collection<WaterMeterDto>> getWaterMeters() {
+    public ResponseEntity<List<WaterMeterDto>> getWaterMeters() {
         return ResponseEntity.ok(waterMeterService.getAll());
     }
 
     @GetMapping("/v1/water-meter/not-related")
     public ResponseEntity<Collection<WaterMeterDto>> getNotRelated() {
-        return ResponseEntity.ok(waterMeterService.findAllWheregetNotRelated());
+        return ResponseEntity.ok(waterMeterService.findAllWhereNotRelated());
     }
 
     @PostMapping("/v1/water-meter")
@@ -64,7 +64,7 @@ public class WaterMeterController {
      */
     @GetMapping("/v1/water-meter/{id}")
     public ResponseEntity<WaterMeterDto> getWaterMeterByNumber(@PathVariable Long id) {
-        WaterMeterDto waterMeter = waterMeterService.getById(id);
+        WaterMeterDto waterMeter = new WaterMeterDto(waterMeterService.getById(id));
         return ResponseEntity.ok(waterMeter);
     }
 }

@@ -15,7 +15,7 @@ public class ResumeConsumptionDetailDto {
     /**
      * Serial number of water meter
      */
-    private String serial;
+    private Integer serial;
     private String rut;
     private String names;
     private String middleName;
@@ -28,7 +28,7 @@ public class ResumeConsumptionDetailDto {
     private Long consumptionId;
     private List<DetailItemDto> detail = new ArrayList<>();
 
-    public ResumeConsumptionDetailDto(String serial, String rut, ClientTypeEnum clientType, String names,
+    public ResumeConsumptionDetailDto(Integer serial, String rut, ClientTypeEnum clientType, String names,
                                       String middleName, String lastName,
                                       String businessName, Integer actualRecord, Long consumptionId) {
         this.serial = serial;

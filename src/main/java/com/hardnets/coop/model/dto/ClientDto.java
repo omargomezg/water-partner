@@ -48,7 +48,14 @@ public class ClientDto {
 
     private Boolean isActive = true;
 
-    private Set<String> waterMeters = new HashSet<>();
+    private Set<Integer> waterMeters = new HashSet<>();
+
+    public ClientDto(String rut, String names, ClientTypeEnum clientType) {
+        setRut(rut);
+        setNames(names);
+        setClientType(clientType.label);
+        generateFullName();
+    }
 
     public ClientDto(String rut, String names, String middleName, String lastName, String businessName,
                      ClientTypeEnum clientType) {

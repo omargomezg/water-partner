@@ -1,13 +1,16 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.WaterMeterService;
@@ -76,14 +79,16 @@ public class ConsumptionController {
     }
 
     @PostMapping("/v1/consumption/{id}")
-    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Integer consumption) {
+    public ResponseEntity<String> create(@PathVariable Integer id, @RequestParam Integer consumption) {
         PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
-        Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(), id);
+        WaterMeterEntity waterMeter = waterMeterService.getBySerial(id);
+        Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(),
+                waterMeter.getId());
         if (dbConsumption.isPresent()) {
             dbConsumption.get().setReading(consumption);
             consumptionService.update(dbConsumption.get());
         } else {
-            consumptionService.create(id, consumption, period);
+            consumptionService.create(waterMeter, consumption, period);
         }
         return ResponseEntity.created(URI.create("/consumption/" + id)).build();
     }

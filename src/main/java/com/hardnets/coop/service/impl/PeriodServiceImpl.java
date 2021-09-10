@@ -33,8 +33,8 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public PeriodEntity findById(long id) {
-        return null;
+    public Optional<PeriodEntity> findById(long id) {
+        return periodRepository.findById(id);
     }
 
     @Override

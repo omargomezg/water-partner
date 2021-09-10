@@ -29,6 +29,10 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final WaterMeterRepository waterMeterRepository;
 
+    public ClientEntity update(ClientEntity clientEntity) {
+        return clientRepository.saveAndFlush(clientEntity);
+    }
+
     @Override
     public ClientDto update(ClientDto clientDto) {
         ClientEntity client = clientRepository.findByRut(clientDto.getRut())
@@ -64,7 +68,7 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientDto> getUsers(FilterDto filter) {
         List<ClientDto> dbClients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), filter.getName() != null ? filter.getName().toLowerCase() : null);
         dbClients.forEach(client -> {
-            Collection<String> ids = waterMeterRepository.findAllIdsByClient(client.getRut());
+            Collection<Integer> ids = waterMeterRepository.findAllIdsByClient(client.getRut());
             if (!ids.isEmpty()) {
                 client.getWaterMeters().addAll(ids);
             }
@@ -73,13 +77,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientDto getByRut(String rut) {
-        Optional<ClientDto> client = clientRepository.findUserDtoByRut(rut);
-        if (client.isPresent()) {
-            return client.get();
-        } else {
-            throw new UserNotFoundException("Client not exists");
-        }
+    public Optional<ClientEntity> getByRut(String rut) {
+        return clientRepository.findByRut(rut);
     }
 
     @Override
@@ -91,8 +90,18 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public ClientEntity create(ClientEntity client) {
+        return clientRepository.saveAndFlush(client);
+    }
+
+    @Override
     public Collection<PendingPaymentDto> getPendingPayments(String rut) {
         return null;
+    }
+
+    @Override
+    public boolean exist(String rut) {
+        return clientRepository.findByRut(rut).isPresent();
     }
 
     private ClientDto mapToClientDTO(ClientEntity client) {

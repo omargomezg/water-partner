@@ -1,9 +1,8 @@
 package com.hardnets.coop.model.entity;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +16,9 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@ToString
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class  PersonEntity {
+public abstract class PersonEntity {
     @Id
     private String rut;
 

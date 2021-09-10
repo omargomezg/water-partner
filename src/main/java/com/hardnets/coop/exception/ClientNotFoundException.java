@@ -8,4 +8,7 @@ public class ClientNotFoundException extends RuntimeException {
     public ClientNotFoundException(String rut) {
         super(String.format("Client with rut %s cannot found", rut));
     }
+    public ClientNotFoundException() {
+        super("Client not found");
+    }
 }

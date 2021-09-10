@@ -3,10 +3,10 @@ package com.hardnets.coop.model.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,9 +21,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @Entity
@@ -34,7 +34,7 @@ public class WaterMeterEntity extends BaseEntity {
      * Serial number
      */
     @Column
-    private String serial;
+    private Integer serial;
 
     @Column(nullable = false)
     private String trademark = "";
@@ -49,7 +49,7 @@ public class WaterMeterEntity extends BaseEntity {
     private Date updated;
 
     @Column
-    private String description;
+    private String description = "";
 
     @ToString.Exclude
     @ManyToOne
@@ -76,5 +76,16 @@ public class WaterMeterEntity extends BaseEntity {
     @JsonManagedReference
     private Set<ConsumptionEntity> consumptions = new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        WaterMeterEntity that = (WaterMeterEntity) o;
+        return Objects.equals(getId(), that.getId());
+    }
 
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

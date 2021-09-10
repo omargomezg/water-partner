@@ -12,16 +12,17 @@ import java.util.Date;
 @NoArgsConstructor
 public class WaterMetersConsumptionDto {
     private Long id;
-    private String number;
+    private Integer serial;
     private String diameter;
     private Date dischargeDate;
     private String sector;
     private String client = "";
     private Integer reading;
 
-    public WaterMetersConsumptionDto(Long id, String number, DiameterEnum diameter, Date dischargeDate, String sector, Integer reading) {
+    public WaterMetersConsumptionDto(Long id, Integer serial, DiameterEnum diameter, Date dischargeDate, String sector,
+                                     Integer reading) {
         this.id = id;
-        this.number = number;
+        this.serial = serial;
         this.diameter = diameter.name();
         this.dischargeDate = dischargeDate;
         this.sector = sector;

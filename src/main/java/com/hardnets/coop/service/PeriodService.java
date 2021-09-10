@@ -14,7 +14,7 @@ public interface PeriodService {
 
     Set<Integer> findAllYears();
 
-    PeriodEntity findById(long id);
+    Optional<PeriodEntity> findById(long id);
 
     PeriodEntity save(PeriodEntity periodEntity);
 

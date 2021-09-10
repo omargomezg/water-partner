@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class RelatedWaterMetersDto {
     private Long id;
-    private String number;
+    private Integer serial;
     private DiameterEnum diameter;
     private Date dischargeDate;
     private String sector;
@@ -20,10 +20,10 @@ public class RelatedWaterMetersDto {
     private Float cubicMeter;
     private Short percentage;
 
-    public RelatedWaterMetersDto(Long id, String number, DiameterEnum diameter, Date dischargeDate, String sector,
+    public RelatedWaterMetersDto(Long id, Integer serial, DiameterEnum diameter, Date dischargeDate, String sector,
                                  Integer flatFee, Float cubicMeter, Short percentage) {
         this.id = id;
-        this.number = number;
+        this.serial = serial;
         this.diameter = diameter;
         this.dischargeDate = dischargeDate;
         this.sector = sector;

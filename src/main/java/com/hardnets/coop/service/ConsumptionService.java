@@ -2,7 +2,6 @@ package com.hardnets.coop.service;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.PeriodException;
-import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
@@ -16,6 +15,7 @@ import com.hardnets.coop.model.entity.SalesDocumentDetailEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ConsumptionRepository;
+import com.hardnets.coop.repository.ConsumptionRepositoryCrud;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.impl.BillDetailService;
@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 public class ConsumptionService {
 
     private final ConsumptionRepository consumptionRepository;
+    private final ConsumptionRepositoryCrud consumptionRepositoryCrud;
     private final WaterMeterRepository waterMeterRepository;
     private final PeriodRepository periodRepository;
     private final ClientRepository clientRepository;
@@ -53,16 +54,20 @@ public class ConsumptionService {
         return new ArrayList<>();
     }
 
-    public void create(Long id, Integer consumption, PeriodEntity period) {
-        WaterMeterEntity waterMeter = waterMeterRepository.findById(id).orElseThrow(() -> new WaterMeterNotFoundException("Water meter number " + id + " was " +
-                "not" + " found"));
-        ConsumptionEntity consumptionEntity = new ConsumptionEntity();
-        consumptionEntity.setCreated(LocalDateTime.now());
-        consumptionEntity.setReading(consumption);
-        consumptionEntity.setReadingDate(new Date());
-        consumptionEntity.setWaterMeter(waterMeter);
-        consumptionEntity.setPeriod(period);
-        consumptionRepository.save(consumptionEntity);
+    public void create(WaterMeterEntity waterMeter, Integer consumption, PeriodEntity period) {
+        try {
+            ConsumptionEntity consumptionEntity = new ConsumptionEntity();
+            consumptionEntity.setCreated(LocalDateTime.now());
+            consumptionEntity.setReading(consumption);
+            consumptionEntity.setReadingDate(new Date());
+            consumptionEntity.setWaterMeter(waterMeter);
+            consumptionEntity.setPeriod(period);
+            consumptionRepositoryCrud.save(consumptionEntity);
+        } catch (Exception ex) {
+            log.info("Hoo NO {} {}", waterMeter.getSerial(), consumption);
+            log.error(ex);
+        }
+
     }
 
     public void update(ConsumptionEntity consumptionEntity) {
@@ -104,9 +109,9 @@ public class ConsumptionService {
         return response;
     }
 
-    private Integer getLastRecordConsumption(String numberWaterMeter, Optional<PeriodEntity> period) {
+    private Integer getLastRecordConsumption(Integer serial, Optional<PeriodEntity> period) {
         List<PeriodEntity> periods = periodRepository.findAll();
-        Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(numberWaterMeter);
+        Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(serial);
         if (period.isPresent() && waterMeter.isPresent()) {
             ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
             return consumption.getReading();

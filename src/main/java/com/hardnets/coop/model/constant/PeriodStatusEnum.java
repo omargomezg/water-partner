@@ -6,7 +6,7 @@ public enum PeriodStatusEnum {
 
     public final String label;
 
-    private PeriodStatusEnum(String label) {
+    PeriodStatusEnum(String label) {
         this.label = label;
     }
 }
