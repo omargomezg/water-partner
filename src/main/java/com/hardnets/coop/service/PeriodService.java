@@ -16,7 +16,9 @@ public interface PeriodService {
 
     Optional<PeriodEntity> findById(long id);
 
-    PeriodEntity save(PeriodEntity periodEntity);
+    PeriodDto update(PeriodDto periodEntity);
+
+    PeriodDto create(PeriodDto periodEntity);
 
     PeriodEntity findByStatus(PeriodStatusEnum status);
 

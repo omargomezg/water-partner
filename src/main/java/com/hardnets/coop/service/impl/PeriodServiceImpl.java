@@ -1,5 +1,6 @@
 package com.hardnets.coop.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
@@ -8,7 +9,9 @@ import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import springfox.documentation.schema.plugins.PropertyDiscriminatorBasedInheritancePlugin;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +23,7 @@ import java.util.Set;
 public class PeriodServiceImpl implements PeriodService {
 
     private final PeriodRepository periodRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -38,8 +42,20 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public PeriodEntity save(PeriodEntity periodEntity) {
-        return null;
+    public PeriodDto update(PeriodDto periodDto) {
+        var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
+        PeriodEntity dbPeriod = periodRepository.findById(periodEntity.getId()).orElseThrow(PeriodException::new);
+        dbPeriod.setStatus(periodEntity.getStatus());
+        dbPeriod.setEndDate(periodEntity.getEndDate());
+        periodRepository.save(dbPeriod);
+        return modelMapper.map(dbPeriod, PeriodDto.class);
+    }
+
+    @Override
+    public PeriodDto create(PeriodDto periodDto) {
+        var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
+        periodEntity = periodRepository.save(periodEntity);
+        return modelMapper.map(periodEntity, PeriodDto.class);
     }
 
     @Override

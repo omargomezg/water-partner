@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class ReportService {
         PeriodEntity period = periodRepository.findById(periodId)
                 .orElseThrow(PeriodException::new);
 
-        PeriodEntity lastPeriod = periodRepository.findFirstByIdNot(periodId);
+        // Optional<PeriodEntity> lastPeriod = periodRepository.findFirstByIdNot(periodId);
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<ResumeConsumptionDetailDto> page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
         MunicipalReportDto report = new MunicipalReportDto();

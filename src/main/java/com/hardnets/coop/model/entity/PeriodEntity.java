@@ -45,12 +45,11 @@ public class PeriodEntity extends BaseEntity {
      */
     @Column
     @Enumerated(EnumType.STRING)
-    private PeriodStatusEnum status;
+    private PeriodStatusEnum status = PeriodStatusEnum.ACTIVE;
 
+    /**
+     * Relación de consumos para un periodo
+     */
     @OneToMany(mappedBy = "period", fetch = FetchType.LAZY)
-    private Set<ConsumptionEntity> consumptions;
-
-    public PeriodEntity() {
-        setConsumptions(new HashSet<>());
-    }
+    private Set<ConsumptionEntity> consumptions = new HashSet<>();
 }

@@ -54,24 +54,18 @@ public class ConsumptionService {
         return new ArrayList<>();
     }
 
-    public void create(WaterMeterEntity waterMeter, Integer consumption, PeriodEntity period) {
-        try {
-            ConsumptionEntity consumptionEntity = new ConsumptionEntity();
-            consumptionEntity.setCreated(LocalDateTime.now());
-            consumptionEntity.setReading(consumption);
-            consumptionEntity.setReadingDate(new Date());
-            consumptionEntity.setWaterMeter(waterMeter);
-            consumptionEntity.setPeriod(period);
-            consumptionRepositoryCrud.save(consumptionEntity);
-        } catch (Exception ex) {
-            log.info("Hoo NO {} {}", waterMeter.getSerial(), consumption);
-            log.error(ex);
-        }
-
+    public ConsumptionEntity create(WaterMeterEntity waterMeter, Integer consumption, PeriodEntity period) {
+        ConsumptionEntity consumptionEntity = new ConsumptionEntity();
+        consumptionEntity.setCreated(LocalDateTime.now());
+        consumptionEntity.setReading(consumption);
+        consumptionEntity.setReadingDate(new Date());
+        consumptionEntity.setWaterMeter(waterMeter);
+        consumptionEntity.setPeriod(period);
+        return consumptionRepositoryCrud.save(consumptionEntity);
     }
 
-    public void update(ConsumptionEntity consumptionEntity) {
-        consumptionRepository.save(consumptionEntity);
+    public ConsumptionEntity update(ConsumptionEntity consumptionEntity) {
+        return consumptionRepository.save(consumptionEntity);
     }
 
     public Optional<ConsumptionEntity> findOneByPeriodAndWaterMeter(Long periodId, Long waterMeterId) {
@@ -86,7 +80,7 @@ public class ConsumptionService {
     public ResumeConsumptionDto findAllByPeriodId(Long periodId, int pageIndex, int pageSize) {
         ResumeConsumptionDto response = new ResumeConsumptionDto();
         PeriodEntity period = periodRepository.findById(periodId).orElseThrow(PeriodException::new);
-        PeriodEntity lastPeriod = periodRepository.findFirstByIdNot(periodId);
+        Optional<PeriodEntity> lastPeriod = periodRepository.findFirstByIdNot(periodId);
         response.setStatus(period.getStatus().label);
         response.setStartDate(period.getStartDate());
         response.setEndDate(period.getEndDate());
@@ -95,7 +89,7 @@ public class ConsumptionService {
         Page page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
         response.setDetail(page.getContent());
         response.getDetail().parallelStream().forEach(item -> {
-            var lastRecord = getLastRecordConsumption(item.getSerial(), Optional.of(lastPeriod));
+            var lastRecord = getLastRecordConsumption(item.getSerial(), lastPeriod);
             item.setLastRecord(lastRecord);
             Optional<ConsumptionEntity> consumption = consumptionRepository.findById(item.getConsumptionId());
             if (consumption.isPresent()) {

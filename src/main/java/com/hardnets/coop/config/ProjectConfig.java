@@ -1,7 +1,6 @@
 package com.hardnets.coop.config;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
-import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.entity.DropDownListEntity;
@@ -80,7 +79,7 @@ public class ProjectConfig {
         dropDownListRepository.findAllByDropDownListType(PROFILE).forEach(item -> log.info("Profile created: {} {}", item.getValue(), item.getCode()));
     }
 
-    private void checkClientType(){
+    private void checkClientType() {
         if (dropDownListRepository.findByCode(ClientTypeEnum.PARTNER.label).isEmpty()) {
             saveDropDownEntity("Socio", ClientTypeEnum.PARTNER.label, CLIENT_TYPE);
         }
