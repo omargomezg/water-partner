@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +26,12 @@ public class PeriodServiceImpl implements PeriodService {
     private final PeriodRepository periodRepository;
     private final ModelMapper modelMapper;
 
+
+    @Override
+    public Set<PeriodDto> findAll() {
+        var periods = periodRepository.findAll();
+        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class)).collect(Collectors.toSet());
+    }
 
     @Override
     public Set<PeriodDto> findAllByYear(int year) {

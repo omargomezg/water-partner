@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/period")
@@ -30,9 +32,10 @@ public class PeriodController {
      *
      * @return una lista de periodo
      */
-    @GetMapping("/")
-    public ResponseEntity<?> list() {
-        return ResponseEntity.noContent().build();
+    @GetMapping
+    public ResponseEntity<Set<PeriodDto>> list() {
+        var periods = periodService.findAll();
+        return ResponseEntity.ok(periods);
     }
 
     /**
@@ -40,7 +43,7 @@ public class PeriodController {
      *
      * @return El periodo creado
      */
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<PeriodDto> create(@RequestBody PeriodDto periodDto) {
         var result = periodService.create(periodDto);
         return ResponseEntity.ok(result);
@@ -51,8 +54,8 @@ public class PeriodController {
      *
      * @return El periodo actualizado
      */
-    @PutMapping("/")
-    public ResponseEntity<PeriodDto> update(@RequestBody PeriodDto periodDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<PeriodDto> update(@PathVariable Long id, @RequestBody PeriodDto periodDto) {
         var result = periodService.create(periodDto);
         return ResponseEntity.ok(result);
     }
