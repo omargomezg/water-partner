@@ -104,9 +104,8 @@ public class ConsumptionService {
     }
 
     private Integer getLastRecordConsumption(Integer serial, Optional<PeriodEntity> period) {
-        List<PeriodEntity> periods = periodRepository.findAll();
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(serial);
-        if (period.isPresent() && waterMeter.isPresent()) {
+        if (periodRepository.count() > 0 && waterMeter.isPresent()) {
             ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
             return consumption.getReading();
         }

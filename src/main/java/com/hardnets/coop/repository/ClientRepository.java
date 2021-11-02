@@ -21,9 +21,6 @@ public interface ClientRepository extends JpaRepository<ClientEntity, Long> {
 
     Optional<ClientEntity> findByRut(String rut);
 
-    @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c.businessName, c.clientType) from ClientEntity c")
-    List<ClientDto> findAllClientsDto();
-
     @Query("select new com.hardnets.coop.model.dto.ClientDto(c.rut, c.names, c.middleName, c.lastName, c" +
             ".businessName, c.clientType) " +
             "from ClientEntity c where (:rut is null or c.rut = :rut) and " +
