@@ -100,6 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:4200");
         config.addAllowedOrigin("https://front-aguita.herokuapp.com");
+        config.addAllowedOrigin("https://hardnets-agua-nod.herokuapp.com");
         config.addAllowedOrigin("https://sandbox.flow.cl");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
