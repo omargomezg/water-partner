@@ -5,6 +5,7 @@ import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
+import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
@@ -20,6 +21,10 @@ import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +46,7 @@ public class WaterMeterService {
     private final SubsidyRepository subsidyRepository;
     private final TariffRepository tariffRepository;
     private final PeriodRepository periodRepository;
+    private final ModelMapper modelMapper;
 
     public void update(List<WaterMeterDto> waterMeterDtos) {
         List<WaterMeterEntity> entities = new ArrayList<>();
@@ -96,6 +102,17 @@ public class WaterMeterService {
 
     public Collection<WaterMeterDto> findAllWhereNotRelated() {
         return waterMeterRepository.findAllWhereClientIsNull();
+    }
+
+    public ListOfWaterMeterDto getAllByPage(Integer pageIndex, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        Page<WaterMeterEntity> page = waterMeterRepository.findAll(pageable);
+        ListOfWaterMeterDto result = new ListOfWaterMeterDto();
+        result.setTotalHits(page.getTotalElements());
+        page.getContent().stream().forEach(meter ->
+                result.getContents().add(modelMapper.map(meter, WaterMeterDto.class))
+        );
+        return result;
     }
 
     public List<WaterMeterDto> getAll() {

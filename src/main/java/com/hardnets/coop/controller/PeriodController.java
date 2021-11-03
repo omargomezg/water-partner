@@ -56,7 +56,7 @@ public class PeriodController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<PeriodDto> update(@PathVariable Long id, @RequestBody PeriodDto periodDto) {
-        var result = periodService.create(periodDto);
+        var result = periodService.update(periodDto);
         return ResponseEntity.ok(result);
     }
 
