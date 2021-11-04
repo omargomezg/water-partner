@@ -1,8 +1,8 @@
 package com.hardnets.coop.model.constant;
 
 public enum PeriodStatusEnum {
-    CLOSED("Cerrado"),
-    ACTIVE("Abierto");
+    CLOSED("Closed"),
+    ACTIVE("Active");
 
     public final String label;
 
