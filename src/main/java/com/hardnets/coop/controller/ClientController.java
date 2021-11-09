@@ -2,6 +2,7 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.dto.ClientDocuments;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Log4j2
 @Api("All client operations")
@@ -73,6 +76,16 @@ public class ClientController {
     @GetMapping("/v1/client/water-meter/{rut}")
     public ResponseEntity<Collection<RelatedWaterMetersDto>> getWaterMeters(@PathVariable String rut) {
         return ResponseEntity.ok(waterMeterService.getByUser(rut));
+    }
+
+    @GetMapping("/v1/client/document")
+    public ResponseEntity<List<ClientDocuments>> getRelatedDocuments() {
+        List<ClientDocuments> documents = new ArrayList<>();
+        documents.add(new ClientDocuments());
+        documents.add(new ClientDocuments());
+        documents.add(new ClientDocuments());
+        documents.add(new ClientDocuments());
+        return ResponseEntity.ok(documents);
     }
 
     private ClientDto convertToDto(ClientEntity clientEntity) {
