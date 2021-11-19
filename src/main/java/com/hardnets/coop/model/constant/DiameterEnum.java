@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Es la capacidad definida en milímetros, la cual comunnmente va representada en medidas de 13mm, 19mm, 25mm, 38mm
+ * Es la capacidad definida en milímetros, la cual comunmente va representada en medidas de 13mm, 19mm, 25mm, 38mm
  * o superiores.
  *
  * @author Omar Gómez
@@ -19,6 +19,10 @@ public enum DiameterEnum {
 
     private static Map<Integer, DiameterEnum> diameterEnumMap = new HashMap<>();
 
+    public int getValue(){
+        return diameter;
+    }
+
     static {
         for (DiameterEnum diameterEnum : DiameterEnum.values()) {
             diameterEnumMap.put(
@@ -30,6 +34,11 @@ public enum DiameterEnum {
 
     DiameterEnum(int diameter) {
         this.diameter = diameter;
+    }
+
+    // TODO Obtener el numero del diametro
+    public static DiameterEnum valueOfLabel(int label) {
+        return diameterEnumMap.get(label);
     }
 
     public static DiameterEnum castIntToEnum(int diameter) {

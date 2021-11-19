@@ -1,6 +1,7 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.ClientDocuments;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
@@ -15,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,20 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     @Override
     public BillEntity getById(Long id) {
         return null;
+    }
+
+    @Override
+    public List<ClientDocuments> getByRut(String rut) {
+        var bills = billRepository.getAllByClient_Rut(rut);
+        var documents = new ArrayList<ClientDocuments>();
+        bills.forEach(bill -> documents.add(ClientDocuments.builder()
+                        .id(bill.getId().intValue())
+                        .emmit(bill.getDateOfEmission())
+                        .amount(bill.getDetail().stream().mapToInt(item -> item.getTotalAmount()).sum())
+                        .status(bill.getStatus().name()).build()
+                )
+        );
+        return documents;
     }
 
     @Override

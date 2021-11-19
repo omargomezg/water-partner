@@ -129,7 +129,7 @@ public class WaterMeterService {
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
             Optional<SubsidyEntity> subsidy =
-                    subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter, true,
+                    subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter.getId(), true,
                             new Date());
             Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getDiameter(),
                     client.getClientType());
@@ -171,10 +171,14 @@ public class WaterMeterService {
     }
 
     public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector, boolean pendingConsumption) {
-        Optional<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
-        if (periodEntity.isPresent())
-            return waterMeterRepository.findAllByCustomFilters(number, rut, sector, periodEntity.get().getId(), pendingConsumption);
-        return new ArrayList<>();
+        List<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
+        return waterMeterRepository.findAllByCustomFilters(
+                number,
+                rut,
+                sector,
+                periodEntity.stream().findFirst().get().getId(),
+                pendingConsumption
+        );
     }
 
 }

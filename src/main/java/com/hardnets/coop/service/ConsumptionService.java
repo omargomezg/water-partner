@@ -72,7 +72,8 @@ public class ConsumptionService {
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(waterMeterId);
         if (period.isPresent() && waterMeter.isPresent()) {
-            return Optional.of(consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get()));
+            return consumptionRepository.findAllByPeriodAndWaterMeter(period.get().getId(),
+                    waterMeter.get().getId());
         }
         return Optional.empty();
     }
@@ -103,12 +104,20 @@ public class ConsumptionService {
         return response;
     }
 
+    /**
+     * Obtiene el ultimo valor de consumo registrado al medidor
+     *
+     * @param serial Numero de serie del medidor
+     * @param period Periodo a consultar
+     * @return Ultimo registro de consumo del medidor consultado
+     */
     private Integer getLastRecordConsumption(Integer serial, Optional<PeriodEntity> period) {
-        List<PeriodEntity> periods = periodRepository.findAll();
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(serial);
         if (period.isPresent() && waterMeter.isPresent()) {
-            ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
-            return consumption.getReading();
+            Optional<ConsumptionEntity> consumption =
+                    consumptionRepository.findAllByPeriodAndWaterMeter(period.get().getId(),
+                            waterMeter.get().getId());
+            return consumption.isPresent() ? consumption.get().getReading() : 0;
         }
         return 0;
     }

@@ -4,6 +4,8 @@ public interface SaleDocumentService<T> {
 
     T getById(Long id);
 
+    Object getByRut(String rut);
+
     void createByClient(String rut);
 
     void createAllInPeriod(long periodId);

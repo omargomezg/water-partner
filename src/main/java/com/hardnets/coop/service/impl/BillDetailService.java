@@ -51,7 +51,8 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
             billDetail.add(detail);
         }
         Optional<SubsidyEntity> subsidy =
-                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter(),
+                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(
+                        consumption.getWaterMeter().getId(),
                         true, new Date());
         if (subsidy.isPresent()) {
             BillDetailEntity detailSubsidy = getSubsidizedAmount(subsidy.get(), consumption);

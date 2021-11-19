@@ -83,10 +83,12 @@ class ConsumptionServiceTest {
         Long waterMeter = 1L;
         Optional<PeriodEntity> periodEntity = Optional.of(mock(PeriodEntity.class));
         Optional<WaterMeterEntity> waterMeterEntity = Optional.of(mock(WaterMeterEntity.class));
+        Optional<ConsumptionEntity> consumptionEntity = Optional.of(mock(ConsumptionEntity.class));
 
         when(periodRepository.findById(period)).thenReturn(periodEntity);
         when(waterMeterRepository.findById(period)).thenReturn(waterMeterEntity);
-        when(consumptionRepository.findAllByPeriodAndWaterMeter(periodEntity.get(), waterMeterEntity.get())).thenReturn(mock(ConsumptionEntity.class));
+        when(consumptionRepository.findAllByPeriodAndWaterMeter(periodEntity.get().getId(),
+                waterMeterEntity.get().getId())).thenReturn(consumptionEntity);
 
         var result = consumptionService.findOneByPeriodAndWaterMeter(period, waterMeter);
         assertTrue(result.isPresent());

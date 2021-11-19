@@ -1,5 +1,6 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.model.dto.AllTariffsBaseDto;
 import com.hardnets.coop.model.dto.AllTariffsDto;
 import com.hardnets.coop.model.dto.TariffDto;
 import com.hardnets.coop.service.TariffService;
@@ -23,7 +24,7 @@ public class TariffController {
     TariffService tariffService;
 
     @GetMapping("/v1/tariff")
-    public ResponseEntity<List<AllTariffsDto>> getAllTariffs() {
+    public ResponseEntity<AllTariffsBaseDto> getAllTariffs() {
         return ResponseEntity.ok(tariffService.getAll());
     }
 

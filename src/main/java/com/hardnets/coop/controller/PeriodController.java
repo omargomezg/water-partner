@@ -1,11 +1,13 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.SaleDocumentService;
+import com.hardnets.coop.service.TariffService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,7 @@ public class PeriodController {
     private final PeriodService periodService;
     private final SaleDocumentService<BillEntity> billService;
     private final ConsumptionService consumptionService;
+    private final TariffService tariffService;
 
     /**
      * Listado de periodo
@@ -68,6 +71,9 @@ public class PeriodController {
      */
     @PutMapping("/close/{id}")
     public ResponseEntity<String> closePeriod(@PathVariable Long id) {
+        if (!tariffService.hasTariffForAllDiameters()) {
+            throw new TariffNotFoundException("No existen tarifas para generar cierre");
+        }
         PeriodEntity newPeriod = periodService.close(id);
         consumptionService.createAllRecords(newPeriod.getId());
         billService.createAllInPeriod(id);

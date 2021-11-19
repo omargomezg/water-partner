@@ -25,7 +25,7 @@ public class ItemCalculationService {
      */
     public Integer getSubsidyAmount(ConsumptionEntity consumption) {
         Optional<SubsidyEntity> subsidy =
-                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter(), true,
+                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter().getId(), true,
                         new Date());
         if (subsidy.isPresent()) {
             short percentage = subsidy.get().getPercentage();

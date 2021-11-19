@@ -11,10 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.schema.plugins.PropertyDiscriminatorBasedInheritancePlugin;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,19 +69,17 @@ public class PeriodServiceImpl implements PeriodService {
 
     @Override
     public PeriodEntity findByStatus(PeriodStatusEnum status) {
-        Optional<PeriodEntity> period = periodRepository.findByStatus(status);
-        if (period.isPresent()) {
-            return period.get();
-        }
-        if (status.equals(PeriodStatusEnum.ACTIVE)) {
+        List<PeriodEntity> period = periodRepository.findByStatus(status);
+        if (period.isEmpty() && status.equals(PeriodStatusEnum.ACTIVE)) {
             PeriodEntity newPeriod = new PeriodEntity();
             newPeriod.setStatus(status);
             newPeriod.setStartDate(new Date());
             return periodRepository.save(newPeriod);
         }
-        throw new PeriodException("Cannot find period with status " + status);
+        return period.stream().findFirst().get();
     }
 
+    @Transactional
     @Override
     public PeriodEntity close(Long id) {
         PeriodEntity period = periodRepository.findById(id).orElseThrow(

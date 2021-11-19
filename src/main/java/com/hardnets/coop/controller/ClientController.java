@@ -11,6 +11,7 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.WaterMeterService;
+import com.hardnets.coop.service.impl.BillImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class ClientController {
 
     private final ClientService clientService;
     private final WaterMeterService waterMeterService;
+    private final BillImpl bill;
     private final ModelMapper modelMapper;
 
     @GetMapping("/v1/client")
@@ -79,12 +81,8 @@ public class ClientController {
     }
 
     @GetMapping("/v1/client/document")
-    public ResponseEntity<List<ClientDocuments>> getRelatedDocuments() {
-        List<ClientDocuments> documents = new ArrayList<>();
-        documents.add(new ClientDocuments());
-        documents.add(new ClientDocuments());
-        documents.add(new ClientDocuments());
-        documents.add(new ClientDocuments());
+    public ResponseEntity<List<ClientDocuments>> getRelatedDocuments(@RequestParam String rut) {
+        List<ClientDocuments> documents = bill.getByRut(rut);
         return ResponseEntity.ok(documents);
     }
 

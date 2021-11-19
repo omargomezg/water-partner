@@ -16,6 +16,11 @@ public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
     }
 
     @Override
+    public InvoiceEntity getByRut(String rut) {
+        return null;
+    }
+
+    @Override
     public void createByClient(String rut) {
 
     }
