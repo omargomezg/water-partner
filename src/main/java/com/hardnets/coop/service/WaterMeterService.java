@@ -173,7 +173,7 @@ public class WaterMeterService {
     public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector, boolean pendingConsumption) {
         List<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
         return waterMeterRepository.findAllByCustomFilters(
-                number,
+                number == null ? null : Integer.parseInt(number),
                 rut,
                 sector,
                 periodEntity.stream().findFirst().get().getId(),

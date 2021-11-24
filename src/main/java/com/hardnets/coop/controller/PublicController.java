@@ -86,7 +86,7 @@ public class PublicController {
     }
 
     @PostMapping("/auth/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto user) throws Exception {
         if (userService.getUsers().size() > 0) {
             throw new HandleException("Cannot create user without authentication");
         }

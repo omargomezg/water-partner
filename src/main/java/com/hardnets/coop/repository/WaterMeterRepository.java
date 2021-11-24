@@ -42,7 +42,7 @@ public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Lo
             "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
             "where c.period.id = :period and (:number is null or wm.serial = :number) and (:rut is null or cl.rut = :rut) " +
             "and (:pending is false or c.reading = 0) and (:sector is null or wm.sector = :sector)")
-    Collection<WaterMetersConsumptionDto> findAllByCustomFilters(@Param("number") String number,
+    Collection<WaterMetersConsumptionDto> findAllByCustomFilters(@Param("number") Integer number,
                                                                  @Param("rut") String rut,
                                                                  @Param("sector") String sector,
                                                                  @Param("period") Long period,

@@ -1,14 +1,16 @@
 package com.hardnets.coop.service;
 
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.exception.UserException;
 import com.hardnets.coop.exception.UserNotFoundException;
-import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.dto.UserDto;
-import com.hardnets.coop.model.entity.DropDownListEntity;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final DropDownListRepository downListRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     public UserDto signup(UserDto userDto, String password) {
         return null;
@@ -34,9 +37,17 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserDto update(UserDto userDto) {
-        Optional<UserEntity> user = userRepository.findById(userDto.getRut());
-        user.ifPresent(userRepository::save);
-        return userDto;
+        var user = userRepository.findById(userDto.getRut()).orElseThrow(ClientNotFoundException::new);
+        if (userDto.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        user.setNames(userDto.getNames());
+        user.setLastName(userDto.getLastName());
+        user.setMiddleName(userDto.getMiddleName());
+        user.setEnabled(userDto.getEnabled());
+        user.setRole(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        userRepository.save(user);
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     public Collection<UserDto> getUsers() {
@@ -50,9 +61,10 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDto create(CreateUserDto userDto) throws Exception {
-        Optional<DropDownListEntity> role = downListRepository.findById(userDto.getRoleId());
-        log.info("finded this role: {}", role.get());
+    public UserDto create(UserDto userDto) {
+        if (Objects.isNull(userDto.getPassword())) {
+            throw new UserException("Incomplete user data");
+        }
         UserEntity user = new UserEntity();
         user.setRut(userDto.getRut());
         user.setNames(userDto.getNames());
@@ -60,9 +72,8 @@ public class UserService implements UserDetailsService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(role.get());
-        UserEntity dbUser = userRepository.save(user);
-        return new UserDto(dbUser);
+        user.setRole(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     @Override

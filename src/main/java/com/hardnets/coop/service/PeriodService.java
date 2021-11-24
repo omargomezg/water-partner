@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface PeriodService {
 
-    Set<PeriodDto> findAll();
+    Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus);
 
     Set<PeriodDto> findAllByYear(int year);
 

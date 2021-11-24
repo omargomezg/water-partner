@@ -14,11 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.schema.plugins.PropertyDiscriminatorBasedInheritancePlugin;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,9 +26,13 @@ public class PeriodServiceImpl implements PeriodService {
 
 
     @Override
-    public Set<PeriodDto> findAll() {
-        var periods = periodRepository.findAll();
-        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class)).collect(Collectors.toSet());
+    public Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus) {
+        var periods = periodStatus.isPresent() ?
+                periodRepository.findAllByStatusEquals(periodStatus.get()) :
+                periodRepository.findAll();
+        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class))
+                .sorted(Comparator.comparing(PeriodDto::getStartDate))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -63,6 +63,7 @@ public class PeriodServiceImpl implements PeriodService {
     @Override
     public PeriodDto create(PeriodDto periodDto) {
         var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
+        periodEntity.setStatus(PeriodStatusEnum.PREPARED);
         periodEntity = periodRepository.save(periodEntity);
         return modelMapper.map(periodEntity, PeriodDto.class);
     }

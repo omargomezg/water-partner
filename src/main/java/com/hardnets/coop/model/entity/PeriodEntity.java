@@ -45,7 +45,7 @@ public class PeriodEntity extends BaseEntity {
      */
     @Column
     @Enumerated(EnumType.STRING)
-    private PeriodStatusEnum status = PeriodStatusEnum.ACTIVE;
+    private PeriodStatusEnum status = PeriodStatusEnum.PREPARED;
 
     /**
      * Relación de consumos para un periodo

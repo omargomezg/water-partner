@@ -34,7 +34,6 @@ public class ProjectConfig {
     @EventListener(ApplicationReadyEvent.class)
     public void checkStartup() {
         log.info("Inicia validación de data");
-        checkProfiles();
         checkClientType();
         checkAdministrator();
         openPeriod();
@@ -56,27 +55,10 @@ public class ProjectConfig {
                 user.setLastName("Gómez");
                 user.setRut("140812269");
                 user.setPassword(passwordEncoder.encode("samsungMac"));
-                user.setRole(role.get());
                 userRepository.save(user);
                 log.info("User {} created", user.getEmail());
             }
         }
-    }
-
-    private void checkProfiles() {
-        if (dropDownListRepository.findByCode(ProfileEnum.ADMINISTRATOR.label).isEmpty()) {
-            saveDropDownEntity("Administrador", ProfileEnum.ADMINISTRATOR.label, PROFILE);
-        }
-        if (dropDownListRepository.findByCode(ProfileEnum.FINANCE.label).isEmpty()) {
-            saveDropDownEntity("Finanzas", ProfileEnum.FINANCE.label, PROFILE);
-        }
-        if (dropDownListRepository.findByCode(ProfileEnum.RAISING.label).isEmpty()) {
-            saveDropDownEntity("Recaudación", ProfileEnum.RAISING.label, PROFILE);
-        }
-        if (dropDownListRepository.findByCode(ProfileEnum.BILLING.label).isEmpty()) {
-            saveDropDownEntity("Tarificador", ProfileEnum.BILLING.label, PROFILE);
-        }
-        dropDownListRepository.findAllByDropDownListType(PROFILE).forEach(item -> log.info("Profile created: {} {}", item.getValue(), item.getCode()));
     }
 
     private void checkClientType() {

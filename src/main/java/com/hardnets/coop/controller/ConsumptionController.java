@@ -79,9 +79,9 @@ public class ConsumptionController {
     }
 
     @PostMapping("/v1/consumption/{id}")
-    public ResponseEntity<String> create(@PathVariable Integer id, @RequestParam Integer consumption) {
+    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Integer consumption) {
         PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
-        WaterMeterEntity waterMeter = waterMeterService.getBySerial(id);
+        WaterMeterEntity waterMeter = waterMeterService.getById(id);
         Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(),
                 waterMeter.getId());
         if (dbConsumption.isPresent()) {

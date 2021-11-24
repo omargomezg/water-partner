@@ -18,6 +18,8 @@ public interface PeriodRepository extends JpaRepository<PeriodEntity, Long> {
     @Query("select p from PeriodEntity p where p.status = ?1")
     List<PeriodEntity> findByStatus(PeriodStatusEnum status);
 
+    List<PeriodEntity> findAllByStatusEquals(PeriodStatusEnum periodStatusEnum);
+
     @Query("select new com.hardnets.coop.model.dto.response.PeriodDto(p.id, p.startDate, p.endDate, p.status) from PeriodEntity p where YEAR(p.startDate) = :year")
     Set<PeriodDto> findAllDto(@Param("year") Integer year);
 

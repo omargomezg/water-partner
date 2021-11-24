@@ -9,7 +9,7 @@ public class CreateUserDto {
     @NotNull(message = "Rut cannot be null")
     private String rut;
     @NotNull(message = "need a rol")
-    private Long roleId;
+    private String role;
     @NotNull(message = "Password is required")
     private String password;
     @NotNull(message = "Name cannot be null")
