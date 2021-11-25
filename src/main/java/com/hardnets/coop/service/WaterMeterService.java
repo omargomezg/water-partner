@@ -3,6 +3,7 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
@@ -61,8 +62,14 @@ public class WaterMeterService {
         waterMeterRepository.saveAll(entities);
     }
 
-    public WaterMeterEntity update(WaterMeterEntity waterMeter) {
-        return waterMeterRepository.save(waterMeter);
+    public WaterMeterDto update(WaterMeterDto waterMeterDto) {
+        var waterMeter = waterMeterRepository.findById(waterMeterDto.getId()).orElseThrow(WaterMeterNotFoundException::new);
+        waterMeter.setDiameter(waterMeterDto.getDiameter());
+        waterMeter.setTrademark(waterMeterDto.getTrademark());
+        waterMeter.setSector(waterMeterDto.getSector());
+        waterMeter.setUpdated(new Date());
+        waterMeter.setDescription(waterMeterDto.getComment());
+         return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDto.class);
     }
 
     public WaterMeterEntity create(WaterMeterEntity waterMeter) {

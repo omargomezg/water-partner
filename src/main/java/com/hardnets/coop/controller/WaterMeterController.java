@@ -47,6 +47,11 @@ public class WaterMeterController {
         return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
     }
 
+    @PutMapping("/v1/water-meter/{id}")
+    public ResponseEntity<WaterMeterDto> addWaterMeter(@PathVariable Long id, @RequestBody @Valid WaterMeterDto waterMeter) {
+        return ResponseEntity.ok(waterMeterService.update(waterMeter));
+    }
+
     /**
      * Permite actualizar varios medidores con una sola peticion
      *
