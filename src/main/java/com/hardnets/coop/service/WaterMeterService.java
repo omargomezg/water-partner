@@ -3,23 +3,16 @@ package com.hardnets.coop.service;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
-import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.*;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
-import com.hardnets.coop.repository.ClientRepository;
-import com.hardnets.coop.repository.PeriodRepository;
-import com.hardnets.coop.repository.SubsidyRepository;
-import com.hardnets.coop.repository.TariffRepository;
-import com.hardnets.coop.repository.WaterMeterRepository;
+import com.hardnets.coop.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -43,6 +36,7 @@ import java.util.stream.Collectors;
 public class WaterMeterService {
 
     private final WaterMeterRepository waterMeterRepository;
+    private final WaterMeterPageableRepository waterMeterPageableRepository;
     private final ClientRepository clientRepository;
     private final SubsidyRepository subsidyRepository;
     private final TariffRepository tariffRepository;
@@ -107,8 +101,15 @@ public class WaterMeterService {
                         "not" + " found"));
     }
 
-    public Collection<WaterMeterDto> findAllWhereNotRelated() {
-        return waterMeterRepository.findAllWhereClientIsNull();
+    public MetersAvailableDto findAllWhereNotRelated(Integer pageIndex, Integer pageSize) {
+        MetersAvailableDto meters = new MetersAvailableDto();
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        var result = waterMeterPageableRepository.findAllWhereClientIsNull(pageable);
+
+        meters.getMeters().addAll(result.getContent().stream().map(meter -> modelMapper.map(meter, WaterMeterDto.class))
+                .collect(Collectors.toList()));
+        meters.setTotalHits(result.getTotalElements());
+        return meters;
     }
 
     public ListOfWaterMeterDto getAllByPage(Integer pageIndex, Integer pageSize) {

@@ -5,8 +5,6 @@ import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

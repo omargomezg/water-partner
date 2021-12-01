@@ -5,7 +5,6 @@ import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
