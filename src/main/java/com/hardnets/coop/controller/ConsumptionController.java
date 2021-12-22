@@ -1,9 +1,7 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.PeriodDto;

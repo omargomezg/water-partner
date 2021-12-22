@@ -3,7 +3,6 @@ package com.hardnets.coop.model.entity;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

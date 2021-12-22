@@ -1,14 +1,12 @@
 package com.hardnets.coop.controller;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.dto.ClientDocuments;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.WaterMeterService;
 import com.hardnets.coop.service.impl.BillImpl;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

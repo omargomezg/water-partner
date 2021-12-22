@@ -1,21 +1,25 @@
 package com.hardnets.coop.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.schema.plugins.PropertyDiscriminatorBasedInheritancePlugin;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service

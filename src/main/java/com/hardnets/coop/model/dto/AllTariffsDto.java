@@ -1,6 +1,5 @@
 package com.hardnets.coop.model.dto;
 
-import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.entity.TariffEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

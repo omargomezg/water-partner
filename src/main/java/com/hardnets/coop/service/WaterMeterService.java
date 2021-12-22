@@ -5,13 +5,12 @@ import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-import com.hardnets.coop.model.dto.*;
+import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
+import com.hardnets.coop.model.dto.MetersAvailableDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
-import com.hardnets.coop.model.entity.ClientEntity;
-import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.model.entity.SubsidyEntity;
-import com.hardnets.coop.model.entity.TariffEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
+import com.hardnets.coop.model.entity.*;
 import com.hardnets.coop.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,13 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -49,7 +42,7 @@ public class WaterMeterService {
             WaterMeterEntity entity = waterMeterRepository.findBySerial(dto.getSerial()).orElseThrow(() ->
                     new WaterMeterNotFoundException("Water meter number " + dto.getSerial() + " was not found"));
             ClientEntity client = clientRepository.findByRut(dto.getRut())
-                    .orElseThrow(() -> new UserNotFoundException("User by rut " + dto.getRut() + " was not" + " found"));
+                    .orElseThrow(UserNotFoundException::new);
             entity.setClient(client);
             entities.add(entity);
         }
@@ -63,7 +56,7 @@ public class WaterMeterService {
         waterMeter.setSector(waterMeterDto.getSector());
         waterMeter.setUpdated(new Date());
         waterMeter.setDescription(waterMeterDto.getComment());
-         return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDto.class);
+        return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDto.class);
     }
 
     public WaterMeterEntity create(WaterMeterEntity waterMeter) {
@@ -91,14 +84,12 @@ public class WaterMeterService {
 
     public WaterMeterEntity getBySerial(Integer serial) {
         return waterMeterRepository.findBySerial(serial)
-                .orElseThrow(() -> new WaterMeterNotFoundException("Water meter serial " + serial + " was " +
-                        "not" + " found"));
+                .orElseThrow(WaterMeterNotFoundException::new);
     }
 
     public WaterMeterEntity getById(Long id) {
         return waterMeterRepository.findById(id)
-                .orElseThrow(() -> new WaterMeterNotFoundException("Water meter number " + id + " was " +
-                        "not" + " found"));
+                .orElseThrow(WaterMeterNotFoundException::new);
     }
 
     public MetersAvailableDto findAllWhereNotRelated(Integer pageIndex, Integer pageSize) {
@@ -133,7 +124,7 @@ public class WaterMeterService {
     public Collection<RelatedWaterMetersDto> getByUser(String rut) {
         Collection<RelatedWaterMetersDto> relatedMeters = new HashSet<>();
         ClientEntity client = clientRepository.findByRut(rut)
-                .orElseThrow(() -> new UserNotFoundException("User by rut " + rut + " was not" + " found"));
+                .orElseThrow(UserNotFoundException::new);
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
             Optional<SubsidyEntity> subsidy =
@@ -159,7 +150,7 @@ public class WaterMeterService {
     public boolean relateToClient(WaterMeterDto waterMeterDto, String rut) {
         Integer serial = waterMeterDto.getSerial();
         ClientEntity client = clientRepository.findByRut(rut)
-                .orElseThrow(() -> new UserNotFoundException("User by rut " + rut + " was not" + " found"));
+                .orElseThrow(UserNotFoundException::new);
         waterMeterRepository.findBySerial(waterMeterDto.getSerial()).ifPresent(result -> {
             if (result.getClient() != null) {
                 throw new HandleException("Water meter already related to user " + result.getClient().getFullName());

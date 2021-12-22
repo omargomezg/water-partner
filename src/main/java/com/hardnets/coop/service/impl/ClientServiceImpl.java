@@ -1,7 +1,6 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.request.FilterDto;

@@ -4,9 +4,9 @@ import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.UserException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.model.constant.ProfileEnum;
+import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final DropDownListRepository downListRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
@@ -61,7 +60,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDto create(UserDto userDto) {
+    public UserDto create(CreateUserDto userDto) {
         if (Objects.isNull(userDto.getPassword())) {
             throw new UserException("Incomplete user data");
         }

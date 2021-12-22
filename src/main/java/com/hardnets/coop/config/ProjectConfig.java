@@ -23,7 +23,6 @@ import java.util.Optional;
 @Configuration
 public class ProjectConfig {
 
-    private static final String PROFILE = "PROFILE";
     private static final String CLIENT_TYPE = "CLIENT_TYPE";
 
     private final UserRepository userRepository;

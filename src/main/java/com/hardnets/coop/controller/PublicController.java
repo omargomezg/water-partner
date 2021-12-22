@@ -1,5 +1,12 @@
 package com.hardnets.coop.controller;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.Date;
+
+import javax.validation.Valid;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.model.dto.CreateUserDto;
@@ -16,8 +23,7 @@ import com.hardnets.coop.security.JwtTokenUtil;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.validation.Valid;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Todos los métodos públicos que no requieren autentificación inicialmente
@@ -86,7 +89,7 @@ public class PublicController {
     }
 
     @PostMapping("/auth/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto user) throws Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
         if (userService.getUsers().size() > 0) {
             throw new HandleException("Cannot create user without authentication");
         }

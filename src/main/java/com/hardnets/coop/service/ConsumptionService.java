@@ -6,6 +6,7 @@ import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.DetailItemDto;
+import com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -87,7 +88,7 @@ public class ConsumptionService {
         response.setEndDate(period.getEndDate());
 
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
+        Page<ResumeConsumptionDetailDto> page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
         response.setDetail(page.getContent());
         response.getDetail().parallelStream().forEach(item -> {
             var lastRecord = getLastRecordConsumption(item.getSerial(), lastPeriod);
