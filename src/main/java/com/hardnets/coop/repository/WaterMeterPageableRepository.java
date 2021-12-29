@@ -13,4 +13,7 @@ public interface WaterMeterPageableRepository extends PagingAndSortingRepository
     @Query(value = "select wm from WaterMeterEntity wm where wm.client is null",
             countQuery = "select count(wm) from WaterMeterEntity wm where wm.client is null")
     Page<WaterMeterEntity> findAllWhereClientIsNull(Pageable pageable);
+
+    Page<WaterMeterEntity> findBySerial(Integer serial, Pageable pageable);
+
 }

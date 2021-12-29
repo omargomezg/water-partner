@@ -33,7 +33,7 @@ public class WaterMeterEntity extends BaseEntity {
     /**
      * Serial number
      */
-    @Column
+    @Column(unique = true)
     private Integer serial;
 
     @Column(nullable = false)

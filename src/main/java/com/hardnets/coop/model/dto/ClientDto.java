@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -48,7 +51,7 @@ public class ClientDto {
 
     private Boolean isActive = true;
 
-    private Set<Integer> waterMeters = new HashSet<>();
+    private List<WaterMeterDto> waterMeters = new ArrayList<>();
 
     public ClientDto(String rut, String names, ClientTypeEnum clientType) {
         setRut(rut);

@@ -1,6 +1,7 @@
 package com.hardnets.coop.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -36,8 +37,9 @@ public class WaterMeterController {
      */
     @GetMapping("/v1/water-meter")
     public ResponseEntity<ListOfWaterMeterDto> getWaterMeters(@RequestParam Integer pageIndex,
-                                                              @RequestParam Integer pageSize) {
-        return ResponseEntity.ok(waterMeterService.getAllByPage(pageIndex, pageSize));
+                                                              @RequestParam Integer pageSize,
+                                                              @RequestParam(required = false) Optional<Integer> serial) {
+        return ResponseEntity.ok(waterMeterService.getAllByPage(pageIndex, pageSize, serial));
     }
 
     @GetMapping("/v1/water-meter/not-related")

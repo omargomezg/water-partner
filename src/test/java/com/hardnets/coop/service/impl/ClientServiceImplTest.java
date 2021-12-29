@@ -9,6 +9,7 @@ import com.hardnets.coop.repository.WaterMeterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,7 +20,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -34,9 +34,12 @@ class ClientServiceImplTest {
     @MockBean
     private WaterMeterRepository waterMeterRepository;
 
+    @MockBean
+    private ModelMapper modelMapper;
+
     @BeforeEach
     void init() {
-        clientService = new ClientServiceImpl(clientRepository, waterMeterRepository);
+        clientService = new ClientServiceImpl(clientRepository, waterMeterRepository, modelMapper);
     }
 
     @Test

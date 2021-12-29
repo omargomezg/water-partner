@@ -3,14 +3,17 @@ package com.hardnets.coop.service.impl;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -27,6 +31,7 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final WaterMeterRepository waterMeterRepository;
+    private final ModelMapper modelMapper;
 
     public ClientEntity update(ClientEntity clientEntity) {
         return clientRepository.saveAndFlush(clientEntity);
@@ -67,9 +72,12 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientDto> getUsers(FilterDto filter) {
         List<ClientDto> dbClients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), filter.getName() != null ? filter.getName().toLowerCase() : null);
         dbClients.forEach(client -> {
-            Collection<Integer> ids = waterMeterRepository.findAllIdsByClient(client.getRut());
-            if (!ids.isEmpty()) {
-                client.getWaterMeters().addAll(ids);
+            Collection<WaterMeterDto> waterMeterDtos =
+                    waterMeterRepository.findAllIdsByClient(client.getRut())
+                            .stream().map(meters -> modelMapper.map(meters, WaterMeterDto.class))
+                            .collect(Collectors.toList());
+            if (!waterMeterDtos.isEmpty()) {
+                client.getWaterMeters().addAll(waterMeterDtos);
             }
         });
         return dbClients;
@@ -121,7 +129,8 @@ public class ClientServiceImpl implements ClientService {
         clientDto.setFullName(getFullName(clientDto));
         clientDto.setClientType(client.getClientType().label);
         if (Objects.nonNull(client.getWaterMeter()) && Objects.nonNull(clientDto.getWaterMeters())) {
-            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(item.getSerial()));
+            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(modelMapper.map(item,
+                    WaterMeterDto.class)));
         }
         return clientDto;
     }

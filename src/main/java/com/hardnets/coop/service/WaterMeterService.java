@@ -2,6 +2,7 @@ package com.hardnets.coop.service;
 
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.exception.ConflictException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
@@ -18,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -65,6 +67,9 @@ public class WaterMeterService {
 
 
     public WaterMeterDto create(WaterMeterDto waterMeterDto) {
+        if (checkIfExistsSerial(waterMeterDto.getSerial())) {
+            throw new ConflictException("El numero de serie ya existe");
+        }
         WaterMeterEntity waterMeter = new WaterMeterEntity();
         waterMeter.setDescription(waterMeterDto.getComment());
         waterMeter.setSerial(waterMeterDto.getSerial());
@@ -103,12 +108,13 @@ public class WaterMeterService {
         return meters;
     }
 
-    public ListOfWaterMeterDto getAllByPage(Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page<WaterMeterEntity> page = waterMeterRepository.findAll(pageable);
+    public ListOfWaterMeterDto getAllByPage(Integer pageIndex, Integer pageSize, Optional<Integer> serial) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("updated").descending());
+        Page<WaterMeterEntity> page = serial.isPresent() ? waterMeterPageableRepository.findBySerial(serial.get(), pageable) :
+                waterMeterPageableRepository.findAll(pageable);
         ListOfWaterMeterDto result = new ListOfWaterMeterDto();
         result.setTotalHits(page.getTotalElements());
-        page.getContent().stream().forEach(meter ->
+        page.getContent().forEach(meter ->
                 result.getContents().add(modelMapper.map(meter, WaterMeterDto.class))
         );
         return result;
@@ -178,6 +184,9 @@ public class WaterMeterService {
                 periodEntity.stream().findFirst().get().getId(),
                 pendingConsumption
         );
+    }
+    private boolean checkIfExistsSerial(Integer serial) {
+        return waterMeterRepository.findBySerial(serial).isPresent();
     }
 
 }
