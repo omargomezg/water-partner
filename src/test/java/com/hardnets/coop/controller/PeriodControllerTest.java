@@ -1,7 +1,7 @@
 package com.hardnets.coop.controller;
 
-import org.junit.runner.RunWith;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,8 +24,9 @@ class PeriodControllerTest {
 
     @Test
     void close_period_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/v1/period/close/1")
-                        .with(user("user")))
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/v1/period/close/1")
+                                .with(user("user")))
                 .andExpect(status().isOk())
                 .andReturn();
     }
