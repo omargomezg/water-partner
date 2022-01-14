@@ -78,8 +78,8 @@ public class PeriodController {
      * @param id Id del periodo actual
      * @return No devuelve nada
      */
-    @PutMapping("/close/{id}")
-    public ResponseEntity<String> closePeriod(@PathVariable Long id) {
+    @PutMapping("/close")
+    public ResponseEntity<String> closePeriod(@RequestParam Long id) {
         if (!tariffService.hasTariffForAllDiameters()) {
             throw new TariffNotFoundException("No existen tarifas para generar cierre");
         }
