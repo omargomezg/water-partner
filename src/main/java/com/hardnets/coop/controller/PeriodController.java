@@ -13,6 +13,7 @@ import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.TariffService;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
+@Log4j2
 @RestController
 @RequestMapping("/v1/period")
 public class PeriodController {
@@ -84,6 +86,7 @@ public class PeriodController {
         PeriodEntity newPeriod = periodService.close(id);
         consumptionService.createAllRecords(newPeriod.getId());
         billService.createAllInPeriod(id);
+        log.info("Periodo {} cerrado", id);
         return ResponseEntity.ok().build();
     }
 
