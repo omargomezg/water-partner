@@ -5,6 +5,7 @@ import com.hardnets.coop.convert.ClientEntityToDto;
 import com.hardnets.coop.convert.PeriodDtoToEntity;
 import com.hardnets.coop.convert.TariffDtoToEntity;
 import com.hardnets.coop.convert.TariffEntityToDto;
+import com.hardnets.coop.convert.WaterMeterEntityToDto;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistrar;
 import org.springframework.format.FormatterRegistry;
@@ -18,5 +19,6 @@ public class ConverterConfig implements FormatterRegistrar {
         formatterRegistry.addConverter(new TariffDtoToEntity());
         formatterRegistry.addConverter(new ClientDtoToEntity());
         formatterRegistry.addConverter(new PeriodDtoToEntity());
+        formatterRegistry.addConverter(new WaterMeterEntityToDto());
     }
 }
