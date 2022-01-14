@@ -26,7 +26,7 @@ class PeriodControllerTest {
     void close_period_success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/v1/period/close/1")
                         .with(user("user")))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andReturn();
     }
 

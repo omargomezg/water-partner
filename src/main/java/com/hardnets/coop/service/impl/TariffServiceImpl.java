@@ -11,7 +11,7 @@ import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.TariffService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class TariffServiceImpl implements TariffService {
     private final TariffRepository tariffRepository;
     private final WaterMeterRepository waterMeterRepository;
-    private final ModelMapper modelMapper;
+    private final ConversionService conversionService;
 
     @Override
     public TariffDto findById(Long id) {
@@ -48,16 +48,8 @@ public class TariffServiceImpl implements TariffService {
 
     @Override
     public TariffDto create(TariffDto tariffDto) {
-        TariffEntity tariff = new TariffEntity();
-        tariff.setCubicMeter(tariffDto.getCubicMeter());
-        tariff.setFlatFee(tariffDto.getFlatFee());
-        if (tariffDto.getClientType() != null) {
-            tariff.setClientType(ClientTypeEnum.valueOf(tariffDto.getClientType().toUpperCase()));
-        }
-        tariff.setLastUpdate(Instant.now());
-        tariff.setDiameter(DiameterEnum.valueOf(tariffDto.getDiameter()));
-        TariffEntity dbTariff = tariffRepository.save(tariff);
-        return new TariffDto(dbTariff);
+        TariffEntity tariff = conversionService.convert(tariffDto, TariffEntity.class);
+        return conversionService.convert(tariffRepository.save(tariff), TariffDto.class);
     }
 
     @Override
@@ -78,8 +70,8 @@ public class TariffServiceImpl implements TariffService {
     public boolean hasTariffForAllDiameters() {
         var hastTariff = true;
         var diameters = waterMeterRepository.findAllDiameters();
-        for (DiameterEnum diameter: diameters) {
-            if(tariffRepository.findFirstByDiameter(diameter).isEmpty()) {
+        for (DiameterEnum diameter : diameters) {
+            if (tariffRepository.findFirstByDiameter(diameter).isEmpty()) {
                 hastTariff = false;
             }
         }

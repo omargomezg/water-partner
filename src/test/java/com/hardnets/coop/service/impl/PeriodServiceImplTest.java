@@ -6,19 +6,21 @@ import com.hardnets.coop.repository.PeriodRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.core.convert.ConversionService;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(SpringRunner.class)
-@SpringBootTest
 class PeriodServiceImplTest {
 
     @Mock
@@ -27,18 +29,25 @@ class PeriodServiceImplTest {
     @Mock
     private ModelMapper modelMapper;
 
+    @Mock
+    private ConversionService conversionService;
+
+    @InjectMocks
     private PeriodServiceImpl periodService;
 
     @BeforeEach
     void setup() {
-        this.periodService = new PeriodServiceImpl(periodRepository, modelMapper);
     }
 
     @Test
     void update_success() {
         var period = new PeriodDto();
-        var periodEntity = modelMapper.map(period, PeriodEntity.class);
-        when(periodRepository.save(periodEntity)).thenReturn(periodEntity);
+
+        when(conversionService.convert(any(), eq(PeriodEntity.class))).thenReturn(new PeriodEntity());
+        when(periodRepository.findById(any())).thenReturn(Optional.of(mock(PeriodEntity.class)));
+        when(periodRepository.save(any())).thenReturn(mock(PeriodEntity.class));
+        when(modelMapper.map(any(), eq(PeriodDto.class))).thenReturn(mock(PeriodDto.class));
+
         var result = periodService.update(period);
         assertNotNull(result.getId());
     }

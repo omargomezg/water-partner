@@ -2,13 +2,17 @@ package com.hardnets.coop.model.dto;
 
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class WaterMeterDto {
     private Long id;
     private Integer serial;

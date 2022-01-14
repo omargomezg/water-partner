@@ -2,8 +2,11 @@ package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DiameterEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
@@ -17,8 +20,11 @@ import java.time.Instant;
 /**
  * Its related to water meter and when this change the new value start on assign date
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "tariffs")
 public class TariffEntity extends BaseEntity {

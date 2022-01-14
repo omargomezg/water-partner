@@ -42,8 +42,10 @@ class ClientControllerTest {
     }
 
     @Test
-    void getUsers() throws Exception {
+    void getUsers_success() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client")
+                        .param("pageIndex", "0")
+                        .param("pageSize", "30")
                         .with(user("user")))
                 .andExpect(status().isOk())
                 .andReturn();

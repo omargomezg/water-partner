@@ -3,6 +3,7 @@ package com.hardnets.coop.service.impl;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
@@ -13,12 +14,15 @@ import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +36,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final WaterMeterRepository waterMeterRepository;
     private final ModelMapper modelMapper;
+    private final ConversionService conversionService;
 
     public ClientEntity update(ClientEntity clientEntity) {
         return clientRepository.saveAndFlush(clientEntity);
@@ -39,8 +44,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto update(ClientDto clientDto) {
-        ClientEntity client = clientRepository.findByRut(clientDto.getRut())
-                .orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
+        ClientEntity client = clientRepository.findByRut(clientDto.getRut()).orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
         ClientTypeEnum clientTypeEnum = ClientTypeEnum.valueOf(clientDto.getClientType());
         client.setClientType(clientTypeEnum);
         if (clientTypeEnum.equals(ClientTypeEnum.PARTNER)) {
@@ -69,18 +73,28 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientDto> getUsers(FilterDto filter) {
-        List<ClientDto> dbClients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), filter.getName() != null ? filter.getName().toLowerCase() : null);
-        dbClients.forEach(client -> {
-            Collection<WaterMeterDto> waterMeterDtos =
-                    waterMeterRepository.findAllIdsByClient(client.getRut())
-                            .stream().map(meters -> modelMapper.map(meters, WaterMeterDto.class))
-                            .collect(Collectors.toList());
-            if (!waterMeterDtos.isEmpty()) {
-                client.getWaterMeters().addAll(waterMeterDtos);
-            }
-        });
-        return dbClients;
+    public ClientsDto getUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
+        var name = filter.getName() != null ? filter.getName().toLowerCase() : null;
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        var clients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), name, pageable);
+        return ClientsDto.builder()
+                .totalHits(clients.getTotalElements())
+                .items(clients.getContent().stream().map(this::getClientDto).collect(Collectors.toList()))
+                .build();
+    }
+
+    @NotNull
+    private ClientDto getClientDto(ClientEntity client) {
+        var clientDto = conversionService.convert(client, ClientDto.class);
+        clientDto.setWaterMeters(
+                waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
+                        .map(this::getMeterDto).collect(Collectors.toList())
+        );
+        return clientDto;
+    }
+
+    private WaterMeterDto getMeterDto(WaterMeterEntity meter) {
+        return conversionService.convert(meter, WaterMeterDto.class);
     }
 
     @Override
@@ -90,10 +104,8 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto create(ClientDto clientDto) {
-        ClientEntity client = new ClientEntity(clientDto);
-        client.setClientType(ClientTypeEnum.valueOf(clientDto.getClientType()));
-        ClientEntity dbClient = clientRepository.save(client);
-        return mapToClientDTO(dbClient);
+        ClientEntity client = conversionService.convert(clientDto, ClientEntity.class);
+        return conversionService.convert(clientRepository.save(client), ClientDto.class);
     }
 
     @Override
@@ -129,15 +141,13 @@ public class ClientServiceImpl implements ClientService {
         clientDto.setFullName(getFullName(clientDto));
         clientDto.setClientType(client.getClientType().label);
         if (Objects.nonNull(client.getWaterMeter()) && Objects.nonNull(clientDto.getWaterMeters())) {
-            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(modelMapper.map(item,
-                    WaterMeterDto.class)));
+            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(modelMapper.map(item, WaterMeterDto.class)));
         }
         return clientDto;
     }
 
     private String getFullName(ClientDto client) {
-        if (Objects.nonNull(client.getBusinessName()))
-            return client.getBusinessName();
+        if (Objects.nonNull(client.getBusinessName())) return client.getBusinessName();
         else
             return String.format("%s %s %s", client.getNames(), client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
     }

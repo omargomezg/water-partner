@@ -1,5 +1,17 @@
 package com.hardnets.coop.service.impl;
 
+import com.hardnets.coop.exception.PeriodException;
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
+import com.hardnets.coop.model.dto.response.PeriodDto;
+import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.repository.PeriodRepository;
+import com.hardnets.coop.service.PeriodService;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -8,25 +20,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.hardnets.coop.exception.PeriodException;
-import com.hardnets.coop.model.constant.PeriodStatusEnum;
-import com.hardnets.coop.model.dto.response.PeriodDto;
-import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.repository.PeriodRepository;
-import com.hardnets.coop.service.PeriodService;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
-
 @RequiredArgsConstructor
 @Service
 public class PeriodServiceImpl implements PeriodService {
 
     private final PeriodRepository periodRepository;
     private final ModelMapper modelMapper;
+    private final ConversionService conversionService;
 
 
     @Override
@@ -56,8 +56,8 @@ public class PeriodServiceImpl implements PeriodService {
 
     @Override
     public PeriodDto update(PeriodDto periodDto) {
-        var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
-        PeriodEntity dbPeriod = periodRepository.findById(periodEntity.getId()).orElseThrow(PeriodException::new);
+        PeriodEntity dbPeriod = periodRepository.findById(periodDto.getId()).orElseThrow(PeriodException::new);
+        var periodEntity = conversionService.convert(periodDto, PeriodEntity.class);
         dbPeriod.setStatus(periodEntity.getStatus());
         dbPeriod.setEndDate(periodEntity.getEndDate());
         periodRepository.save(dbPeriod);
@@ -94,6 +94,7 @@ public class PeriodServiceImpl implements PeriodService {
         period.setEndDate(endDate);
         period.setStatus(PeriodStatusEnum.CLOSED);
         periodRepository.save(period);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(endDate);
         calendar.add(Calendar.DATE, 1);

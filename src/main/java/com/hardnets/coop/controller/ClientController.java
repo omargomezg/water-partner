@@ -3,6 +3,7 @@ package com.hardnets.coop.controller;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.dto.ClientDocuments;
 import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
@@ -41,12 +42,14 @@ public class ClientController {
     private final ModelMapper modelMapper;
 
     @GetMapping("/v1/client")
-    public ResponseEntity<Collection<ClientDto>> getUsers(@RequestParam(required = false) String rut,
-                                                          @RequestParam(required = false) String name) {
+    public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String rut,
+                                               @RequestParam(required = false) String name,
+                                               @RequestParam Integer pageIndex,
+                                               @RequestParam Integer pageSize) {
         FilterDto filter = new FilterDto();
         filter.setRut(rut);
         filter.setName(name);
-        return ResponseEntity.ok(clientService.getUsers(filter));
+        return ResponseEntity.ok(clientService.getUsers(filter, pageIndex, pageSize));
     }
 
     @GetMapping("/v1/client/{rut}")
