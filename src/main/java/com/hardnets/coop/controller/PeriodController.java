@@ -35,9 +35,6 @@ import javax.validation.Valid;
 public class PeriodController {
 
     private final PeriodService periodService;
-    private final SaleDocumentService<BillEntity> billService;
-    private final ConsumptionService consumptionService;
-    private final TariffService tariffService;
 
     /**
      * Listado de periodo
@@ -72,24 +69,6 @@ public class PeriodController {
     public ResponseEntity<PeriodDto> update(@PathVariable Long id, @RequestBody PeriodDto periodDto) {
         var result = periodService.update(periodDto);
         return ResponseEntity.ok(result);
-    }
-
-    /**
-     * Cierra un periodo y abre uno nuevo con fecha al dia siguiente
-     *
-     * @param period Periodo
-     * @return No devuelve nada
-     */
-    @PutMapping("/close")
-    public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period) {
-        if (!tariffService.hasTariffForAllDiameters()) {
-            throw new TariffNotFoundException("No existen tarifas para generar cierre");
-        }
-        PeriodEntity newPeriod = periodService.close(period.getId());
-        consumptionService.createAllRecords(newPeriod.getId());
-        billService.createAllInPeriod(period.getId());
-        log.info("Periodo cerrado {}", period);
-        return ResponseEntity.ok().build();
     }
 
 }
