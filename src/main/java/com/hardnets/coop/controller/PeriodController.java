@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 
+import javax.validation.Valid;
+
 @AllArgsConstructor
 @Log4j2
 @RestController
@@ -75,18 +77,18 @@ public class PeriodController {
     /**
      * Cierra un periodo y abre uno nuevo con fecha al dia siguiente
      *
-     * @param id Id del periodo actual
+     * @param period Periodo
      * @return No devuelve nada
      */
     @PutMapping("/close")
-    public ResponseEntity<String> closePeriod(@RequestParam Long id) {
+    public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period) {
         if (!tariffService.hasTariffForAllDiameters()) {
             throw new TariffNotFoundException("No existen tarifas para generar cierre");
         }
-        PeriodEntity newPeriod = periodService.close(id);
+        PeriodEntity newPeriod = periodService.close(period.getId());
         consumptionService.createAllRecords(newPeriod.getId());
-        billService.createAllInPeriod(id);
-        log.info("Periodo {} cerrado", id);
+        billService.createAllInPeriod(period.getId());
+        log.info("Periodo cerrado {}", period);
         return ResponseEntity.ok().build();
     }
 
