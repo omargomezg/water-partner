@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -144,6 +145,7 @@ public class ConsumptionService {
      * @param periodId
      */
     @Async
+    @Transactional
     public void createAllRecords(Long periodId) {
         periodRepository.findById(periodId).ifPresent(period -> {
             waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {

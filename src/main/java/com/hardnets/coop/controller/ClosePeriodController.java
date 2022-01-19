@@ -11,6 +11,7 @@ import com.hardnets.coop.service.TariffService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,12 +36,12 @@ public class ClosePeriodController {
      * @param period Periodo
      * @return No devuelve nada
      */
-    @PutMapping
-    public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period) {
+    @PutMapping("/{id}")
+    public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period, @PathVariable Long id) {
         if (!tariffService.hasTariffForAllDiameters()) {
             throw new TariffNotFoundException("No existen tarifas para generar cierre");
         }
-        PeriodEntity newPeriod = periodService.close(period.getId());
+        PeriodEntity newPeriod = periodService.close(id);
         consumptionService.createAllRecords(newPeriod.getId());
         billService.createAllInPeriod(period.getId());
         log.info("Periodo cerrado {}", period);

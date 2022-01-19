@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     }
 
     @Async
+    @Transactional
     @Override
     public void createAllInPeriod(long periodId) {
         PeriodEntity period = periodRepository.getById(periodId);
