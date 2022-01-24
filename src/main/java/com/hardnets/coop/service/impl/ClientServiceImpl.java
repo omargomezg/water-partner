@@ -86,16 +86,18 @@ public class ClientServiceImpl implements ClientService {
     @NotNull
     private ClientDto getClientDto(ClientEntity client) {
         var clientDto = conversionService.convert(client, ClientDto.class);
-        log.info("Consultado medidores para {}", client.getRut());
-        clientDto.setWaterMeters(
-                waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
-                        .map(this::getMeterDto).collect(Collectors.toList())
-        );
+        if (clientDto != null) {
+            log.info("Consultado medidores para {}", client.getRut());
+            clientDto.setWaterMeters(
+                    waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
+                            .map(this::getMeterDto).collect(Collectors.toList())
+            );
+        }
         return clientDto;
     }
 
     private WaterMeterDto getMeterDto(WaterMeterEntity meter) {
-        log.info("Agregando medidor {}", meter);
+        log.info("Agregando medidor {}", meter.toString());
         return conversionService.convert(meter, WaterMeterDto.class);
     }
 

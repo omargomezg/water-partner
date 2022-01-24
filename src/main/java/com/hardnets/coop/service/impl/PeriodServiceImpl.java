@@ -93,15 +93,19 @@ public class PeriodServiceImpl implements PeriodService {
         Date endDate = new Date();
         period.setEndDate(endDate);
         period.setStatus(PeriodStatusEnum.CLOSED);
-        periodRepository.save(period);
+        return enableNewPeriod(periodRepository.save(period));
+    }
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(endDate);
-        calendar.add(Calendar.DATE, 1);
-        return create(calendar.getTime());
-        //TODO crear boletas o detalle de boleas (servicio asíncrono)
-        //TODO crear pdf o boletas
-        //TODO enviar boletas a clientes
+    private PeriodEntity enableNewPeriod(PeriodEntity actualPeriod) {
+        Optional<PeriodEntity> newPeriod = periodRepository.findById(actualPeriod.getId() + 1);
+        if (newPeriod.isPresent()) {
+            return newPeriod.get();
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(actualPeriod.getEndDate());
+            calendar.add(Calendar.DATE, 1);
+            return create(calendar.getTime());
+        }
     }
 
     @Override

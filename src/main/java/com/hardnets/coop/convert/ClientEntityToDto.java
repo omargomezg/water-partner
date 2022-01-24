@@ -17,7 +17,6 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
                 .names(clientEntity.getNames())
                 .clientType(clientEntity.getClientType().label)
                 .birthDate(clientEntity.getBirthDate())
-                .waterMeters(new ArrayList<>())
                 .build();
     }
 
