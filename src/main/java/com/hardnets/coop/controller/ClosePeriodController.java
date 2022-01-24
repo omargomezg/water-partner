@@ -38,13 +38,14 @@ public class ClosePeriodController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period, @PathVariable Long id) {
-        if (!tariffService.hasTariffForAllDiameters()) {
+        log.info("Cerrando periodo");
+        /*if (!tariffService.hasTariffForAllDiameters()) {
             throw new TariffNotFoundException("No existen tarifas para generar cierre");
         }
         PeriodEntity newPeriod = periodService.close(id);
         consumptionService.createAllRecords(newPeriod.getId());
         billService.createAllInPeriod(period.getId());
-        log.info("Periodo cerrado {}", period);
+        log.info("Periodo cerrado {}", period);*/
         return ResponseEntity.ok().build();
     }
 }
