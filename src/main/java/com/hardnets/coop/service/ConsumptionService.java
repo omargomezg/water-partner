@@ -142,19 +142,18 @@ public class ConsumptionService {
      * Crea todos los registros de consumos para tener una base en futuras consultas
      * Se crea un registro por cada medidor relacionado a un cliente
      *
-     * @param periodId
+     * @param periodId el Id del periodo con el cual se crearán las lecturas con valor 0
      */
     @Async
     @Transactional
     public void createAllRecords(Long periodId) {
-        periodRepository.findById(periodId).ifPresent(period -> {
-            waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {
-                ConsumptionEntity consumptionEntity = new ConsumptionEntity();
-                consumptionEntity.setReading(0);
-                consumptionEntity.setPeriod(period);
-                consumptionEntity.setWaterMeter(waterMeter);
-                consumptionRepository.save(consumptionEntity);
-            });
-        });
+        periodRepository.findById(periodId).ifPresent(period ->
+                waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {
+                    ConsumptionEntity consumptionEntity = new ConsumptionEntity();
+                    consumptionEntity.setReading(0);
+                    consumptionEntity.setPeriod(period);
+                    consumptionEntity.setWaterMeter(waterMeter);
+                    consumptionRepository.save(consumptionEntity);
+                }));
     }
 }
