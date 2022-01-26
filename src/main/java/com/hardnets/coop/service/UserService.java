@@ -44,13 +44,13 @@ public class UserService implements UserDetailsService {
         user.setLastName(userDto.getLastName());
         user.setMiddleName(userDto.getMiddleName());
         user.setEnabled(userDto.getEnabled());
-        user.setRole(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        user.setProfile(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
         userRepository.save(user);
         return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     public Collection<UserDto> getUsers() {
-        Collection<UserEntity> dbUsers = (Collection<UserEntity>) userRepository.findAll();
+        Collection<UserEntity> dbUsers = userRepository.findAllByProfileNot(ProfileEnum.KAL_EL);
         return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
@@ -71,7 +71,7 @@ public class UserService implements UserDetailsService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        user.setProfile(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
         return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 

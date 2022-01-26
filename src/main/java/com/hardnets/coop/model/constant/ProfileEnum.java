@@ -7,7 +7,8 @@ public enum ProfileEnum {
     ADMINISTRATOR("Administrator"),
     FINANCE("Finance"),
     RAISING("Raising"),
-    BILLING("Billing");
+    BILLING("Billing"),
+    KAL_EL("Kal-El");
 
     public final String label;
 

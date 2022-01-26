@@ -28,8 +28,8 @@ public class UserDto {
         this.setNames(user.getNames());
         this.setMiddleName(user.getMiddleName());
         this.setLastName(user.getLastName());
-        if(Objects.nonNull(user.getRole())) {
-            this.setRole(user.getRole().label);
+        if(Objects.nonNull(user.getProfile())) {
+            this.setRole(user.getProfile().label);
         }
         this.setLastLogin(user.getLastLogin());
         setEnabled(user.getEnabled());

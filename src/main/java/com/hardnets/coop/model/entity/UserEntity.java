@@ -20,8 +20,9 @@ public class UserEntity extends PersonEntity implements UserDetails, Serializabl
     @Column
     private String password;
 
+    @Column(name = "role")
     @Enumerated
-    private ProfileEnum role;
+    private ProfileEnum profile;
 
     @Column
     private Date lastLogin;

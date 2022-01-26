@@ -45,13 +45,14 @@ public class ProjectConfig {
 
     private void checkAdministrator() {
         if (userRepository.findAll().isEmpty()) {
-            Optional<DropDownListEntity> role = dropDownListRepository.findByCode(ProfileEnum.ADMINISTRATOR.label);
+            Optional<DropDownListEntity> role = dropDownListRepository.findByCode(ProfileEnum.KAL_EL.label);
             if (role.isPresent()) {
                 UserEntity user = new UserEntity();
                 user.setEmail("omar.fdo.gomez@gmail.com");
                 user.setNames("Omar Fernando");
                 user.setMiddleName("Gómez");
                 user.setLastName("Gómez");
+                user.setProfile(ProfileEnum.KAL_EL);
                 user.setRut("140812269");
                 user.setPassword(passwordEncoder.encode("samsungMac"));
                 userRepository.save(user);
