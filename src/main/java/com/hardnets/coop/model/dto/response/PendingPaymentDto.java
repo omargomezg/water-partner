@@ -1,11 +1,15 @@
 package com.hardnets.coop.model.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class PendingPaymentDto {
     private String documentNumber;
-    private Long amount;
+    private String documentType;
+    @Builder.Default
+    private Long amount = 0L;
 }

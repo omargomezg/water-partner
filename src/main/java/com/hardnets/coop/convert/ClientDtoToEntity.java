@@ -4,7 +4,9 @@ import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     @Override
     public ClientEntity convert(ClientDto clientDto) {

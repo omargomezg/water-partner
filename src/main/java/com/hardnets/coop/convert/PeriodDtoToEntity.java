@@ -4,7 +4,9 @@ import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PeriodDtoToEntity implements Converter<PeriodDto, PeriodEntity> {
     @Override
     public PeriodEntity convert(PeriodDto periodDto) {

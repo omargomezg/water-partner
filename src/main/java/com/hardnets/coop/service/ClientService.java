@@ -30,13 +30,5 @@ public interface ClientService {
 
     ClientEntity create(ClientEntity client);
 
-    /**
-     * Obtiene los documentos pendientes de pago por parte de un cliente
-     *
-     * @param rut Rut del deudor
-     * @return Un listado de documentos por pagar
-     */
-    Collection<PendingPaymentDto> getPendingPayments(String rut);
-
     boolean exist(String rut);
 }

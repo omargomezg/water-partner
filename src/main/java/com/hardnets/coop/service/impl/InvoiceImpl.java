@@ -1,8 +1,12 @@
 package com.hardnets.coop.service.impl;
 
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.InvoiceEntity;
 import com.hardnets.coop.service.SaleDocumentService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Tareas relacionadas a la gestión de facturas
@@ -17,6 +21,11 @@ public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
 
     @Override
     public InvoiceEntity getByRut(String rut) {
+        return null;
+    }
+
+    @Override
+    public List<PendingPaymentDto> getAlByStatusAndRut(SalesDocumentStatusEnum status, String rut) {
         return null;
     }
 

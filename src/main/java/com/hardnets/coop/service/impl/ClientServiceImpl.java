@@ -7,11 +7,13 @@ import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -115,11 +117,6 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientEntity create(ClientEntity client) {
         return clientRepository.saveAndFlush(client);
-    }
-
-    @Override
-    public Collection<PendingPaymentDto> getPendingPayments(String rut) {
-        return null;
     }
 
     @Override

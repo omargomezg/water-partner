@@ -2,6 +2,7 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDocuments;
+import com.hardnets.coop.model.dto.response.PendingPaymentDto;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
@@ -13,12 +14,14 @@ import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Tareas relacionadas a la gestión de boletas de servicios
@@ -33,6 +36,7 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     private final BillRepository billRepository;
     private final BillDetailRepository billDetailRepository;
     private final BillDetailService billDetailService;
+    private final ConversionService conversionService;
 
     @Override
     public BillEntity getById(Long id) {
@@ -51,6 +55,13 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
                 )
         );
         return documents;
+    }
+
+    @Override
+    public List<PendingPaymentDto> getAlByStatusAndRut(SalesDocumentStatusEnum status, String rut) {
+        return billRepository.getAllByStatusAndClient_Rut(status, rut).stream().
+                map(this::convertToPendingPaymentDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -88,5 +99,18 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     @Override
     public void sendToClient(Long id) {
 
+    }
+
+    private PendingPaymentDto convertToPendingPaymentDto(BillEntity bill) {
+        var dto = conversionService.convert(bill, PendingPaymentDto.class);
+        if (dto != null) {
+            dto.setAmount(getTotalAmount(bill));
+        }
+        log.info(dto.toString());
+        return dto;
+    }
+
+    private Long getTotalAmount(BillEntity bill) {
+        return billDetailRepository.findAllByBill(bill).stream().mapToLong(BillDetailEntity::getTotalAmount).sum();
     }
 }

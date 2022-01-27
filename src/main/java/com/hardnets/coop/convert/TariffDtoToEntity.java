@@ -5,11 +5,12 @@ import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.dto.TariffDto;
 import com.hardnets.coop.model.entity.TariffEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
-@Service
+@Component
 public class TariffDtoToEntity implements Converter<TariffDto, TariffEntity> {
     @Override
     public TariffEntity convert(TariffDto tariffDto) {

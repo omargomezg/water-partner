@@ -3,11 +3,12 @@ package com.hardnets.coop.convert;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-@Service
+@Component
 public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
     @Override
     public ClientDto convert(ClientEntity clientEntity) {

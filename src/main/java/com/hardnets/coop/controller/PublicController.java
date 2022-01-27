@@ -1,19 +1,14 @@
 package com.hardnets.coop.controller;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.Date;
-
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hardnets.coop.exception.HandleException;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.dto.request.UserSignupRequest;
 import com.hardnets.coop.model.dto.response.LoginDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
@@ -22,8 +17,11 @@ import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.FlowService;
+import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.UserService;
-
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +38,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import javax.validation.Valid;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Todos los métodos públicos que no requieren autentificación inicialmente
@@ -59,6 +62,7 @@ public class PublicController {
     private final UserService userService;
     private final ClientService clientService;
     private final FlowService flowService;
+    private final SaleDocumentService<BillEntity> billService;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
@@ -84,8 +88,9 @@ public class PublicController {
     }
 
     @GetMapping("/pending-payment/{rut}")
-    public ResponseEntity<Collection<PendingPaymentDto>> getUserPendingPayment(@PathVariable String rut) {
-        return ResponseEntity.ok(clientService.getPendingPayments(rut));
+    public ResponseEntity<List<PendingPaymentDto>> getUserPendingPayment(@PathVariable String rut) {
+        var pendingDocuments = billService.getAlByStatusAndRut(SalesDocumentStatusEnum.OUTSTANDING, rut);
+        return ResponseEntity.ok(pendingDocuments);
     }
 
     @PostMapping("/auth/create")
