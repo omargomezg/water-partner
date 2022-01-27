@@ -2,15 +2,16 @@ package com.hardnets.coop.repository;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.entity.BillEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface BillRepository extends JpaRepository<BillEntity, Long> {
-    List<BillEntity> getAllByClient_Rut(String rut);
+public interface BillRepository extends PagingAndSortingRepository<BillEntity, Long> {
+    Page<BillEntity> getAllByClient_Rut(String rut, Pageable pageable);
 
-    List<BillEntity> getAllByStatusAndClient_Rut(SalesDocumentStatusEnum status, String rut);
+    Page<BillEntity> getAllByStatusAndClient_RutOrderByDateOfEmissionAsc(SalesDocumentStatusEnum status, String rut,
+                                                                         Pageable pageable);
 
 }

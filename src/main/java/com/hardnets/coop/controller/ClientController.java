@@ -1,16 +1,17 @@
 package com.hardnets.coop.controller;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.dto.ClientDocuments;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.WaterMeterService;
-import com.hardnets.coop.service.impl.BillImpl;
+import com.hardnets.coop.service.impl.BillServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 @Log4j2
 @Api("All client operations")
@@ -38,7 +39,7 @@ public class ClientController {
 
     private final ClientService clientService;
     private final WaterMeterService waterMeterService;
-    private final BillImpl bill;
+    private final BillServiceImpl bill;
     private final ModelMapper modelMapper;
 
     @GetMapping("/v1/client")
@@ -81,8 +82,12 @@ public class ClientController {
     }
 
     @GetMapping("/v1/client/document")
-    public ResponseEntity<List<ClientDocuments>> getRelatedDocuments(@RequestParam String rut) {
-        List<ClientDocuments> documents = bill.getByRut(rut);
+    public ResponseEntity<IssuedBillsDto> getRelatedDocuments(@RequestParam String rut,
+                                                              @RequestParam(defaultValue = "1") Integer status,
+                                                              @RequestParam Integer pageIndex,
+                                                              @RequestParam Integer pageSize) {
+        SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
+        var documents = bill.getAllByStatusAndRut(statusEnum, rut, pageIndex, pageSize);
         return ResponseEntity.ok(documents);
     }
 

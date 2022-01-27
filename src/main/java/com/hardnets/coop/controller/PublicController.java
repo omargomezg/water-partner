@@ -5,6 +5,7 @@ import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.dto.request.UserSignupRequest;
 import com.hardnets.coop.model.dto.response.LoginDto;
 import com.hardnets.coop.model.dto.response.PendingPaymentDto;
@@ -21,7 +22,6 @@ import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,16 +35,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Todos los métodos públicos que no requieren autentificación inicialmente
@@ -88,13 +86,17 @@ public class PublicController {
     }
 
     @GetMapping("/pending-payment/{rut}")
-    public ResponseEntity<List<PendingPaymentDto>> getUserPendingPayment(@PathVariable String rut) {
-        var pendingDocuments = billService.getAlByStatusAndRut(SalesDocumentStatusEnum.OUTSTANDING, rut);
+    public ResponseEntity<IssuedBillsDto> getUserPendingPayment(@PathVariable String rut,
+                                                                @RequestParam(defaultValue = "1") Integer status,
+                                                                @RequestParam Integer pageIndex,
+                                                                @RequestParam Integer pageSize) {
+        SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
+        var pendingDocuments = billService.getAllByStatusAndRut(statusEnum, rut, pageIndex, pageSize);
         return ResponseEntity.ok(pendingDocuments);
     }
 
     @PostMapping("/auth/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) throws Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) {
         if (userService.getUsers().size() > 0) {
             throw new HandleException("Cannot create user without authentication");
         }

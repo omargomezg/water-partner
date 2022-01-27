@@ -2,7 +2,8 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDocuments;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
@@ -15,11 +16,13 @@ import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +32,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Log4j2
 @Service
-public class BillImpl implements SaleDocumentService<BillEntity> {
+public class BillServiceImpl implements SaleDocumentService<BillEntity> {
 
     private final PeriodRepository periodRepository;
     private final ConsumptionRepository consumptionRepository;
@@ -44,24 +47,31 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     }
 
     @Override
-    public List<ClientDocuments> getByRut(String rut) {
-        var bills = billRepository.getAllByClient_Rut(rut);
-        var documents = new ArrayList<ClientDocuments>();
-        bills.forEach(bill -> documents.add(ClientDocuments.builder()
-                        .id(bill.getId().intValue())
-                        .emmit(bill.getDateOfEmission())
-                        .amount(bill.getDetail().stream().mapToInt(item -> item.getTotalAmount()).sum())
-                        .status(bill.getStatus().name()).build()
-                )
+    public IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        IssuedBillsDto issuedBills = new IssuedBillsDto();
+        var bills = billRepository.getAllByClient_Rut(rut, pageable);
+        issuedBills.setTotalHits(bills.getTotalElements());
+        issuedBills.setContents(
+                bills.getContent().stream()
+                        .map(this::convertToIssuedBillDto)
+                        .collect(Collectors.toList())
         );
-        return documents;
+        return issuedBills;
     }
 
     @Override
-    public List<PendingPaymentDto> getAlByStatusAndRut(SalesDocumentStatusEnum status, String rut) {
-        return billRepository.getAllByStatusAndClient_Rut(status, rut).stream().
-                map(this::convertToPendingPaymentDto)
-                .collect(Collectors.toList());
+    public IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        IssuedBillsDto issuedBillsDto = new IssuedBillsDto();
+        var bills = billRepository.getAllByStatusAndClient_RutOrderByDateOfEmissionAsc(status, rut, pageable);
+        issuedBillsDto.setTotalHits(bills.getTotalElements());
+        issuedBillsDto.setContents(
+                bills.getContent().stream()
+                        .map(this::convertToIssuedBillDto)
+                        .collect(Collectors.toList())
+        );
+        return issuedBillsDto;
     }
 
     @Override
@@ -101,12 +111,11 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
 
     }
 
-    private PendingPaymentDto convertToPendingPaymentDto(BillEntity bill) {
-        var dto = conversionService.convert(bill, PendingPaymentDto.class);
+    private IssuedBillDto convertToIssuedBillDto(BillEntity bill) {
+        var dto = conversionService.convert(bill, IssuedBillDto.class);
         if (dto != null) {
             dto.setAmount(getTotalAmount(bill));
         }
-        log.info(dto.toString());
         return dto;
     }
 
