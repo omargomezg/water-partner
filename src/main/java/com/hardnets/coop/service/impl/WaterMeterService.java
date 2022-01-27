@@ -1,4 +1,4 @@
-package com.hardnets.coop.service;
+package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;

@@ -1,18 +1,20 @@
 package com.hardnets.coop.convert;
 
 import com.hardnets.coop.model.constant.SalesDocumentTypeEnum;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillDto;
 import com.hardnets.coop.model.entity.BillEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BillEntityToPendingDto implements Converter<BillEntity, PendingPaymentDto> {
+public class BillEntityToIssuedBillDto implements Converter<BillEntity, IssuedBillDto> {
 
     @Override
-    public PendingPaymentDto convert(BillEntity billEntity) {
-        return PendingPaymentDto.builder()
+    public IssuedBillDto convert(BillEntity billEntity) {
+        return IssuedBillDto.builder()
+                .dateOfEmission(billEntity.getDateOfEmission())
                 .documentNumber(billEntity.getDocumentNumber())
+                .status(billEntity.getStatus().name())
                 .documentType(SalesDocumentTypeEnum.BILL.name())
                 .build();
     }

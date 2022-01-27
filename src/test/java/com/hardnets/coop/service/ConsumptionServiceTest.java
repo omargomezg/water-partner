@@ -9,6 +9,7 @@ import com.hardnets.coop.repository.ConsumptionRepositoryCrud;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.impl.BillDetailService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

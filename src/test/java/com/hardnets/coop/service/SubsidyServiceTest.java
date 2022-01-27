@@ -9,16 +9,13 @@ import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.repository.DecreeRepository;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
+import com.hardnets.coop.service.impl.SubsidyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 

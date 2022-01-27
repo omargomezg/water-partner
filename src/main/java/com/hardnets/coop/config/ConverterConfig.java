@@ -2,6 +2,8 @@ package com.hardnets.coop.config;
 
 import com.hardnets.coop.convert.ClientDtoToEntity;
 import com.hardnets.coop.convert.ClientEntityToDto;
+import com.hardnets.coop.convert.ItemDtoToItemEntity;
+import com.hardnets.coop.convert.ItemEntityToItemDto;
 import com.hardnets.coop.convert.PeriodDtoToEntity;
 import com.hardnets.coop.convert.TariffDtoToEntity;
 import com.hardnets.coop.convert.TariffEntityToDto;
@@ -20,5 +22,7 @@ public class ConverterConfig implements FormatterRegistrar {
         formatterRegistry.addConverter(new ClientDtoToEntity());
         formatterRegistry.addConverter(new PeriodDtoToEntity());
         formatterRegistry.addConverter(new WaterMeterEntityToDto());
+        formatterRegistry.addConverter(new ItemEntityToItemDto());
+        formatterRegistry.addConverter(new ItemDtoToItemEntity());
     }
 }

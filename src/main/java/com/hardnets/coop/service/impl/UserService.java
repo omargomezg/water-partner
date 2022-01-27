@@ -1,4 +1,4 @@
-package com.hardnets.coop.service;
+package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.UserException;
@@ -8,6 +8,7 @@ import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.UserRepository;
+import com.hardnets.coop.service.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;

@@ -1,18 +1,9 @@
 package com.hardnets.coop.controller;
 
-import java.util.Optional;
-import java.util.Set;
-
-import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
-import com.hardnets.coop.model.entity.BillEntity;
-import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
-import com.hardnets.coop.service.SaleDocumentService;
-import com.hardnets.coop.service.TariffService;
-
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
-
-import javax.validation.Valid;
+import java.util.Optional;
+import java.util.Set;
 
 @AllArgsConstructor
 @Log4j2

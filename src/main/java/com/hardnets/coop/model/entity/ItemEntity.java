@@ -1,8 +1,11 @@
 package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.CalculationTypeEnum;
+import com.hardnets.coop.model.constant.ClientTypeEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +18,10 @@ import javax.persistence.Table;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@AllArgsConstructor
 @Entity
 @Table(name = "item")
+@NoArgsConstructor
 public class ItemEntity extends BaseEntity {
 
     /**
@@ -56,7 +61,6 @@ public class ItemEntity extends BaseEntity {
     /**
      * Tipo de usuario al que aplica el item
      */
-    @ManyToOne
-    @JoinColumn(name = "client_type_id", referencedColumnName = "id")
-    private DropDownListEntity assignedTo;
+    @Column(name = "client_type")
+    private ClientTypeEnum assignedTo;
 }

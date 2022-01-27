@@ -2,7 +2,7 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.dto.request.UserSubsidyRequest;
 import com.hardnets.coop.model.dto.response.SubsidyDto;
-import com.hardnets.coop.service.SubsidyService;
+import com.hardnets.coop.service.impl.SubsidyService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

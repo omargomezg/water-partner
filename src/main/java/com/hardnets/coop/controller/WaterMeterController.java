@@ -8,7 +8,7 @@ import javax.validation.Valid;
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.hardnets.coop.service.WaterMeterService;
+import com.hardnets.coop.service.impl.WaterMeterService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

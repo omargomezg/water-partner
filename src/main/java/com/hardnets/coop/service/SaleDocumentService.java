@@ -1,17 +1,15 @@
 package com.hardnets.coop.service;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
-
-import java.util.List;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 
 public interface SaleDocumentService<T> {
 
     T getById(Long id);
 
-    Object getByRut(String rut);
+    IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize);
 
-    List<PendingPaymentDto> getAlByStatusAndRut(SalesDocumentStatusEnum status, String rut);
+    IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize);
 
     void createByClient(String rut);
 

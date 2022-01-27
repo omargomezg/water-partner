@@ -4,9 +4,6 @@ import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Component
 public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
@@ -25,7 +22,7 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
         if (client.getBusinessName().isEmpty())
             return String.format("%s %s %s",
                     client.getNames(),
-                    client.getMiddleName() != null ? client.getMiddleName(): "", client.getLastName());
+                    client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
         else
             return client.getBusinessName();
     }

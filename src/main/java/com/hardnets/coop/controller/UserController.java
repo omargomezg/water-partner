@@ -8,7 +8,7 @@ import javax.validation.Valid;
 
 import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
-import com.hardnets.coop.service.UserService;
+import com.hardnets.coop.service.impl.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

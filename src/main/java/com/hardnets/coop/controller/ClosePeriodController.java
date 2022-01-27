@@ -4,10 +4,10 @@ import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.TariffService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @Log4j2
 @RestController
-@RequestMapping("/v1/closing-period")
+@RequestMapping("/closing-period")
 public class ClosePeriodController {
 
     private final TariffService tariffService;

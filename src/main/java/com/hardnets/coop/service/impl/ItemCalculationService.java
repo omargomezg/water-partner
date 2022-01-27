@@ -1,4 +1,4 @@
-package com.hardnets.coop.service;
+package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.SubsidyEntity;

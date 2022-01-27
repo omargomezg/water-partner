@@ -1,18 +1,16 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.entity.InvoiceEntity;
 import com.hardnets.coop.service.SaleDocumentService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Tareas relacionadas a la gestión de facturas
  */
 @Service
-public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
+public class InvoiceServiceImpl implements SaleDocumentService<InvoiceEntity> {
 
     @Override
     public InvoiceEntity getById(Long id) {
@@ -20,12 +18,12 @@ public class InvoiceImpl implements SaleDocumentService<InvoiceEntity> {
     }
 
     @Override
-    public InvoiceEntity getByRut(String rut) {
+    public IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize) {
         return null;
     }
 
     @Override
-    public List<PendingPaymentDto> getAlByStatusAndRut(SalesDocumentStatusEnum status, String rut) {
+    public IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize) {
         return null;
     }
 
