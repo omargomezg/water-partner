@@ -44,7 +44,7 @@ public class BillImpl implements SaleDocumentService<BillEntity> {
     @Async
     @Override
     public void createAllInPeriod(long periodId) {
-        PeriodEntity period = periodRepository.getById(periodId);
+        PeriodEntity period = periodRepository.getById(periodId).orElseThrow();
         List<ConsumptionEntity> consumptions = consumptionRepository.findAllByPeriod(period);
         for (ConsumptionEntity consumption : consumptions) {
             if (consumption.getWaterMeter().getClient() != null) {

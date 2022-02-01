@@ -18,6 +18,8 @@ import java.util.Set;
 @Repository
 public interface PeriodRepository extends PagingAndSortingRepository<PeriodEntity, Long> {
 
+    Optional<PeriodEntity> getById(Long id);
+
     List<PeriodEntity> findAll();
 
     Page<PeriodEntity> findAllByPage(Pageable pageable);
