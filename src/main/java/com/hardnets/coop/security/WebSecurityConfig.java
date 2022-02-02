@@ -62,12 +62,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http = http
                 .exceptionHandling()
                 .authenticationEntryPoint(
-                        (request, response, ex) -> {
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    ex.getMessage()
-                            );
-                        }
+                        (request, response, ex) -> response.sendError(
+                                HttpServletResponse.SC_UNAUTHORIZED,
+                                ex.getMessage()
+                        )
                 )
                 .and();
 
@@ -94,10 +92,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200");
-        config.addAllowedOrigin("https://front-aguita.herokuapp.com");
-        config.addAllowedOrigin("https://hardnets-agua-nod.herokuapp.com");
-        config.addAllowedOrigin("https://sandbox.flow.cl");
+        config.addAllowedOrigin("${cors.allowed-origin.front}");
+        config.addAllowedOrigin("${cors.allowed-origin.flow}");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
