@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +34,7 @@ import java.util.Collection;
 @Log4j2
 @Api("All client operations")
 @AllArgsConstructor
+@RequestMapping("/v1/client")
 @RestController
 public class ClientController {
 
@@ -41,7 +43,7 @@ public class ClientController {
     private final BillServiceImpl bill;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/v1/client")
+    @GetMapping
     public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String rut,
                                                @RequestParam(required = false) String name,
                                                @RequestParam Integer pageIndex,
@@ -52,35 +54,35 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getUsers(filter, pageIndex, pageSize));
     }
 
-    @GetMapping("/v1/client/{rut}")
+    @GetMapping("/{rut}")
     public ResponseEntity<ClientDto> getUsers(@PathVariable String rut) {
         ClientEntity client = clientService.getByRut(rut).orElseThrow(ClientNotFoundException::new);
         return ResponseEntity.ok(convertToDto(client));
     }
 
-    @PostMapping("/v1/client")
+    @PostMapping
     public ResponseEntity<ClientDto> createUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.create(client), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Update an specific user", notes = "The primary key is rut, for example: '12345678-9'")
-    @PutMapping("/v1/client")
+    @PutMapping
     public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);
     }
 
-    @PostMapping("/v1/client/water-meter/{rut}")
+    @PostMapping("/water-meter/{rut}")
     public ResponseEntity<Boolean> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
                                                  @PathVariable String rut) {
         return new ResponseEntity<>(waterMeterService.relateToClient(waterMeterDto, rut), HttpStatus.CREATED);
     }
 
-    @GetMapping("/v1/client/water-meter/{rut}")
+    @GetMapping("/water-meter/{rut}")
     public ResponseEntity<Collection<RelatedWaterMetersDto>> getWaterMeters(@PathVariable String rut) {
         return ResponseEntity.ok(waterMeterService.getByUser(rut));
     }
 
-    @GetMapping("/v1/client/document")
+    @GetMapping("/document")
     public ResponseEntity<IssuedBillsDto> getRelatedDocuments(@RequestParam String rut,
                                                               @RequestParam(defaultValue = "1") Integer status,
                                                               @RequestParam Integer pageIndex,

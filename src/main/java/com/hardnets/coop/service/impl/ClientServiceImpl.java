@@ -90,10 +90,13 @@ public class ClientServiceImpl implements ClientService {
         var clientDto = conversionService.convert(client, ClientDto.class);
         if (clientDto != null) {
             log.info("Consultado medidores para {}", client.getRut());
-            clientDto.setWaterMeters(
-                    waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
-                            .map(this::getMeterDto).collect(Collectors.toList())
-            );
+            var meters = waterMeterRepository.findAllIdsByClient(clientDto.getRut());
+            if (!meters.isEmpty()) {
+                clientDto.setWaterMeters(
+                        waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
+                                .map(this::getMeterDto).collect(Collectors.toList())
+                );
+            }
         }
         return clientDto;
     }
