@@ -9,8 +9,8 @@ import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
-import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,17 +40,18 @@ public class ConsumptionController {
 
     /**
      * Obtiene un listado de medidores mas su ultima lectura
+     *
      * @param waterMeterNumber
      * @param rut
-     * @param consumptionPending
+     * @param status
      * @return
      */
     @GetMapping("/v1/consumption/related-water-meters")
-    public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
-                                                                                 @RequestParam(required = false) String rut,
-                                                                                 @RequestParam(required = false) String sector,
-                                                                                 @RequestParam(name = "pending") boolean consumptionPending) {
-        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, consumptionPending));
+    public ResponseEntity<List<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
+                                                                           @RequestParam(required = false) String rut,
+                                                                           @RequestParam(required = false) String sector,
+                                                                           @RequestParam(name = "status") String status) {
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, status));
     }
 
     /**

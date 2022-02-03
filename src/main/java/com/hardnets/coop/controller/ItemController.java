@@ -29,12 +29,12 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> create(@RequestBody ItemDto itemDto) {
-        return new ResponseEntity<ItemDto>(itemService.create(itemDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(itemService.create(itemDto), HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<String> update() {
-        return null;
+    @PutMapping("/{id}")
+    public ResponseEntity<ItemDto> update(@RequestBody ItemDto itemDto, @RequestParam Long id) {
+        return ResponseEntity.ok(itemService.update(itemDto, id));
     }
 
     @DeleteMapping

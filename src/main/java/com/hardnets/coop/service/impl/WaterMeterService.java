@@ -1,8 +1,8 @@
 package com.hardnets.coop.service.impl;
 
+import com.hardnets.coop.exception.ConflictException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
-import com.hardnets.coop.exception.ConflictException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
@@ -11,8 +11,17 @@ import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
-import com.hardnets.coop.model.entity.*;
-import com.hardnets.coop.repository.*;
+import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.model.entity.SubsidyEntity;
+import com.hardnets.coop.model.entity.TariffEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
+import com.hardnets.coop.repository.ClientRepository;
+import com.hardnets.coop.repository.PeriodRepository;
+import com.hardnets.coop.repository.SubsidyRepository;
+import com.hardnets.coop.repository.TariffRepository;
+import com.hardnets.coop.repository.WaterMeterPageableRepository;
+import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -22,7 +31,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -153,7 +168,7 @@ public class WaterMeterService {
         return relatedMeters.stream().sorted(Comparator.comparing(RelatedWaterMetersDto::getDischargeDate)).collect(Collectors.toList());
     }
 
-    public boolean relateToClient(WaterMeterDto waterMeterDto, String rut) {
+    public void relateToClient(WaterMeterDto waterMeterDto, String rut) {
         Integer serial = waterMeterDto.getSerial();
         ClientEntity client = clientRepository.findByRut(rut)
                 .orElseThrow(UserNotFoundException::new);
@@ -172,19 +187,29 @@ public class WaterMeterService {
         wEntity.setDescription(waterMeterDto.getComment());
         wEntity.setClient(client);
         waterMeterRepository.save(wEntity);
-        return true;
     }
 
-    public Collection<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector, boolean pendingConsumption) {
+    public List<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector,
+                                                                    String status) {
         List<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
-        return waterMeterRepository.findAllByCustomFilters(
+        var consumptions = waterMeterRepository.findAllByCustomFilters(
                 number == null ? null : Integer.parseInt(number),
                 rut,
                 sector,
-                periodEntity.stream().findFirst().get().getId(),
-                pendingConsumption
+                periodEntity.stream().findFirst().get().getId()
         );
+        switch (status.toLowerCase()) {
+            case "pending":
+                return consumptions.stream().filter(item -> item.getReading() == 0)
+                        .collect(Collectors.toList());
+            case "no-pending":
+                return consumptions.stream().filter(item -> item.getReading() > 0)
+                        .collect(Collectors.toList());
+            default:
+                return consumptions;
+        }
     }
+
     private boolean checkIfExistsSerial(Integer serial) {
         return waterMeterRepository.findBySerial(serial).isPresent();
     }

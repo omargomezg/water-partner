@@ -2,6 +2,8 @@ package com.hardnets.coop.config;
 
 import com.hardnets.coop.convert.ClientDtoToEntity;
 import com.hardnets.coop.convert.ClientEntityToDto;
+import com.hardnets.coop.convert.CalculationTypeEnumToDto;
+import com.hardnets.coop.convert.ClientTypeEnumToDto;
 import com.hardnets.coop.convert.ItemDtoToItemEntity;
 import com.hardnets.coop.convert.ItemEntityToItemDto;
 import com.hardnets.coop.convert.PeriodDtoToEntity;
@@ -24,5 +26,7 @@ public class ConverterConfig implements FormatterRegistrar {
         formatterRegistry.addConverter(new WaterMeterEntityToDto());
         formatterRegistry.addConverter(new ItemEntityToItemDto());
         formatterRegistry.addConverter(new ItemDtoToItemEntity());
+        formatterRegistry.addConverter(new CalculationTypeEnumToDto());
+        formatterRegistry.addConverter(new ClientTypeEnumToDto());
     }
 }

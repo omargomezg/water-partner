@@ -10,8 +10,8 @@ import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.service.impl.BillServiceImpl;
+import com.hardnets.coop.service.impl.WaterMeterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -72,9 +72,10 @@ public class ClientController {
     }
 
     @PostMapping("/water-meter/{rut}")
-    public ResponseEntity<Boolean> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
-                                                 @PathVariable String rut) {
-        return new ResponseEntity<>(waterMeterService.relateToClient(waterMeterDto, rut), HttpStatus.CREATED);
+    public ResponseEntity<Void> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
+                                              @PathVariable String rut) {
+        waterMeterService.relateToClient(waterMeterDto, rut);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping("/water-meter/{rut}")

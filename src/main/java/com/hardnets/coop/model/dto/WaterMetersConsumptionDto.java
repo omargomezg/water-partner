@@ -20,12 +20,23 @@ public class WaterMetersConsumptionDto {
     private Integer reading;
 
     public WaterMetersConsumptionDto(Long id, Integer serial, DiameterEnum diameter, Date dischargeDate, String sector,
-                                     Integer reading) {
+                                     Integer reading, String firstName, String middleName, String lastName,
+                                     String businessName) {
         this.id = id;
         this.serial = serial;
         this.diameter = diameter.name();
         this.dischargeDate = dischargeDate;
         this.sector = sector;
         this.reading = reading;
+        this.client = getFullName(firstName, middleName, lastName, businessName);
+    }
+
+    private String getFullName(String firstName, String middleName, String lastName, String businessName) {
+        if (businessName.isEmpty())
+            return String.format("%s %s %s",
+                    firstName,
+                    middleName != null ? middleName : "", lastName);
+        else
+            return businessName;
     }
 }

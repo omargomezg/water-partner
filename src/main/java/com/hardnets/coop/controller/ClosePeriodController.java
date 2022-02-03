@@ -40,6 +40,7 @@ public class ClosePeriodController {
     public ResponseEntity<String> closePeriod(@RequestBody @Valid PeriodDto period, @PathVariable Long id) {
         log.info("Cerrando periodo");
         if (!tariffService.hasTariffForAllDiameters()) {
+            log.error("No existen tarifas para generar cierre");
             throw new TariffNotFoundException("No existen tarifas para generar cierre");
         }
         PeriodEntity newPeriod = periodService.close(id);

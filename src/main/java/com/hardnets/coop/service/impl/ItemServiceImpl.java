@@ -1,6 +1,8 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ItemException;
+import com.hardnets.coop.model.constant.CalculationTypeEnum;
+import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.items.ItemDto;
 import com.hardnets.coop.model.dto.items.ItemsDto;
 import com.hardnets.coop.model.entity.ItemEntity;
@@ -52,12 +54,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update() {
-        return null;
+    public ItemDto update(ItemDto itemDto, Long id) {
+        var entity = itemRepository.findById(id).orElseThrow();
+        entity.setExcerpt(itemDto.getExcerpt());
+        entity.setDescription(itemDto.getDescription());
+        entity.setAmount(itemDto.getAmount());
+        entity.setAssignedTo(ClientTypeEnum.valueOf(itemDto.getTypeOfClient()));
+        entity.setIsActive(itemDto.getIsActive());
+        entity.setIsFixedAmount(itemDto.getIsFixedAmount());
+        entity.setMethodOfCalculating(CalculationTypeEnum.valueOf(itemDto.getMethodOfCalculating()));
+        return conversionService.convert(itemRepository.save(entity), ItemDto.class);
     }
 
     @Override
-    public ItemDto delete() {
+    public ItemDto delete(Long id) {
         return null;
     }
 }

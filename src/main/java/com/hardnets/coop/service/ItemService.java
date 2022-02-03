@@ -8,7 +8,7 @@ public interface ItemService {
 
     ItemDto create(ItemDto itemDto);
 
-    ItemDto update();
+    ItemDto update(ItemDto itemDto, Long id);
 
-    ItemDto delete();
+    ItemDto delete(Long id);
 }

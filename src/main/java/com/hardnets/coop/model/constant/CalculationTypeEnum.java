@@ -7,13 +7,20 @@ public enum CalculationTypeEnum {
     /**
      * Expresa el calculo de un consumo normal de agua
      */
-    CONSUMPTION,
+    CONSUMPTION("Consumo"),
     /**
      * Cuando un usuario tiene relacionado un subsidio
      */
-    SUBSIDY,
+    SUBSIDY("Subsidio"),
     /**
      * Calculo por cobro de excedente (sobre consumo)
      */
-    EXCESS;
+    EXCESS("Sobreconsumo");
+
+    public final String spanish;
+
+    CalculationTypeEnum(String spanish) {
+        this.spanish = spanish;
+    }
+
 }
