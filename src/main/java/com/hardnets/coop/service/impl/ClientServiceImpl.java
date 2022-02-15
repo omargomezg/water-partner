@@ -41,7 +41,7 @@ public class ClientServiceImpl implements ClientService {
     private final ConversionService conversionService;
 
     public ClientEntity update(ClientEntity clientEntity) {
-        return clientRepository.saveAndFlush(clientEntity);
+        return clientRepository.save(clientEntity);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientEntity create(ClientEntity client) {
-        return clientRepository.saveAndFlush(client);
+        return clientRepository.save(client);
     }
 
     @Override

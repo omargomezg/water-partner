@@ -52,6 +52,7 @@ public class ClientEntity extends PersonEntity {
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<BillEntity> bills = new HashSet<>();
 
     @OneToMany(
