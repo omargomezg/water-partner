@@ -2,7 +2,7 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
-import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
@@ -47,11 +47,14 @@ public class ConsumptionController {
      * @return
      */
     @GetMapping("/v1/consumption/related-water-meters")
-    public ResponseEntity<List<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
-                                                                           @RequestParam(required = false) String rut,
-                                                                           @RequestParam(required = false) String sector,
-                                                                           @RequestParam(name = "status") String status) {
-        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, status));
+    public ResponseEntity<RecordsDto> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
+                                                      @RequestParam(required = false) String rut,
+                                                      @RequestParam(required = false) String sector,
+                                                      @RequestParam(name = "status") String status,
+                                                      @RequestParam(defaultValue = "0") Integer pageIndex,
+                                                      @RequestParam(defaultValue = "25") Integer pageSize) {
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, status,
+                pageIndex, pageSize));
     }
 
     /**

@@ -51,7 +51,7 @@ public class ClientController {
         FilterDto filter = new FilterDto();
         filter.setRut(rut);
         filter.setName(name);
-        return ResponseEntity.ok(clientService.getUsers(filter, pageIndex, pageSize));
+        return ResponseEntity.ok(clientService.getFilteredUsers(filter, pageIndex, pageSize));
     }
 
     @GetMapping("/{rut}")

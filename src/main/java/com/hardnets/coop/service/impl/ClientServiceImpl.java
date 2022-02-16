@@ -6,14 +6,11 @@ import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
-import com.hardnets.coop.model.entity.BillEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,7 +72,12 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientsDto getUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
+    public List<ClientEntity> findAll() {
+        return (List<ClientEntity>) clientRepository.findAll();
+    }
+
+    @Override
+    public ClientsDto getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
         var name = filter.getName() != null ? filter.getName().toLowerCase() : null;
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         var clients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), name, pageable);

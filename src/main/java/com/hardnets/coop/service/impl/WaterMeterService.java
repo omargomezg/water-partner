@@ -9,7 +9,8 @@ import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.pageable.record.RecordDto;
+import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
@@ -189,29 +190,42 @@ public class WaterMeterService {
         waterMeterRepository.save(wEntity);
     }
 
-    public List<WaterMetersConsumptionDto> findAllForSetConsumption(String number, String rut, String sector,
-                                                                    String status) {
+    public RecordsDto findAllForSetConsumption(String number,
+                                               String rut,
+                                               String sector,
+                                               String status,
+                                               Integer pageIndex,
+                                               Integer pageSize) {
+        RecordsDto recordsDto = new RecordsDto();
         List<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
-        var consumptions = waterMeterRepository.findAllByCustomFilters(
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        var consumptions = waterMeterPageableRepository.findAllByCustomFilters(
                 number == null ? null : Integer.parseInt(number),
                 rut,
                 sector,
-                periodEntity.stream().findFirst().get().getId()
+                periodEntity.stream().findFirst().get().getId(),
+                pageable
         );
-        switch (status.toLowerCase()) {
-            case "pending":
-                return consumptions.stream().filter(item -> item.getReading() == 0)
-                        .collect(Collectors.toList());
-            case "no-pending":
-                return consumptions.stream().filter(item -> item.getReading() > 0)
-                        .collect(Collectors.toList());
-            default:
-                return consumptions;
-        }
+        recordsDto.setRecords(getFilteredByStatus(status, consumptions.getContent()));
+        recordsDto.setTotalHits(consumptions.getTotalElements());
+        return recordsDto;
     }
 
     private boolean checkIfExistsSerial(Integer serial) {
         return waterMeterRepository.findBySerial(serial).isPresent();
+    }
+
+    private List<RecordDto> getFilteredByStatus(String status, List<RecordDto> readings) {
+        switch (status.toLowerCase()) {
+            case "pending":
+                return readings.stream().filter(item -> item.getReading() == 0)
+                        .collect(Collectors.toList());
+            case "no-pending":
+                return readings.stream().filter(item -> item.getReading() > 0)
+                        .collect(Collectors.toList());
+            default:
+                return readings;
+        }
     }
 
 }

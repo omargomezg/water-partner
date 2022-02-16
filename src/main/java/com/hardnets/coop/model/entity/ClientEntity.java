@@ -34,13 +34,14 @@ public class ClientEntity extends PersonEntity {
     @Column
     private String telephone;
 
-    @Column
     private String businessName = "";
 
     @Column
     private String businessActivity = "";
 
     private String profession;
+
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
     private ClientTypeEnum clientType;
@@ -71,15 +72,5 @@ public class ClientEntity extends PersonEntity {
         setBusinessActivity(client.getBusinessActivity());
         setBusinessName(client.getBusinessName());
         setProfession(client.getProfession());
-    }
-
-    public String getFullName() {
-        String fullName;
-        if (this.clientType.equals(ClientTypeEnum.PARTNER)) {
-            fullName = String.format("%s %s %s", this.getNames(), this.getMiddleName(), this.getLastName());
-        } else {
-            fullName = this.getBusinessName();
-        }
-        return fullName;
     }
 }

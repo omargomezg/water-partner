@@ -16,6 +16,7 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
         clientEntity.setMiddleName(clientDto.getMiddleName());
         clientEntity.setLastName(clientDto.getLastName());
         clientEntity.setBusinessName(clientDto.getBusinessName());
+        clientEntity.setFullName(getFullName(clientDto));
         clientEntity.setBusinessActivity(clientDto.getBusinessActivity());
         clientEntity.setBirthDate(clientDto.getBirthDate());
         clientEntity.setClientType(ClientTypeEnum.valueOf(clientDto.getClientType()));
@@ -26,4 +27,15 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
         clientEntity.setTelephone(clientDto.getTelephone());
         return clientEntity;
     }
+
+
+    private String getFullName(ClientDto client) {
+        if (client.getBusinessName().isEmpty())
+            return String.format("%s %s %s",
+                    client.getNames(),
+                    client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
+        else
+            return client.getBusinessName();
+    }
+
 }
