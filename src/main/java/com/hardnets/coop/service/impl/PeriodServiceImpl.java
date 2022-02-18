@@ -73,15 +73,8 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public PeriodEntity findByStatus(PeriodStatusEnum status) {
-        List<PeriodEntity> period = periodRepository.findByStatus(status);
-        if (period.isEmpty() && status.equals(PeriodStatusEnum.ACTIVE)) {
-            PeriodEntity newPeriod = new PeriodEntity();
-            newPeriod.setStatus(status);
-            newPeriod.setStartDate(new Date());
-            return periodRepository.save(newPeriod);
-        }
-        return period.stream().findFirst().get();
+    public Optional<PeriodEntity> findByStatus(PeriodStatusEnum status) {
+        return periodRepository.findByStatus(status).stream().findFirst();
     }
 
     @Transactional

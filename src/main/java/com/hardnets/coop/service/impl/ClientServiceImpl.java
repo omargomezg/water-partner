@@ -91,7 +91,6 @@ public class ClientServiceImpl implements ClientService {
     private ClientDto getClientDto(ClientEntity client) {
         var clientDto = conversionService.convert(client, ClientDto.class);
         if (clientDto != null) {
-            log.info("Consultado medidores para {}", client.getRut());
             var meters = waterMeterRepository.findAllIdsByClient(clientDto.getRut());
             if (!meters.isEmpty()) {
                 clientDto.setWaterMeters(
@@ -104,7 +103,6 @@ public class ClientServiceImpl implements ClientService {
     }
 
     private WaterMeterDto getMeterDto(WaterMeterEntity meter) {
-        log.info("Agregando medidor {}", meter.toString());
         return conversionService.convert(meter, WaterMeterDto.class);
     }
 

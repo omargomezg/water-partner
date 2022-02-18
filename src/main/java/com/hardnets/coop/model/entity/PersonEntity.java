@@ -20,6 +20,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PersonEntity {
     @Id
+    @Column(length = 10)
     private String rut;
 
     @Column

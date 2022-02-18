@@ -25,7 +25,7 @@ import java.util.Set;
 @Entity
 @ToString
 @NoArgsConstructor
-@Table(name = "clients")
+@Table(name = "client")
 public class ClientEntity extends PersonEntity {
 
     @Column

@@ -1,5 +1,6 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
@@ -81,7 +82,8 @@ public class ConsumptionController {
 
     @PostMapping("/v1/consumption/{id}")
     public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Integer consumption) {
-        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
+        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE)
+                .orElseThrow(PeriodException::new);
         WaterMeterEntity waterMeter = waterMeterService.getById(id);
         Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(),
                 waterMeter.getId());

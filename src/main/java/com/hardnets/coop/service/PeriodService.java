@@ -22,7 +22,7 @@ public interface PeriodService {
 
     PeriodDto create(PeriodDto periodEntity);
 
-    PeriodEntity findByStatus(PeriodStatusEnum status);
+    Optional<PeriodEntity> findByStatus(PeriodStatusEnum status);
 
     /**
      * Cierra un periodo y abre uno nuevo

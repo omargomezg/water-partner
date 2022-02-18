@@ -22,7 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "periods")
+@Table(name = "period")
 public class PeriodEntity extends BaseEntity {
 
     /**

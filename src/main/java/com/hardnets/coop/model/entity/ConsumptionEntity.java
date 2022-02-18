@@ -28,6 +28,7 @@ public class ConsumptionEntity extends BaseEntity {
     @Column
     private Date readingDate;
 
+    // TODO esta deprecado? este campo aparece en PeriodEntity
     @Column
     private Date cutoffDate;
 

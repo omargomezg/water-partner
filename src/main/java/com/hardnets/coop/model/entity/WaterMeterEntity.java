@@ -27,7 +27,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "watermeters")
+@Table(name = "watermeter")
 public class WaterMeterEntity extends BaseEntity {
 
     /**

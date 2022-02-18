@@ -2,7 +2,6 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.utils.JsonUtil;
 import org.junit.Before;
