@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RecordDto {
+    private Long id;
     private Integer serial;
     private String client;
     private DiameterEnum diameter;
