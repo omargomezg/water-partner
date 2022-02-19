@@ -4,7 +4,6 @@ import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.ProfileEnum;
 import com.hardnets.coop.model.entity.DropDownListEntity;
-import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
@@ -48,10 +47,6 @@ public class ProjectConfig {
             var newPeriod = periodService.create(new Date());
             consumptionService.createAllRecords(newPeriod.getId());
         }
-    }
-
-    private void checkConsumption(PeriodEntity periodEntity) {
-
     }
 
     private void checkAdministrator() {

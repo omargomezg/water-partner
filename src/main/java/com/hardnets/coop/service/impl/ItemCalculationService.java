@@ -5,14 +5,11 @@ import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
-@Log4j2
 @AllArgsConstructor
 @Service
 public class ItemCalculationService {

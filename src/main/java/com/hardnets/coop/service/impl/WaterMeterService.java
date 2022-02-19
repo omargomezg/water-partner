@@ -24,7 +24,6 @@ import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterPageableRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +41,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-@Log4j2
 @Service
 public class WaterMeterService {
 

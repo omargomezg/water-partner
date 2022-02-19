@@ -16,7 +16,6 @@ import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.model.flow.UrlReturn;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.security.JwtTokenUtil;
-import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.impl.UserService;
@@ -58,7 +57,6 @@ public class PublicController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
-    private final ClientService clientService;
     private final FlowService flowService;
     private final SaleDocumentService<BillEntity> billService;
 

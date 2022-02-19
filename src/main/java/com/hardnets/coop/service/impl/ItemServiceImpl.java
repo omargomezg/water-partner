@@ -9,7 +9,6 @@ import com.hardnets.coop.model.entity.ItemEntity;
 import com.hardnets.coop.repository.ItemRepository;
 import com.hardnets.coop.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Log4j2
 @RequiredArgsConstructor
 @Service
 public class ItemServiceImpl implements ItemService {

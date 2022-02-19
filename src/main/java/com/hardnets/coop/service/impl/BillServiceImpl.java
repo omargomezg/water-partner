@@ -13,7 +13,6 @@ import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.SaleDocumentService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
  * Tareas relacionadas a la gestión de boletas de servicios
  */
 @AllArgsConstructor
-@Log4j2
 @Service
 public class BillServiceImpl implements SaleDocumentService<BillEntity> {
 

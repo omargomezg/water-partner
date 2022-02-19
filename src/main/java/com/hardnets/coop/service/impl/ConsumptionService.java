@@ -19,9 +19,7 @@ import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.ConsumptionRepositoryCrud;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import com.hardnets.coop.service.impl.BillDetailService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Log4j2
 @AllArgsConstructor
 @Service
 public class ConsumptionService {

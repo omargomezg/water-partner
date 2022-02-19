@@ -15,7 +15,6 @@ import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Log4j2
 @Api("All client operations")
 @AllArgsConstructor
 @RestController

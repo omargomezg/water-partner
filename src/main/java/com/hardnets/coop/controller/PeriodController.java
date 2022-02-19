@@ -4,7 +4,6 @@ import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.service.PeriodService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +18,6 @@ import java.util.Optional;
 import java.util.Set;
 
 @AllArgsConstructor
-@Log4j2
 @RestController
 @RequestMapping("/v1/period")
 public class PeriodController {

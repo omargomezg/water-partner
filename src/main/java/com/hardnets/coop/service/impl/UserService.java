@@ -10,7 +10,6 @@ import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.service.UserDetailsService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +22,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Log4j2
 @Service
 public class UserService implements UserDetailsService {
 
