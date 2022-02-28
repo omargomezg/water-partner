@@ -14,6 +14,7 @@ public class RecordDto {
     private Long id;
     private Integer serial;
     private String client;
+    private Integer clientNumber;
     private DiameterEnum diameter;
     private String sector;
     private Integer reading;

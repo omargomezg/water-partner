@@ -19,10 +19,10 @@ public interface WaterMeterPageableRepository extends PagingAndSortingRepository
     Page<WaterMeterEntity> findBySerial(Integer serial, Pageable pageable);
 
     @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, " +
-            "wm.diameter, wm.sector, c.reading) " +
+            "cl.clientNumber, wm.diameter, wm.sector, c.reading) " +
             "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
             "where c.period.id = :period and (:number is null or wm.serial = :number) and (:rut is null or cl.rut = :rut) " +
-            "and (:sector is null or wm.sector = :sector)",
+            "and (:sector is null or wm.sector = :sector) order by cl.clientNumber",
             countQuery = "select count(c)" +
                     "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
                     "where c.period.id = :period and (:number is null or wm.serial = :number) and (:rut is null or cl.rut = :rut) " +

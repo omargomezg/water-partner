@@ -9,6 +9,7 @@ import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
+import com.hardnets.coop.repository.SectorRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
+    private final SectorRepository sectorRepository;
     private final WaterMeterRepository waterMeterRepository;
     private final ModelMapper modelMapper;
     private final ConversionService conversionService;
@@ -44,9 +46,11 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDto update(ClientDto clientDto) {
         ClientEntity client = clientRepository.findByRut(clientDto.getRut()).orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
+        var sector = sectorRepository.findById(clientDto.getSector());
         ClientTypeEnum clientTypeEnum = ClientTypeEnum.valueOf(clientDto.getClientType());
         client.setClientType(clientTypeEnum);
         client.setClientNumber(clientDto.getClientNumber());
+        sector.ifPresent(client::setSector);
         if (clientTypeEnum.equals(ClientTypeEnum.PARTNER)) {
             client.setBirthDate(clientDto.getBirthDate());
             client.setNames(clientDto.getNames());
@@ -117,7 +121,13 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDto create(ClientDto clientDto) {
         ClientEntity client = conversionService.convert(clientDto, ClientEntity.class);
-        return conversionService.convert(clientRepository.save(client), ClientDto.class);
+        var sector = sectorRepository.findById(clientDto.getSector());
+        sector.ifPresent(client::setSector);
+        var dto = conversionService.convert(clientRepository.save(client), ClientDto.class);
+        sector.ifPresent(item -> {
+            dto.setSector(item.getId());
+        });
+        return dto;
     }
 
     @Override
@@ -144,6 +154,7 @@ public class ClientServiceImpl implements ClientService {
                 .email(client.getEmail())
                 .isActive(client.getEnabled())
                 .telephone(client.getTelephone())
+                .sector(client.getSector().getId())
                 .build();
         clientDto.setFullName(getFullName(clientDto));
         clientDto.setClientType(client.getClientType().label);

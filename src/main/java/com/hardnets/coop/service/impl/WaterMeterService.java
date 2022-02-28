@@ -195,13 +195,16 @@ public class WaterMeterService {
                                                Integer pageIndex,
                                                Integer pageSize) {
         RecordsDto recordsDto = new RecordsDto();
-        List<PeriodEntity> periodEntity = periodRepository.findByStatus(PeriodStatusEnum.ACTIVE);
+        PeriodEntity periodEntity =
+                periodRepository.findByStatus(PeriodStatusEnum.ACTIVE).stream()
+                        .findFirst()
+                        .orElseThrow();
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         var consumptions = waterMeterPageableRepository.findAllByCustomFilters(
                 number == null ? null : Integer.parseInt(number),
                 rut,
                 sector,
-                periodEntity.stream().findFirst().get().getId(),
+                periodEntity.getId(),
                 pageable
         );
         recordsDto.setRecords(getFilteredByStatus(status, consumptions.getContent()));

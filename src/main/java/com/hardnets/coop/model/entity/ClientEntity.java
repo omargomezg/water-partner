@@ -43,7 +43,11 @@ public class ClientEntity extends PersonEntity {
 
     private String fullName;
 
-    private String clientNumber = "";
+    private Integer clientNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "sector_id")
+    private SectorEntity sector;
 
     @Enumerated(EnumType.STRING)
     private ClientTypeEnum clientType;

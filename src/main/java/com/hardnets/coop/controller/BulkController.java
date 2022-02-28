@@ -10,12 +10,12 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.util.RutUtils;
 import io.swagger.annotations.Api;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @Api("All client operations")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/bulk")
 @RestController
 public class BulkController {
@@ -37,7 +37,7 @@ public class BulkController {
     private final PeriodService periodService;
     private final ClientService clientService;
     private final WaterMeterService waterMeterService;
-    private ConsumptionService consumptionService;
+    private final ConsumptionService consumptionService;
 
     @PostMapping(value = "/water-meter-with-user", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addWaterMeterWithUser(@RequestBody @Valid List<BulkWaterMeterUserDto> records) {

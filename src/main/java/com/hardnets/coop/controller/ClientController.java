@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ public class ClientController {
     private final WaterMeterService waterMeterService;
     private final BillServiceImpl bill;
     private final ModelMapper modelMapper;
+    private final ConversionService conversionService;
 
     @GetMapping
     public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String rut,
@@ -55,7 +57,7 @@ public class ClientController {
     @GetMapping("/{rut}")
     public ResponseEntity<ClientDto> getUsers(@PathVariable String rut) {
         ClientEntity client = clientService.getByRut(rut).orElseThrow(ClientNotFoundException::new);
-        return ResponseEntity.ok(convertToDto(client));
+        return ResponseEntity.ok(conversionService.convert(client, ClientDto.class));
     }
 
     @PostMapping
