@@ -38,6 +38,9 @@ public class ClientDto {
 
     private Date dateOfAdmission;
 
+    @Builder.Default
+    private String clientNumber = "";
+
     @NotNull(message = "Client Type is required")
     private String clientType;
 
