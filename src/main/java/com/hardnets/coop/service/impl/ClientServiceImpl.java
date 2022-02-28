@@ -46,17 +46,20 @@ public class ClientServiceImpl implements ClientService {
         ClientEntity client = clientRepository.findByRut(clientDto.getRut()).orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
         ClientTypeEnum clientTypeEnum = ClientTypeEnum.valueOf(clientDto.getClientType());
         client.setClientType(clientTypeEnum);
+        client.setClientNumber(clientDto.getClientNumber());
         if (clientTypeEnum.equals(ClientTypeEnum.PARTNER)) {
             client.setBirthDate(clientDto.getBirthDate());
             client.setNames(clientDto.getNames());
             client.setLastName(clientDto.getLastName());
             client.setMiddleName(clientDto.getMiddleName());
             client.setProfession(clientDto.getProfession());
+            client.setFullName(String.format("%s %s %s", clientDto.getNames(), clientDto.getMiddleName(), clientDto.getLastName()));
             client.setBusinessName("");
             client.setBusinessActivity("");
         } else {
             client.setBusinessName(clientDto.getBusinessName());
             client.setBusinessActivity(clientDto.getBusinessActivity());
+            client.setFullName(clientDto.getBusinessName());
             client.setBirthDate(null);
             client.setNames("");
             client.setLastName("");

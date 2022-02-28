@@ -43,6 +43,8 @@ public class ClientEntity extends PersonEntity {
 
     private String fullName;
 
+    private String clientNumber = "";
+
     @Enumerated(EnumType.STRING)
     private ClientTypeEnum clientType;
 
