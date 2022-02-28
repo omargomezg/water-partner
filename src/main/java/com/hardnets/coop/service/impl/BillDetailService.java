@@ -9,7 +9,6 @@ import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.repository.BillRepository;
 import com.hardnets.coop.repository.ItemRepository;
 import com.hardnets.coop.repository.SubsidyRepository;
-import com.hardnets.coop.service.ItemCalculationService;
 import com.hardnets.coop.service.SaleDetailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,7 +50,8 @@ public class BillDetailService implements SaleDetailService<BillDetailEntity> {
             billDetail.add(detail);
         }
         Optional<SubsidyEntity> subsidy =
-                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter(),
+                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(
+                        consumption.getWaterMeter().getId(),
                         true, new Date());
         if (subsidy.isPresent()) {
             BillDetailEntity detailSubsidy = getSubsidizedAmount(subsidy.get(), consumption);

@@ -9,8 +9,8 @@ import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.repository.PaymentRepository;
 import com.hardnets.coop.service.FlowService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,13 +31,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Log4j2
+@RequiredArgsConstructor
 @Service
 public class FlowServiceImpl implements FlowService {
 
 
     private static final Byte PENDING_PAY = 1;
-    @Autowired
-    PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
 
     @Value("${flow.secretKeyForSha256HMAC}")
     private String secretKeyForSha256;
@@ -53,7 +53,9 @@ public class FlowServiceImpl implements FlowService {
     private String frontUrl;
 
     @Override
-    public PaymentOrderResponse sendPaymentOrder(PendingPaymentDto paymentOrder) throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+    public PaymentOrderResponse sendPaymentOrder(PendingPaymentDto paymentOrder)
+            throws NoSuchAlgorithmException,
+            InvalidKeyException, JsonProcessingException {
         // adding headers to the api
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);

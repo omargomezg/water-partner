@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class AllTariffsDto {
     private Long id;
-    private String diameter;
+    private Integer diameter;
     private Integer flatFee;
     private Float cubicMeter;
     private String clientType;
@@ -23,7 +23,7 @@ public class AllTariffsDto {
         setClientType(tariffEntity.getClientType().label);
         setCubicMeter(tariffEntity.getCubicMeter());
         setFlatFee(tariffEntity.getFlatFee());
-        setDiameter(tariffEntity.getDiameter().name());
+        setDiameter(tariffEntity.getDiameter().getValue());
         setLastUpdate(tariffEntity.getLastUpdate());
     }
 }

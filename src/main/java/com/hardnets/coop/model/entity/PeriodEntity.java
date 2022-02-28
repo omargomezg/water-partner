@@ -22,7 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "periods")
+@Table(name = "period")
 public class PeriodEntity extends BaseEntity {
 
     /**
@@ -39,13 +39,26 @@ public class PeriodEntity extends BaseEntity {
     private Date endDate;
 
     /**
+     * Indica si el proceso de creación de boletas se ha ejecutado junto con
+     * el calculo de cada uno de los items
+     */
+    @Column
+    private Boolean billsCreated = false;
+
+    /**
+     * Indica si el proceso de creación de factura y el calculo de cobros se ha realizado
+     */
+    @Column
+    private Boolean invoicesCreated = false;
+
+    /**
      * Indica el estado de un periodo el cual puede ser:
      * - ACTIVE: Abierto, por cuanto puede recibir lecturas para el mes
      * - CLOSED: Cerrado, cuando cambia a este estado se generan las boletas/facturas
      */
     @Column
     @Enumerated(EnumType.STRING)
-    private PeriodStatusEnum status = PeriodStatusEnum.ACTIVE;
+    private PeriodStatusEnum status = PeriodStatusEnum.PREPARED;
 
     /**
      * Relación de consumos para un periodo

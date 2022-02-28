@@ -1,19 +1,19 @@
 package com.hardnets.coop.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import springfox.documentation.schema.plugins.PropertyDiscriminatorBasedInheritancePlugin;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -25,12 +25,17 @@ public class PeriodServiceImpl implements PeriodService {
 
     private final PeriodRepository periodRepository;
     private final ModelMapper modelMapper;
+    private final ConversionService conversionService;
 
 
     @Override
-    public Set<PeriodDto> findAll() {
-        var periods = periodRepository.findAll();
-        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class)).collect(Collectors.toSet());
+    public Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus) {
+        var periods = periodStatus.isPresent() ?
+                periodRepository.findAllByStatusEquals(periodStatus.get()) :
+                periodRepository.findAll();
+        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class))
+                .sorted(Comparator.comparing(PeriodDto::getStartDate))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -50,8 +55,8 @@ public class PeriodServiceImpl implements PeriodService {
 
     @Override
     public PeriodDto update(PeriodDto periodDto) {
-        var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
-        PeriodEntity dbPeriod = periodRepository.findById(periodEntity.getId()).orElseThrow(PeriodException::new);
+        PeriodEntity dbPeriod = periodRepository.findById(periodDto.getId()).orElseThrow(PeriodException::new);
+        var periodEntity = conversionService.convert(periodDto, PeriodEntity.class);
         dbPeriod.setStatus(periodEntity.getStatus());
         dbPeriod.setEndDate(periodEntity.getEndDate());
         periodRepository.save(dbPeriod);
@@ -61,25 +66,17 @@ public class PeriodServiceImpl implements PeriodService {
     @Override
     public PeriodDto create(PeriodDto periodDto) {
         var periodEntity = modelMapper.map(periodDto, PeriodEntity.class);
+        periodEntity.setStatus(PeriodStatusEnum.PREPARED);
         periodEntity = periodRepository.save(periodEntity);
         return modelMapper.map(periodEntity, PeriodDto.class);
     }
 
     @Override
-    public PeriodEntity findByStatus(PeriodStatusEnum status) {
-        Optional<PeriodEntity> period = periodRepository.findByStatus(status);
-        if (period.isPresent()) {
-            return period.get();
-        }
-        if (status.equals(PeriodStatusEnum.ACTIVE)) {
-            PeriodEntity newPeriod = new PeriodEntity();
-            newPeriod.setStatus(status);
-            newPeriod.setStartDate(new Date());
-            return periodRepository.save(newPeriod);
-        }
-        throw new PeriodException("Cannot find period with status " + status);
+    public Optional<PeriodEntity> findByStatus(PeriodStatusEnum status) {
+        return periodRepository.findByStatus(status).stream().findFirst();
     }
 
+    @Transactional
     @Override
     public PeriodEntity close(Long id) {
         PeriodEntity period = periodRepository.findById(id).orElseThrow(
@@ -88,14 +85,19 @@ public class PeriodServiceImpl implements PeriodService {
         Date endDate = new Date();
         period.setEndDate(endDate);
         period.setStatus(PeriodStatusEnum.CLOSED);
-        periodRepository.save(period);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(endDate);
-        calendar.add(Calendar.DATE, 1);
-        return create(calendar.getTime());
-        //TODO crear boletas o detalle de boleas (servicio asíncrono)
-        //TODO crear pdf o boletas
-        //TODO enviar boletas a clientes
+        return enableNewPeriod(periodRepository.save(period));
+    }
+
+    private PeriodEntity enableNewPeriod(PeriodEntity actualPeriod) {
+        Optional<PeriodEntity> newPeriod = periodRepository.findById(actualPeriod.getId() + 1);
+        if (newPeriod.isPresent()) {
+            return newPeriod.get();
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(actualPeriod.getEndDate());
+            calendar.add(Calendar.DATE, 1);
+            return create(calendar.getTime());
+        }
     }
 
     @Override

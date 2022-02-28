@@ -1,4 +1,4 @@
-package com.hardnets.coop.service;
+package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.PeriodException;
@@ -6,6 +6,7 @@ import com.hardnets.coop.model.dto.ReadingsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.DetailItemDto;
+import com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.BillDetailEntity;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -18,14 +19,13 @@ import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.ConsumptionRepositoryCrud;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import com.hardnets.coop.service.impl.BillDetailService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Log4j2
 @AllArgsConstructor
 @Service
 public class ConsumptionService {
@@ -72,7 +71,8 @@ public class ConsumptionService {
         Optional<PeriodEntity> period = periodRepository.findById(periodId);
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findById(waterMeterId);
         if (period.isPresent() && waterMeter.isPresent()) {
-            return Optional.of(consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get()));
+            return consumptionRepository.findAllByPeriodAndWaterMeter(period.get().getId(),
+                    waterMeter.get().getId());
         }
         return Optional.empty();
     }
@@ -86,7 +86,7 @@ public class ConsumptionService {
         response.setEndDate(period.getEndDate());
 
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        Page page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
+        Page<ResumeConsumptionDetailDto> page = consumptionRepository.findAllByPeriod(period.getId(), pageable);
         response.setDetail(page.getContent());
         response.getDetail().parallelStream().forEach(item -> {
             var lastRecord = getLastRecordConsumption(item.getSerial(), lastPeriod);
@@ -103,11 +103,20 @@ public class ConsumptionService {
         return response;
     }
 
+    /**
+     * Obtiene el ultimo valor de consumo registrado al medidor
+     *
+     * @param serial Numero de serie del medidor
+     * @param period Periodo a consultar
+     * @return Ultimo registro de consumo del medidor consultado
+     */
     private Integer getLastRecordConsumption(Integer serial, Optional<PeriodEntity> period) {
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(serial);
-        if (periodRepository.count() > 0 && waterMeter.isPresent()) {
-            ConsumptionEntity consumption = consumptionRepository.findAllByPeriodAndWaterMeter(period.get(), waterMeter.get());
-            return consumption.getReading();
+        if (period.isPresent() && waterMeter.isPresent()) {
+            Optional<ConsumptionEntity> consumption =
+                    consumptionRepository.findAllByPeriodAndWaterMeter(period.get().getId(),
+                            waterMeter.get().getId());
+            return consumption.isPresent() ? consumption.get().getReading() : 0;
         }
         return 0;
     }
@@ -130,18 +139,18 @@ public class ConsumptionService {
      * Crea todos los registros de consumos para tener una base en futuras consultas
      * Se crea un registro por cada medidor relacionado a un cliente
      *
-     * @param periodId
+     * @param periodId el Id del periodo con el cual se crearán las lecturas con valor 0
      */
     @Async
+    @Transactional
     public void createAllRecords(Long periodId) {
-        periodRepository.findById(periodId).ifPresent(period -> {
-            waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {
-                ConsumptionEntity consumptionEntity = new ConsumptionEntity();
-                consumptionEntity.setReading(0);
-                consumptionEntity.setPeriod(period);
-                consumptionEntity.setWaterMeter(waterMeter);
-                consumptionRepository.save(consumptionEntity);
-            });
-        });
+        periodRepository.findById(periodId).ifPresent(period ->
+                waterMeterRepository.findAll().parallelStream().forEach(waterMeter -> {
+                    ConsumptionEntity consumptionEntity = new ConsumptionEntity();
+                    consumptionEntity.setReading(0);
+                    consumptionEntity.setPeriod(period);
+                    consumptionEntity.setWaterMeter(waterMeter);
+                    consumptionRepository.save(consumptionEntity);
+                }));
     }
 }

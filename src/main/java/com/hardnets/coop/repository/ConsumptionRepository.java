@@ -5,14 +5,15 @@ import com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ConsumptionRepository extends PagingAndSortingRepository<ConsumptionEntity, Long> {
@@ -34,5 +35,8 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
             countQuery = "select count(c) from ConsumptionEntity c inner join c.waterMeter.client cl where cl.rut = ?1 and c.reading > 0")
     Page<ConsumptionClientDetailDto> findAllByClient(String rut, Pageable pageable);
 
-    ConsumptionEntity findAllByPeriodAndWaterMeter(PeriodEntity period, WaterMeterEntity waterMeter);
+    @Query(value = "select con from ConsumptionEntity con where con.waterMeter.id = :water_id and con.period.id = " +
+            ":period_id")
+    Optional<ConsumptionEntity> findAllByPeriodAndWaterMeter(@Param("period_id") Long period_id,
+                                                             @Param("water_id") Long water_id);
 }

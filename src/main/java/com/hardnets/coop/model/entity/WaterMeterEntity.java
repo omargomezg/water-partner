@@ -27,13 +27,13 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "watermeters")
+@Table(name = "watermeter")
 public class WaterMeterEntity extends BaseEntity {
 
     /**
      * Serial number
      */
-    @Column
+    @Column(unique = true)
     private Integer serial;
 
     @Column(nullable = false)

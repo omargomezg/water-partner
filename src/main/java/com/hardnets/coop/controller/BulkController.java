@@ -10,13 +10,12 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.ConsumptionService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
-import com.hardnets.coop.service.WaterMeterService;
+import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.util.RutUtils;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +28,6 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
-@Log4j2
 @Api("All client operations")
 @AllArgsConstructor
 @RequestMapping("/bulk")

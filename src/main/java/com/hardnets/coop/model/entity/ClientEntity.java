@@ -2,14 +2,11 @@ package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,7 +25,7 @@ import java.util.Set;
 @Entity
 @ToString
 @NoArgsConstructor
-@Table(name = "clients")
+@Table(name = "client")
 public class ClientEntity extends PersonEntity {
 
     @Column
@@ -37,13 +34,14 @@ public class ClientEntity extends PersonEntity {
     @Column
     private String telephone;
 
-    @Column
     private String businessName = "";
 
     @Column
     private String businessActivity = "";
 
     private String profession;
+
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
     private ClientTypeEnum clientType;
@@ -55,6 +53,7 @@ public class ClientEntity extends PersonEntity {
     @OneToMany(
             mappedBy = "client",
             fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<BillEntity> bills = new HashSet<>();
 
     @OneToMany(
@@ -73,15 +72,5 @@ public class ClientEntity extends PersonEntity {
         setBusinessActivity(client.getBusinessActivity());
         setBusinessName(client.getBusinessName());
         setProfession(client.getProfession());
-    }
-
-    public String getFullName() {
-        String fullName;
-        if (this.clientType.equals(ClientTypeEnum.PARTNER)) {
-            fullName = String.format("%s %s %s", this.getNames(), this.getMiddleName(), this.getLastName());
-        } else {
-            fullName = this.getBusinessName();
-        }
-        return fullName;
     }
 }

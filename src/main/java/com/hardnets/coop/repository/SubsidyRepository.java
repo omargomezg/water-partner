@@ -1,7 +1,6 @@
 package com.hardnets.coop.repository;
 
 import com.hardnets.coop.model.entity.SubsidyEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +16,9 @@ public interface SubsidyRepository extends JpaRepository<SubsidyEntity, Long> {
             ":endDate")
     Optional<SubsidyEntity> findByIsActiveAndWaterMeterId(@Param("id") Long number, @Param("endDate") Date endDate);
 
-    Optional<SubsidyEntity> findAllByWaterMeterAndIsActiveAndEndingDateAfter(WaterMeterEntity waterMeter,
-                                                                               Boolean isActive, Date date);
+    @Query(value = "select sub from SubsidyEntity sub where sub.waterMeter.id = :meter_id and sub.isActive = :isActive and sub.endingDate > :endingDate")
+    Optional<SubsidyEntity> findAllByWaterMeterAndIsActiveAndEndingDateAfter(@Param("meter_id") Long meter_id,
+                                                                             @Param("isActive") Boolean isActive,
+                                                                             @Param("endingDate") Date date);
 
 }

@@ -1,18 +1,15 @@
-package com.hardnets.coop.service;
+package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.SubsidyEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
-@Log4j2
 @AllArgsConstructor
 @Service
 public class ItemCalculationService {
@@ -25,7 +22,7 @@ public class ItemCalculationService {
      */
     public Integer getSubsidyAmount(ConsumptionEntity consumption) {
         Optional<SubsidyEntity> subsidy =
-                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter(), true,
+                subsidyRepository.findAllByWaterMeterAndIsActiveAndEndingDateAfter(consumption.getWaterMeter().getId(), true,
                         new Date());
         if (subsidy.isPresent()) {
             short percentage = subsidy.get().getPercentage();

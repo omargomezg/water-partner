@@ -1,15 +1,12 @@
 package com.hardnets.coop.model.entity;
 
+import com.hardnets.coop.model.constant.ProfileEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -23,9 +20,9 @@ public class UserEntity extends PersonEntity implements UserDetails, Serializabl
     @Column
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private DropDownListEntity role;
+    @Column(name = "role")
+    @Enumerated
+    private ProfileEnum profile;
 
     @Column
     private Date lastLogin;

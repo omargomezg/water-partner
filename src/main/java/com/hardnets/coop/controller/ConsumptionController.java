@@ -1,22 +1,20 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.exception.WaterMeterNotFoundException;
+import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.ReadingsDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.hardnets.coop.model.dto.WaterMetersConsumptionDto;
+import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
 import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
 import com.hardnets.coop.model.entity.ConsumptionEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
-import com.hardnets.coop.service.ConsumptionService;
 import com.hardnets.coop.service.PeriodService;
-import com.hardnets.coop.service.WaterMeterService;
+import com.hardnets.coop.service.impl.ConsumptionService;
+import com.hardnets.coop.service.impl.WaterMeterService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Log4j2
 @Api("All client operations")
 @AllArgsConstructor
 @RestController
@@ -43,17 +39,21 @@ public class ConsumptionController {
 
     /**
      * Obtiene un listado de medidores mas su ultima lectura
+     *
      * @param waterMeterNumber
      * @param rut
-     * @param consumptionPending
+     * @param status
      * @return
      */
     @GetMapping("/v1/consumption/related-water-meters")
-    public ResponseEntity<Collection<WaterMetersConsumptionDto>> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
-                                                                                 @RequestParam(required = false) String rut,
-                                                                                 @RequestParam(required = false) String sector,
-                                                                                 @RequestParam(name = "pending") boolean consumptionPending) {
-        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, consumptionPending));
+    public ResponseEntity<RecordsDto> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
+                                                      @RequestParam(required = false) String rut,
+                                                      @RequestParam(required = false) String sector,
+                                                      @RequestParam(name = "status") String status,
+                                                      @RequestParam(defaultValue = "0") Integer pageIndex,
+                                                      @RequestParam(defaultValue = "25") Integer pageSize) {
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, status,
+                pageIndex, pageSize));
     }
 
     /**
@@ -79,9 +79,10 @@ public class ConsumptionController {
     }
 
     @PostMapping("/v1/consumption/{id}")
-    public ResponseEntity<String> create(@PathVariable Integer id, @RequestParam Integer consumption) {
-        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE);
-        WaterMeterEntity waterMeter = waterMeterService.getBySerial(id);
+    public ResponseEntity<String> create(@PathVariable Long id, @RequestParam Integer consumption) {
+        PeriodEntity period = periodService.findByStatus(PeriodStatusEnum.ACTIVE)
+                .orElseThrow(PeriodException::new);
+        WaterMeterEntity waterMeter = waterMeterService.getById(id);
         Optional<ConsumptionEntity> dbConsumption = consumptionService.findOneByPeriodAndWaterMeter(period.getId(),
                 waterMeter.getId());
         if (dbConsumption.isPresent()) {

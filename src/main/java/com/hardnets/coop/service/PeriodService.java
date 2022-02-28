@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface PeriodService {
 
-    Set<PeriodDto> findAll();
+    Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus);
 
     Set<PeriodDto> findAllByYear(int year);
 
@@ -22,7 +22,7 @@ public interface PeriodService {
 
     PeriodDto create(PeriodDto periodEntity);
 
-    PeriodEntity findByStatus(PeriodStatusEnum status);
+    Optional<PeriodEntity> findByStatus(PeriodStatusEnum status);
 
     /**
      * Cierra un periodo y abre uno nuevo

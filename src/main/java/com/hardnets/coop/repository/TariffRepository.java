@@ -15,4 +15,6 @@ public interface TariffRepository extends JpaRepository<TariffEntity, Long> {
     @Query("select t from TariffEntity t where t.diameter = ?1 and t.clientType = ?2")
     Optional<TariffEntity> findBySizeAndClientType(DiameterEnum size, ClientTypeEnum clientType);
 
+    Optional<TariffEntity> findFirstByDiameter(DiameterEnum diameter);
+
 }

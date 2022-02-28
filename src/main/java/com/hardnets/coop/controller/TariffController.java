@@ -1,6 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.model.dto.AllTariffsDto;
+import com.hardnets.coop.model.dto.AllTariffsBaseDto;
 import com.hardnets.coop.model.dto.TariffDto;
 import com.hardnets.coop.service.TariffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 public class TariffController {
@@ -23,7 +22,7 @@ public class TariffController {
     TariffService tariffService;
 
     @GetMapping("/v1/tariff")
-    public ResponseEntity<List<AllTariffsDto>> getAllTariffs() {
+    public ResponseEntity<AllTariffsBaseDto> getAllTariffs() {
         return ResponseEntity.ok(tariffService.getAll());
     }
 

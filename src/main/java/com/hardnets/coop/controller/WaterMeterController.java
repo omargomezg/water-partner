@@ -1,9 +1,15 @@
 package com.hardnets.coop.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
+import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.hardnets.coop.service.WaterMeterService;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import com.hardnets.coop.service.impl.WaterMeterService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.Collection;
-import java.util.List;
+import lombok.AllArgsConstructor;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 public class WaterMeterController {
@@ -30,18 +34,26 @@ public class WaterMeterController {
      * @return a list of water meters
      */
     @GetMapping("/v1/water-meter")
-    public ResponseEntity<List<WaterMeterDto>> getWaterMeters() {
-        return ResponseEntity.ok(waterMeterService.getAll());
+    public ResponseEntity<ListOfWaterMeterDto> getWaterMeters(@RequestParam Integer pageIndex,
+                                                              @RequestParam Integer pageSize,
+                                                              @RequestParam(required = false) Optional<Integer> serial) {
+        return ResponseEntity.ok(waterMeterService.getAllByPage(pageIndex, pageSize, serial));
     }
 
     @GetMapping("/v1/water-meter/not-related")
-    public ResponseEntity<Collection<WaterMeterDto>> getNotRelated() {
-        return ResponseEntity.ok(waterMeterService.findAllWhereNotRelated());
+    public ResponseEntity<MetersAvailableDto> getNotRelated(@RequestParam Integer pageIndex,
+                                                            @RequestParam Integer pageSize) {
+        return ResponseEntity.ok(waterMeterService.findAllWhereNotRelated(pageIndex, pageSize));
     }
 
     @PostMapping("/v1/water-meter")
     public ResponseEntity<WaterMeterDto> addWaterMeter(@RequestBody @Valid WaterMeterDto waterMeter) {
         return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/v1/water-meter/{id}")
+    public ResponseEntity<WaterMeterDto> addWaterMeter(@PathVariable Long id, @RequestBody @Valid WaterMeterDto waterMeter) {
+        return ResponseEntity.ok(waterMeterService.update(waterMeter));
     }
 
     /**

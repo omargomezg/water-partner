@@ -2,7 +2,6 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.GenericListDto;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.utils.JsonUtil;
 import org.junit.Before;
@@ -42,8 +41,10 @@ class ClientControllerTest {
     }
 
     @Test
-    void getUsers() throws Exception {
+    void getUsers_success() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client")
+                        .param("pageIndex", "0")
+                        .param("pageSize", "30")
                         .with(user("user")))
                 .andExpect(status().isOk())
                 .andReturn();
