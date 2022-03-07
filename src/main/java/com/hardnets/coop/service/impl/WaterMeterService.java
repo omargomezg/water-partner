@@ -193,23 +193,47 @@ public class WaterMeterService {
                                                String sector,
                                                String status,
                                                Integer pageIndex,
-                                               Integer pageSize) {
+                                               Integer pageSize,
+                                               String sortColumn, String direction) {
         RecordsDto recordsDto = new RecordsDto();
         PeriodEntity periodEntity =
                 periodRepository.findByStatus(PeriodStatusEnum.ACTIVE).stream()
                         .findFirst()
                         .orElseThrow();
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        var consumptions = waterMeterPageableRepository.findAllByCustomFilters(
-                number == null ? null : Integer.parseInt(number),
-                rut,
-                sector,
-                periodEntity.getId(),
-                pageable
-        );
-        recordsDto.setRecords(getFilteredByStatus(status, consumptions.getContent()));
+        Pageable pageable = PageRequest.of(pageIndex, pageSize,
+                direction.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                getColumnToSort(sortColumn));
+        Page<RecordDto> consumptions;
+        switch (status.toLowerCase()) {
+            case "pending":
+                consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(number == null ? null : Integer.parseInt(number),
+                        rut, sector, periodEntity.getId(), pageable);
+                break;
+            case "no-pending":
+                consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(number == null ? null : Integer.parseInt(number),
+                        rut, sector, periodEntity.getId(), pageable);
+                break;
+            default:
+                consumptions = waterMeterPageableRepository.findAllByCustomFilters(number == null ? null : Integer.parseInt(number),
+                        rut, sector, periodEntity.getId(), pageable);
+        }
+        recordsDto.setRecords(consumptions.getContent());
         recordsDto.setTotalHits(consumptions.getTotalElements());
         return recordsDto;
+    }
+
+    private String getColumnToSort(String column) {
+        switch (column) {
+            case "client":
+                column = "waterMeter.client.fullName";
+                break;
+            case "sector":
+                column = "waterMeter.sector";
+                break;
+            default:
+                column = "waterMeter.serial";
+        }
+        return column;
     }
 
     private boolean checkIfExistsSerial(Integer serial) {
