@@ -21,7 +21,7 @@ public class WaterMeterDto {
     private String comment;
     private String sector;
     private Date updated;
-    private String rut;
+    private String dni;
 
     /**
      * Date when is related to

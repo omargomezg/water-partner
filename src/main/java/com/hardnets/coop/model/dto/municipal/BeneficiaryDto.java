@@ -9,9 +9,9 @@ import lombok.Setter;
 @Builder
 public class BeneficiaryDto {
     /**
-     * Código: RUT
+     * Código: DNI
      */
-    private String rut;
+    private String dni;
 
     /**
      * Código: DV-RUT

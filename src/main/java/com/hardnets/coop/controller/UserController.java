@@ -32,10 +32,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Collection<UserDto>> getUsers(@RequestParam(required = false) String rut) {
-        if (rut == null)
+    public ResponseEntity<Collection<UserDto>> getUsers(@RequestParam(required = false) String dni) {
+        if (dni == null)
             return ResponseEntity.ok(userService.getUsers());
-        return ResponseEntity.ok(new HashSet<>(List.of(userService.getByRut(rut))));
+        return ResponseEntity.ok(new HashSet<>(List.of(userService.getByDni(dni))));
     }
 
     @PostMapping
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<UserDto> updateUser(@RequestParam String rut, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestParam String dni, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.update(userDto));
     }
 

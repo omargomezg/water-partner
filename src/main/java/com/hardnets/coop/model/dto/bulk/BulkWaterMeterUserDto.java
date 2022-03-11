@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class BulkWaterMeterUserDto {
 
     @NotEmpty
-    private String rut;
+    private String dni;
 
     @NotEmpty
     private String names;

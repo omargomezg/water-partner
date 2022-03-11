@@ -53,7 +53,7 @@ public class WaterMeterEntity extends BaseEntity {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "client_rut", referencedColumnName = "rut")
+    @JoinColumn(name = "client_dni", referencedColumnName = "dni")
     private ClientEntity client;
 
     @Enumerated(EnumType.STRING)

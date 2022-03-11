@@ -57,7 +57,7 @@ public class WaterMeterService {
         for (WaterMeterDto dto : waterMeterDtos) {
             WaterMeterEntity entity = waterMeterRepository.findBySerial(dto.getSerial()).orElseThrow(() ->
                     new WaterMeterNotFoundException("Water meter number " + dto.getSerial() + " was not found"));
-            ClientEntity client = clientRepository.findByRut(dto.getRut())
+            ClientEntity client = clientRepository.findByDni(dto.getDni())
                     .orElseThrow(UserNotFoundException::new);
             entity.setClient(client);
             entities.add(entity);
@@ -141,9 +141,9 @@ public class WaterMeterService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<RelatedWaterMetersDto> getByUser(String rut) {
+    public Collection<RelatedWaterMetersDto> getByUser(String dni) {
         Collection<RelatedWaterMetersDto> relatedMeters = new HashSet<>();
-        ClientEntity client = clientRepository.findByRut(rut)
+        ClientEntity client = clientRepository.findByDni(dni)
                 .orElseThrow(UserNotFoundException::new);
         Collection<WaterMeterEntity> dbRelatedMeters = waterMeterRepository.findAllByClientOrderByUpdatedDesc(client);
         for (WaterMeterEntity dbRelatedMeter : dbRelatedMeters) {
@@ -167,9 +167,9 @@ public class WaterMeterService {
         return relatedMeters.stream().sorted(Comparator.comparing(RelatedWaterMetersDto::getDischargeDate)).collect(Collectors.toList());
     }
 
-    public void relateToClient(WaterMeterDto waterMeterDto, String rut) {
+    public void relateToClient(WaterMeterDto waterMeterDto, String dni) {
         Integer serial = waterMeterDto.getSerial();
-        ClientEntity client = clientRepository.findByRut(rut)
+        ClientEntity client = clientRepository.findByDni(dni)
                 .orElseThrow(UserNotFoundException::new);
         waterMeterRepository.findBySerial(waterMeterDto.getSerial()).ifPresent(result -> {
             if (result.getClient() != null) {
@@ -189,7 +189,7 @@ public class WaterMeterService {
     }
 
     public RecordsDto findAllForSetConsumption(String number,
-                                               String rut,
+                                               String dni,
                                                String sector,
                                                String status,
                                                Integer pageIndex,
@@ -204,18 +204,16 @@ public class WaterMeterService {
                 direction.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
                 getColumnToSort(sortColumn));
         Page<RecordDto> consumptions;
+        Integer serial = number == null ? null : Integer.parseInt(number);
         switch (status.toLowerCase()) {
             case "pending":
-                consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(number == null ? null : Integer.parseInt(number),
-                        rut, sector, periodEntity.getId(), pageable);
+                consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(serial, dni, sector, periodEntity.getId(), pageable);
                 break;
             case "no-pending":
-                consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(number == null ? null : Integer.parseInt(number),
-                        rut, sector, periodEntity.getId(), pageable);
+                consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(serial, dni, sector, periodEntity.getId(), pageable);
                 break;
             default:
-                consumptions = waterMeterPageableRepository.findAllByCustomFilters(number == null ? null : Integer.parseInt(number),
-                        rut, sector, periodEntity.getId(), pageable);
+                consumptions = waterMeterPageableRepository.findAllByCustomFilters(serial, dni, sector, periodEntity.getId(), pageable);
         }
         recordsDto.setRecords(consumptions.getContent());
         recordsDto.setTotalHits(consumptions.getTotalElements());
@@ -238,19 +236,6 @@ public class WaterMeterService {
 
     private boolean checkIfExistsSerial(Integer serial) {
         return waterMeterRepository.findBySerial(serial).isPresent();
-    }
-
-    private List<RecordDto> getFilteredByStatus(String status, List<RecordDto> readings) {
-        switch (status.toLowerCase()) {
-            case "pending":
-                return readings.stream().filter(item -> item.getReading() == 0)
-                        .collect(Collectors.toList());
-            case "no-pending":
-                return readings.stream().filter(item -> item.getReading() > 0)
-                        .collect(Collectors.toList());
-            default:
-                return readings;
-        }
     }
 
 }

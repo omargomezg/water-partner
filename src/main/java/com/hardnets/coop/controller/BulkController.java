@@ -57,8 +57,8 @@ public class BulkController {
         if (Boolean.TRUE.equals(isSerial(bulkRecord.getSerial()))) {
             if (waterMeterService.existSerial(bulkRecord.getSerial())
                     && (bulkRecord.getReading() > 0 && bulkRecord.getReading() != null)) {
-                String rut = clearRutFormat(bulkRecord.getRut());
-                clientService.getByRut(rut).ifPresent(client -> {
+                String dni = clearRutFormat(bulkRecord.getDni());
+                clientService.getByDni(dni).ifPresent(client -> {
                     if (waterMeterService.existSerial(bulkRecord.getSerial())) {
                         WaterMeterEntity waterMeter = waterMeterService.getBySerial(bulkRecord.getSerial());
                         PeriodEntity period = periodService.findById(periodId).orElseThrow(PeriodException::new);
@@ -70,7 +70,7 @@ public class BulkController {
     }
 
     private void saveWaterMeter(BulkWaterMeterUserDto bulkRecord) {
-        String rut = clearRutFormat(bulkRecord.getRut());
+        String dni = clearRutFormat(bulkRecord.getDni());
         if (!waterMeterService.existSerial(bulkRecord.getSerial()) && isSerial(bulkRecord.getSerial())) {
             WaterMeterEntity waterMeter = new WaterMeterEntity();
             waterMeter.setSerial(bulkRecord.getSerial());
@@ -78,8 +78,8 @@ public class BulkController {
             waterMeter.setCreated(new Date());
             waterMeter.setStatus(StatusEnum.NEW);
 
-            if (RutUtils.validateRut(rut)) {
-                clientService.getByRut(rut)
+            if (RutUtils.validateRut(dni)) {
+                clientService.getByDni(dni)
                         .ifPresent(waterMeter::setClient);
             }
             waterMeterService.create(waterMeter);
@@ -91,10 +91,10 @@ public class BulkController {
     }
 
     private void saveClient(BulkWaterMeterUserDto bulkRecord) {
-        String rut = clearRutFormat(bulkRecord.getRut());
+        String rut = clearRutFormat(bulkRecord.getDni());
         if (!clientService.exist(rut) && RutUtils.validateRut(rut)) {
             ClientEntity client = new ClientEntity();
-            client.setRut(rut);
+            client.setDni(rut);
             client.setNames(bulkRecord.getNames());
             client.setClientType(ClientTypeEnum.PARTNER);
             clientService.create(client);

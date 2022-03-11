@@ -7,11 +7,11 @@ public interface SaleDocumentService<T> {
 
     T getById(Long id);
 
-    IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize);
+    IssuedBillsDto getByDni(String dni, Integer pageIndex, Integer pageSize);
 
-    IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize);
+    IssuedBillsDto getAllByStatusAndDni(SalesDocumentStatusEnum status, String dni, Integer pageIndex, Integer pageSize);
 
-    void createByClient(String rut);
+    void createByClient(String dni);
 
     void createAllInPeriod(long periodId);
 

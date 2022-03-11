@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginDto {
-    private String rut;
+    private String dni;
     private String email;
     private String fullName;
     private String token;

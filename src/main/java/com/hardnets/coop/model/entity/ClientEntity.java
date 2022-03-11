@@ -50,7 +50,7 @@ public class ClientEntity extends PersonEntity {
     private SectorEntity sector;
 
     @Enumerated(EnumType.STRING)
-    private ClientTypeEnum clientType;
+    private ClientTypeEnum clientType = ClientTypeEnum.PUBLIC;
 
     @ManyToOne
     @JoinColumn(name = "subsidy_id")
@@ -72,7 +72,7 @@ public class ClientEntity extends PersonEntity {
     private Set<WaterMeterEntity> waterMeter = new HashSet<>();
 
     public ClientEntity(ClientDto client) {
-        super(client.getRut(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());
+        super(client.getDni(), client.getNames(), client.getMiddleName(), client.getLastName(), client.getEmail(), client.getBirthDate());
         setDateOfAdmission(client.getDateOfAdmission());
         setTelephone(client.getTelephone());
         setBusinessActivity(client.getBusinessActivity());

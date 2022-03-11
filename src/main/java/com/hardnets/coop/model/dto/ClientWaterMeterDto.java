@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ClientWaterMeterDto {
-    private String rut;
+    private String dni;
     private Long waterMeterNumber;
     private String comment;
     private Long sizeId;

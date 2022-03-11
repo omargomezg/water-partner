@@ -18,17 +18,17 @@ public class InvoiceServiceImpl implements SaleDocumentService<InvoiceEntity> {
     }
 
     @Override
-    public IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize) {
+    public IssuedBillsDto getByDni(String dni, Integer pageIndex, Integer pageSize) {
         return null;
     }
 
     @Override
-    public IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize) {
+    public IssuedBillsDto getAllByStatusAndDni(SalesDocumentStatusEnum status, String dni, Integer pageIndex, Integer pageSize) {
         return null;
     }
 
     @Override
-    public void createByClient(String rut) {
+    public void createByClient(String dni) {
 
     }
 

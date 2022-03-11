@@ -20,7 +20,7 @@ public class InvoiceEntity extends SalesDocumentEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "client_rut", referencedColumnName = "rut", nullable = false)
+    @JoinColumn(name = "client_dni", referencedColumnName = "dni", nullable = false)
     private ClientEntity client;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)

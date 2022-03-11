@@ -6,8 +6,8 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateUserDto {
-    @NotNull(message = "Rut cannot be null")
-    private String rut;
+    @NotNull(message = "Dni cannot be null")
+    private String dni;
     @NotNull(message = "need a rol")
     private String role;
     @NotNull(message = "Password is required")

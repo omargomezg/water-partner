@@ -19,7 +19,7 @@ import java.util.Set;
 public class BillEntity extends SalesDocumentEntity {
 
     @ManyToOne
-    @JoinColumn(name = "client_rut", referencedColumnName = "rut", nullable = false)
+    @JoinColumn(name = "client_dni", referencedColumnName = "dni", nullable = false)
     private ClientEntity client;
 
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)

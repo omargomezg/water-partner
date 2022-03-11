@@ -44,19 +44,19 @@ public class ClientController {
     private final ConversionService conversionService;
 
     @GetMapping
-    public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String rut,
+    public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String dni,
                                                @RequestParam(required = false) String name,
                                                @RequestParam Integer pageIndex,
                                                @RequestParam Integer pageSize) {
         FilterDto filter = new FilterDto();
-        filter.setRut(rut);
+        filter.setDni(dni);
         filter.setName(name);
         return ResponseEntity.ok(clientService.getFilteredUsers(filter, pageIndex, pageSize));
     }
 
-    @GetMapping("/{rut}")
-    public ResponseEntity<ClientDto> getUsers(@PathVariable String rut) {
-        ClientEntity client = clientService.getByRut(rut).orElseThrow(ClientNotFoundException::new);
+    @GetMapping("/{dni}")
+    public ResponseEntity<ClientDto> getUsers(@PathVariable String dni) {
+        ClientEntity client = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
         return ResponseEntity.ok(conversionService.convert(client, ClientDto.class));
     }
 
@@ -89,7 +89,7 @@ public class ClientController {
                                                               @RequestParam Integer pageIndex,
                                                               @RequestParam Integer pageSize) {
         SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
-        var documents = bill.getAllByStatusAndRut(statusEnum, rut, pageIndex, pageSize);
+        var documents = bill.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
         return ResponseEntity.ok(documents);
     }
 

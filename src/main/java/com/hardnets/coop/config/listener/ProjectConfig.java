@@ -57,7 +57,7 @@ public class ProjectConfig {
             user.setMiddleName("Gómez");
             user.setLastName("Gómez");
             user.setProfile(ProfileEnum.KAL_EL);
-            user.setRut("140812269");
+            user.setDni("140812269");
             user.setPassword(passwordEncoder.encode("samsungMac"));
             userRepository.save(user);
             log.info("Super User {} created", user.getEmail());

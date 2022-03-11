@@ -68,7 +68,7 @@ public class PublicController {
 
             UserEntity user = (UserEntity) authenticate.getPrincipal();
             LoginDto response = new LoginDto();
-            response.setRut(user.getRut());
+            response.setDni(user.getDni());
             response.setEmail(user.getEmail());
             response.setFullName(String.format("%s %s", user.getNames().split(" ")[0], user.getLastName()));
             response.setToken(jwtTokenUtil.generateAccessToken(user));
@@ -89,7 +89,7 @@ public class PublicController {
                                                                 @RequestParam Integer pageIndex,
                                                                 @RequestParam Integer pageSize) {
         SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
-        var pendingDocuments = billService.getAllByStatusAndRut(statusEnum, rut, pageIndex, pageSize);
+        var pendingDocuments = billService.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
         return ResponseEntity.ok(pendingDocuments);
     }
 

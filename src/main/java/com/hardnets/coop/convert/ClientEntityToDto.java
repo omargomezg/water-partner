@@ -12,8 +12,8 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
     @Override
     public ClientDto convert(ClientEntity source) {
         var clientDto = ClientDto.builder()
-                .rut(source.getRut())
-                .fullName(getFullName(source))
+                .dni(source.getDni())
+                .fullName(source.getFullName())
                 .names(source.getNames())
                 .email(source.getEmail())
                 .clientType(source.getClientType().label)
@@ -31,14 +31,5 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
 
     private String getProfession(ClientEntity client) {
         return client.getBusinessName().isEmpty() ? client.getProfession() : "";
-    }
-
-    private String getFullName(ClientEntity client) {
-        if (client.getBusinessName().isEmpty())
-            return String.format("%s %s %s",
-                    client.getNames(),
-                    client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
-        else
-            return client.getBusinessName();
     }
 }

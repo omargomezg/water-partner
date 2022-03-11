@@ -122,7 +122,7 @@ public class ConsumptionService {
     }
 
     public ConsumptionClientDto findAllByClient(String rut, Integer pageIndex, Integer pageSize) {
-        ClientEntity client = clientRepository.findByRut(rut).orElseThrow(() -> new ClientNotFoundException(rut));
+        ClientEntity client = clientRepository.findByDni(rut).orElseThrow(() -> new ClientNotFoundException(rut));
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<ConsumptionClientDetailDto> page = consumptionRepository.findAllByClient(rut, pageable);
         ConsumptionClientDto pageDto = new ConsumptionClientDto();

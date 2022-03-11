@@ -89,7 +89,7 @@ class ClientControllerTest {
 
     private ClientDto getClient() {
         return ClientDto.builder()
-                .rut("14081226-9")
+                .dni("14081226-9")
                 .clientType(ClientTypeEnum.PARTNER.label)
                 .build();
     }

@@ -21,7 +21,7 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
     @Query("select new com.hardnets.coop.model.dto.ReadingsDto(c.id, c.reading,c.readingDate) from ConsumptionEntity c where c.waterMeter.id = ?1 order by c.readingDate desc")
     List<ReadingsDto> findAllByWaterMeter(Long waterMeterId);
 
-    @Query(value = "select new com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto(wm.serial, c.waterMeter.client.rut, " +
+    @Query(value = "select new com.hardnets.coop.model.dto.response.ResumeConsumptionDetailDto(wm.serial, c.waterMeter.client.dni, " +
             "c.waterMeter.client.clientType, c.waterMeter.client.names, c.waterMeter.client.middleName, c.waterMeter.client.lastName, " +
             "c.waterMeter.client.businessName, c.reading, c.id) from ConsumptionEntity c inner join c.waterMeter wm where c.period.id = ?1",
             countQuery = "select count(c) from ConsumptionEntity c where c.period.id = ?1"
@@ -31,8 +31,8 @@ public interface ConsumptionRepository extends PagingAndSortingRepository<Consum
     List<ConsumptionEntity> findAllByPeriod(PeriodEntity period);
 
     @Query(value = "select new com.hardnets.coop.model.dto.response.ConsumptionClientDetailDto(c.readingDate, pe.endDate, c.reading) " +
-            "from ConsumptionEntity c inner join c.waterMeter.client cl inner join c.period pe where cl.rut = ?1 and c.reading > 0 order by pe.id desc",
-            countQuery = "select count(c) from ConsumptionEntity c inner join c.waterMeter.client cl where cl.rut = ?1 and c.reading > 0")
+            "from ConsumptionEntity c inner join c.waterMeter.client cl inner join c.period pe where cl.dni = ?1 and c.reading > 0 order by pe.id desc",
+            countQuery = "select count(c) from ConsumptionEntity c inner join c.waterMeter.client cl where cl.dni = ?1 and c.reading > 0")
     Page<ConsumptionClientDetailDto> findAllByClient(String rut, Pageable pageable);
 
     @Query(value = "select con from ConsumptionEntity con where con.waterMeter.id = :water_id and con.period.id = " +

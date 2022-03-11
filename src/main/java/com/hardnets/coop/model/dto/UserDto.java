@@ -11,7 +11,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class UserDto {
-    private String rut;
+    private String dni;
     private String role;
     private String names;
     private String middleName;
@@ -23,7 +23,7 @@ public class UserDto {
     private String password;
 
     public UserDto(UserEntity user) {
-        this.setRut(user.getRut());
+        this.setDni(user.getDni());
         this.setEmail(user.getEmail());
         this.setNames(user.getNames());
         this.setMiddleName(user.getMiddleName());

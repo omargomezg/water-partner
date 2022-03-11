@@ -52,7 +52,7 @@ public class ReportService {
                 .map(consumption -> ReportDto.builder().consumption(consumption.getActualRecord().intValue())
                         .codeCommune(14101)
                         .beneficiary(BeneficiaryDto.builder()
-                                .rut(consumption.getRut())
+                                .dni(consumption.getDni())
                                 .names(consumption.getNames())
                                 .middleName(consumption.getMiddleName())
                                 .lastName(consumption.getLastName())

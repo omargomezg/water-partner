@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BillRepository extends PagingAndSortingRepository<BillEntity, Long> {
-    Page<BillEntity> getAllByClient_Rut(String rut, Pageable pageable);
+    Page<BillEntity> getAllByClient_Dni(String dni, Pageable pageable);
 
-    Page<BillEntity> getAllByStatusAndClient_RutOrderByDateOfEmissionAsc(SalesDocumentStatusEnum status, String rut,
+    Page<BillEntity> getAllByStatusAndClient_DniOrderByDateOfEmissionAsc(SalesDocumentStatusEnum status, String dni,
                                                                          Pageable pageable);
 
 }

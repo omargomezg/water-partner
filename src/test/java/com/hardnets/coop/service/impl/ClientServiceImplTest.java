@@ -2,30 +2,16 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.TariffDto;
-import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.entity.ClientEntity;
-import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -93,7 +79,7 @@ class ClientServiceImplTest {
 
     private ClientDto getClient() {
         return ClientDto.builder()
-                .rut("14081226-9")
+                .dni("14081226-9")
                 .clientType(ClientTypeEnum.PARTNER.label)
                 .build();
     }

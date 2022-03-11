@@ -41,20 +41,20 @@ public class ConsumptionController {
      * Obtiene un listado de medidores mas su ultima lectura
      *
      * @param waterMeterNumber
-     * @param rut
+     * @param dni
      * @param status
      * @return
      */
     @GetMapping("/v1/consumption/related-water-meters")
     public ResponseEntity<RecordsDto> findWaterMeters(@RequestParam(required = false) String waterMeterNumber,
-                                                      @RequestParam(required = false) String rut,
+                                                      @RequestParam(required = false) String dni,
                                                       @RequestParam(required = false) String sector,
                                                       @RequestParam Optional<String> order,
                                                       @RequestParam Optional<String> direction,
                                                       @RequestParam(name = "status") String status,
                                                       @RequestParam(defaultValue = "0") Integer pageIndex,
                                                       @RequestParam(defaultValue = "25") Integer pageSize) {
-        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, rut, sector, status,
+        return ResponseEntity.ok(waterMeterService.findAllForSetConsumption(waterMeterNumber, dni, sector, status,
                 pageIndex, pageSize, order.orElse("waterMeterNumber"), direction.orElse("asc")));
     }
 

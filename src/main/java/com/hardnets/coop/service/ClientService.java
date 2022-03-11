@@ -18,7 +18,7 @@ public interface ClientService {
 
     ClientsDto getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize);
 
-    Optional<ClientEntity> getByRut(String rut);
+    Optional<ClientEntity> getByDni(String dni);
 
     /**
      * Crea un nuevo cliente

@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserDto update(UserDto userDto) {
-        var user = userRepository.findById(userDto.getRut()).orElseThrow(ClientNotFoundException::new);
+        var user = userRepository.findById(userDto.getDni()).orElseThrow(ClientNotFoundException::new);
         if (userDto.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
@@ -53,8 +53,8 @@ public class UserService implements UserDetailsService {
         return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
-    public UserDto getByRut(String rut) throws UserNotFoundException {
-        UserEntity user = userRepository.findById(rut).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserDto getByDni(String dni) throws UserNotFoundException {
+        UserEntity user = userRepository.findById(dni).orElseThrow(() -> new UserNotFoundException("User not found"));
         return new UserDto(user);
     }
 
@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
             throw new UserException("Incomplete user data");
         }
         UserEntity user = new UserEntity();
-        user.setRut(userDto.getRut());
+        user.setDni(userDto.getDni());
         user.setNames(userDto.getNames());
         user.setMiddleName(userDto.getMiddleName());
         user.setLastName(userDto.getLastName());

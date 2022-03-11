@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ClientDto {
-    @NotNull(message = "Rut cannot be null")
-    private String rut;
+    @NotNull(message = "Dni cannot be null")
+    private String dni;
 
     private String fullName;
 
@@ -56,9 +56,9 @@ public class ClientDto {
     @Builder.Default
     private List<WaterMeterDto> waterMeters = new ArrayList<>();
 
-     public ClientDto(String rut, String names, String middleName, String lastName, String businessName,
-                     ClientTypeEnum clientType) {
-        setRut(rut);
+     public ClientDto(String dni, String names, String middleName, String lastName, String businessName,
+                      ClientTypeEnum clientType) {
+        setDni(dni);
         setNames(names);
         setMiddleName(middleName);
         setLastName(lastName);

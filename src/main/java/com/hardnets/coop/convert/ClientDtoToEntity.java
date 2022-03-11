@@ -6,12 +6,15 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     @Override
     public ClientEntity convert(ClientDto clientDto) {
         ClientEntity clientEntity = new ClientEntity();
-        clientEntity.setRut(clientDto.getRut());
+        clientEntity.setDni(clientDto.getDni());
+        clientEntity.setClientNumber(clientDto.getClientNumber());
         clientEntity.setNames(clientDto.getNames());
         clientEntity.setMiddleName(clientDto.getMiddleName());
         clientEntity.setLastName(clientDto.getLastName());
@@ -30,11 +33,16 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
 
 
     private String getFullName(ClientDto client) {
-        if (client.getBusinessName().isEmpty())
-            return String.format("%s %s %s",
-                    client.getNames(),
-                    client.getMiddleName() != null ? client.getMiddleName() : "", client.getLastName());
-        else
+        if (client.getBusinessName().isEmpty()) {
+            StringBuilder sb = new StringBuilder().append(client.getNames());
+            if (Objects.nonNull(client.getMiddleName())) {
+                sb.append(" ").append(client.getMiddleName());
+            }
+            if (Objects.nonNull(client.getLastName())) {
+                sb.append(" ").append(client.getLastName());
+            }
+            return sb.toString();
+        } else
             return client.getBusinessName();
     }
 

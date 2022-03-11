@@ -43,10 +43,10 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
     }
 
     @Override
-    public IssuedBillsDto getByRut(String rut, Integer pageIndex, Integer pageSize) {
+    public IssuedBillsDto getByDni(String dni, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         IssuedBillsDto issuedBills = new IssuedBillsDto();
-        var bills = billRepository.getAllByClient_Rut(rut, pageable);
+        var bills = billRepository.getAllByClient_Dni(dni, pageable);
         issuedBills.setTotalHits(bills.getTotalElements());
         issuedBills.setContents(
                 bills.getContent().stream()
@@ -57,10 +57,10 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
     }
 
     @Override
-    public IssuedBillsDto getAllByStatusAndRut(SalesDocumentStatusEnum status, String rut, Integer pageIndex, Integer pageSize) {
+    public IssuedBillsDto getAllByStatusAndDni(SalesDocumentStatusEnum status, String dni, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         IssuedBillsDto issuedBillsDto = new IssuedBillsDto();
-        var bills = billRepository.getAllByStatusAndClient_RutOrderByDateOfEmissionAsc(status, rut, pageable);
+        var bills = billRepository.getAllByStatusAndClient_DniOrderByDateOfEmissionAsc(status, dni, pageable);
         issuedBillsDto.setTotalHits(bills.getTotalElements());
         issuedBillsDto.setContents(
                 bills.getContent().stream()
@@ -71,7 +71,7 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
     }
 
     @Override
-    public void createByClient(String rut) {
+    public void createByClient(String dni) {
 
     }
 

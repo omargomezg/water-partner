@@ -45,37 +45,15 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto update(ClientDto clientDto) {
-        ClientEntity client = clientRepository.findByRut(clientDto.getRut()).orElseThrow(() -> new ClientNotFoundException(clientDto.getRut()));
-        var sector = sectorRepository.findById(clientDto.getSector());
-        ClientTypeEnum clientTypeEnum = ClientTypeEnum.valueOf(clientDto.getClientType());
-        client.setClientType(clientTypeEnum);
-        client.setClientNumber(clientDto.getClientNumber());
-        sector.ifPresent(client::setSector);
-        if (clientTypeEnum.equals(ClientTypeEnum.PARTNER)) {
-            client.setBirthDate(clientDto.getBirthDate());
-            client.setNames(clientDto.getNames());
-            client.setLastName(clientDto.getLastName());
-            client.setMiddleName(clientDto.getMiddleName());
-            client.setProfession(clientDto.getProfession());
-            client.setFullName(String.format("%s %s %s", clientDto.getNames(), clientDto.getMiddleName(), clientDto.getLastName()));
-            client.setBusinessName("");
-            client.setBusinessActivity("");
-        } else {
-            client.setBusinessName(clientDto.getBusinessName());
-            client.setBusinessActivity(clientDto.getBusinessActivity());
-            client.setFullName(clientDto.getBusinessName());
-            client.setBirthDate(null);
-            client.setNames("");
-            client.setLastName("");
-            client.setMiddleName("");
-            client.setProfession("");
+        if (clientRepository.findByDni(clientDto.getDni()).isEmpty()) {
+            throw new ClientNotFoundException(clientDto.getDni());
         }
-        client.setDateOfAdmission(clientDto.getDateOfAdmission());
-        client.setEnabled(clientDto.getIsActive());
-        client.setEmail(clientDto.getEmail());
-        client.setTelephone(clientDto.getTelephone());
+        var client = conversionService.convert(clientDto, ClientEntity.class);
+        assert client != null;
+        var sector = sectorRepository.findById(clientDto.getSector());
+        sector.ifPresent(client::setSector);
         ClientEntity dbClient = clientRepository.save(client);
-        return mapToClientDTO(dbClient);
+        return conversionService.convert(dbClient, ClientDto.class);
     }
 
     @Override
@@ -87,7 +65,7 @@ public class ClientServiceImpl implements ClientService {
     public ClientsDto getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
         var name = filter.getName() != null ? filter.getName().toLowerCase() : null;
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        var clients = clientRepository.findAllClientsByRutOrNameOrNone(filter.getRut(), name, pageable);
+        var clients = clientRepository.findAllClientsByDniOrNameOrNone(filter.getDni(), name, pageable);
         return ClientsDto.builder()
                 .totalHits(clients.getTotalElements())
                 .items(clients.getContent().stream().map(this::getClientDto).collect(Collectors.toList()))
@@ -98,10 +76,10 @@ public class ClientServiceImpl implements ClientService {
     private ClientDto getClientDto(ClientEntity client) {
         var clientDto = conversionService.convert(client, ClientDto.class);
         if (clientDto != null) {
-            var meters = waterMeterRepository.findAllIdsByClient(clientDto.getRut());
+            var meters = waterMeterRepository.findAllIdsByClient(clientDto.getDni());
             if (!meters.isEmpty()) {
                 clientDto.setWaterMeters(
-                        waterMeterRepository.findAllIdsByClient(clientDto.getRut()).stream()
+                        waterMeterRepository.findAllIdsByClient(clientDto.getDni()).stream()
                                 .map(this::getMeterDto).collect(Collectors.toList())
                 );
             }
@@ -114,8 +92,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Optional<ClientEntity> getByRut(String rut) {
-        return clientRepository.findByRut(rut);
+    public Optional<ClientEntity> getByDni(String dni) {
+        return clientRepository.findByDni(dni);
     }
 
     @Override
@@ -124,9 +102,7 @@ public class ClientServiceImpl implements ClientService {
         var sector = sectorRepository.findById(clientDto.getSector());
         sector.ifPresent(client::setSector);
         var dto = conversionService.convert(clientRepository.save(client), ClientDto.class);
-        sector.ifPresent(item -> {
-            dto.setSector(item.getId());
-        });
+        sector.ifPresent(item -> dto.setSector(item.getId()));
         return dto;
     }
 
@@ -137,31 +113,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public boolean exist(String rut) {
-        return clientRepository.findByRut(rut).isPresent();
-    }
-
-    private ClientDto mapToClientDTO(ClientEntity client) {
-        ClientDto clientDto = ClientDto.builder()
-                .rut(client.getRut())
-                .names(client.getNames())
-                .middleName(client.getMiddleName())
-                .lastName(client.getLastName())
-                .businessName(client.getBusinessName())
-                .businessActivity(client.getBusinessActivity())
-                .birthDate(client.getBirthDate())
-                .profession(client.getProfession())
-                .dateOfAdmission(client.getDateOfAdmission())
-                .email(client.getEmail())
-                .isActive(client.getEnabled())
-                .telephone(client.getTelephone())
-                .sector(client.getSector().getId())
-                .build();
-        clientDto.setFullName(getFullName(clientDto));
-        clientDto.setClientType(client.getClientType().label);
-        if (Objects.nonNull(client.getWaterMeter()) && Objects.nonNull(clientDto.getWaterMeters())) {
-            client.getWaterMeter().forEach(item -> clientDto.getWaterMeters().add(modelMapper.map(item, WaterMeterDto.class)));
-        }
-        return clientDto;
+        return clientRepository.findByDni(rut).isPresent();
     }
 
     private String getFullName(ClientDto client) {
