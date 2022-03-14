@@ -1,6 +1,7 @@
 package com.hardnets.coop.convert;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
+import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
@@ -13,6 +14,7 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     @Override
     public ClientEntity convert(ClientDto clientDto) {
         ClientEntity clientEntity = new ClientEntity();
+        clientEntity.setTypeOfDni(DniTypeEnum.valueOf(clientDto.getDniType()));
         clientEntity.setDni(clientDto.getDni());
         clientEntity.setClientNumber(clientDto.getClientNumber());
         clientEntity.setNames(clientDto.getNames());

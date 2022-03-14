@@ -17,6 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ClientDto {
+
+    @NotNull
+    private String dniType;
+
     @NotNull(message = "Dni cannot be null")
     private String dni;
 

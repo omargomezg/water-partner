@@ -22,6 +22,10 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
                 .clientNumber(source.getClientNumber())
                 .profession(getProfession(source));
 
+        if (Objects.nonNull(source.getTypeOfDni())) {
+            clientDto.dniType(source.getTypeOfDni().name());
+        }
+
         if (Objects.nonNull(source.getSector())) {
             clientDto.sector(source.getSector().getId());
         }

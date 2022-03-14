@@ -28,10 +28,9 @@ import java.util.Set;
 @Table(name = "client")
 public class ClientEntity extends PersonEntity {
 
-    @Column
     private Date dateOfAdmission;
 
-    @Column
+    @Column(length = 15)
     private String telephone;
 
     private String businessName = "";

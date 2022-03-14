@@ -1,11 +1,11 @@
 package com.hardnets.coop.model.entity;
 
+import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,7 +26,10 @@ public abstract class PersonEntity {
     private String dni;
 
     @Enumerated(EnumType.STRING)
-    private NationalityEnum nationality;
+    private DniTypeEnum typeOfDni;
+
+    @Enumerated(EnumType.STRING)
+    private NationalityEnum nationality = NationalityEnum.CHILEAN;
 
     @NotNull
     private String names;
@@ -38,7 +41,6 @@ public abstract class PersonEntity {
     @Email
     private String email;
 
-    @Column
     private Boolean enabled = true;
 
     private String password;
