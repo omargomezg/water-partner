@@ -14,7 +14,6 @@ import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.util.RutUtils;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
-@Api("All client operations")
 @RequiredArgsConstructor
 @RequestMapping("/bulk")
 @RestController

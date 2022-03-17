@@ -11,6 +11,8 @@ import java.util.Date;
 @Builder
 public class ClientDocuments {
     private Integer id;
+
+    @Builder.Default
     private Date emmit = new Date();
     private Integer amount;
     private String status;

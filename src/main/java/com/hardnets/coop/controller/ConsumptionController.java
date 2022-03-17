@@ -13,7 +13,6 @@ import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
-import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Api("All client operations")
 @AllArgsConstructor
 @RestController
 public class ConsumptionController {

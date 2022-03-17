@@ -12,8 +12,7 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.impl.BillServiceImpl;
 import com.hardnets.coop.service.impl.WaterMeterService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.Collection;
 
-@Api("All client operations")
 @AllArgsConstructor
 @RequestMapping("/v1/client")
 @RestController
@@ -65,7 +63,7 @@ public class ClientController {
         return new ResponseEntity<>(clientService.create(client), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Update an specific user", notes = "The primary key is rut, for example: '12345678-9'")
+    @Operation(description = "Update an specific user")
     @PutMapping
     public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);

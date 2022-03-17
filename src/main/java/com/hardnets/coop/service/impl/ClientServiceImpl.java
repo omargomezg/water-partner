@@ -1,7 +1,6 @@
 package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
@@ -14,8 +13,6 @@ import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +33,6 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final SectorRepository sectorRepository;
     private final WaterMeterRepository waterMeterRepository;
-    private final ModelMapper modelMapper;
     private final ConversionService conversionService;
 
     public ClientEntity update(ClientEntity clientEntity) {
@@ -72,7 +68,6 @@ public class ClientServiceImpl implements ClientService {
                 .build();
     }
 
-    @NotNull
     private ClientDto getClientDto(ClientEntity client) {
         var clientDto = conversionService.convert(client, ClientDto.class);
         if (clientDto != null) {
