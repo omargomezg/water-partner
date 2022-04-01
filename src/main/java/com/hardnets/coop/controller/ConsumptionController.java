@@ -93,6 +93,7 @@ public class ConsumptionController {
         } else {
             consumptionService.create(waterMeter, consumption, period);
         }
+        // TODO Pendiente crear detalle de consumo async
         return ResponseEntity.created(URI.create("/consumption/" + id)).build();
     }
 

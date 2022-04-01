@@ -12,40 +12,40 @@ import java.util.Objects;
 @Component
 public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     @Override
-    public ClientEntity convert(ClientDto clientDto) {
+    public ClientEntity convert(ClientDto source) {
         ClientEntity clientEntity = new ClientEntity();
-        clientEntity.setTypeOfDni(DniTypeEnum.valueOf(clientDto.getDniType()));
-        clientEntity.setDni(clientDto.getDni());
-        clientEntity.setClientNumber(clientDto.getClientNumber());
-        clientEntity.setNames(clientDto.getNames());
-        clientEntity.setMiddleName(clientDto.getMiddleName());
-        clientEntity.setLastName(clientDto.getLastName());
-        clientEntity.setBusinessName(clientDto.getBusinessName());
-        clientEntity.setFullName(getFullName(clientDto));
-        clientEntity.setBusinessActivity(clientDto.getBusinessActivity());
-        clientEntity.setBirthDate(clientDto.getBirthDate());
-        clientEntity.setClientType(ClientTypeEnum.valueOf(clientDto.getClientType()));
-        clientEntity.setProfession(clientDto.getProfession());
-        clientEntity.setDateOfAdmission(clientDto.getDateOfAdmission());
-        clientEntity.setEmail(clientDto.getEmail());
-        clientEntity.setEnabled(clientDto.getIsActive());
-        clientEntity.setTelephone(clientDto.getTelephone());
+        clientEntity.setTypeOfDni(DniTypeEnum.valueOf(source.getDniType()));
+        clientEntity.setDni(source.getDni());
+        clientEntity.setClientNumber(source.getClientNumber());
+        clientEntity.setNames(source.getNames());
+        clientEntity.setMiddleName(source.getMiddleName());
+        clientEntity.setLastName(source.getLastName());
+        clientEntity.setBusinessName(source.getBusinessName());
+        clientEntity.setFullName(getFullName(source));
+        clientEntity.setBusinessActivity(source.getBusinessActivity());
+        clientEntity.setBirthDate(source.getBirthDate());
+        clientEntity.setClientType(ClientTypeEnum.valueOf(source.getClientType()));
+        clientEntity.setProfession(source.getProfession());
+        clientEntity.setDateOfAdmission(source.getDateOfAdmission());
+        clientEntity.setEmail(source.getEmail());
+        clientEntity.setEnabled(source.getIsActive());
+        clientEntity.setTelephone(source.getTelephone());
         return clientEntity;
     }
 
 
-    private String getFullName(ClientDto client) {
-        if (client.getBusinessName().isEmpty()) {
-            StringBuilder sb = new StringBuilder().append(client.getNames());
-            if (Objects.nonNull(client.getMiddleName())) {
-                sb.append(" ").append(client.getMiddleName());
+    private String getFullName(ClientDto source) {
+        if (source.getBusinessName().isEmpty()) {
+            StringBuilder sb = new StringBuilder().append(source.getNames());
+            if (Objects.nonNull(source.getMiddleName())) {
+                sb.append(" ").append(source.getMiddleName());
             }
-            if (Objects.nonNull(client.getLastName())) {
-                sb.append(" ").append(client.getLastName());
+            if (Objects.nonNull(source.getLastName())) {
+                sb.append(" ").append(source.getLastName());
             }
             return sb.toString();
         } else
-            return client.getBusinessName();
+            return source.getBusinessName();
     }
 
 }
