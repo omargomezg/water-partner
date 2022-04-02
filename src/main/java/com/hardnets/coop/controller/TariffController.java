@@ -27,12 +27,12 @@ public class TariffController {
     }
 
     @PostMapping("/v1/tariff")
-    public ResponseEntity<?> crateTariff(@RequestBody @Valid TariffDto tariff) {
+    public ResponseEntity<TariffDto> crateTariff(@RequestBody @Valid TariffDto tariff) {
         return new ResponseEntity<>(tariffService.create(tariff), HttpStatus.CREATED);
     }
 
     @GetMapping("/v1/tariff/{id}")
-    public ResponseEntity<TariffDto> getTarifById(@PathVariable Long id) {
+    public ResponseEntity<TariffDto> getTariffById(@PathVariable Long id) {
         return ResponseEntity.ok(tariffService.findById(id));
     }
 
