@@ -51,7 +51,7 @@ public class ClientEntity extends PersonEntity {
     @Enumerated(EnumType.STRING)
     private ClientTypeEnum clientType = ClientTypeEnum.PUBLIC;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subsidy_id")
     private SubsidyEntity subsidy;
 

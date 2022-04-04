@@ -4,14 +4,11 @@ import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.impl.BillServiceImpl;
-import com.hardnets.coop.service.impl.WaterMeterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -29,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Collection;
 
 @Api("All client operations")
 @AllArgsConstructor
@@ -38,7 +34,6 @@ import java.util.Collection;
 public class ClientController {
 
     private final ClientService clientService;
-    private final WaterMeterService waterMeterService;
     private final BillServiceImpl bill;
     private final ModelMapper modelMapper;
     private final ConversionService conversionService;
@@ -69,18 +64,6 @@ public class ClientController {
     @PutMapping
     public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);
-    }
-
-    @PostMapping("/water-meter/{rut}")
-    public ResponseEntity<Void> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
-                                              @PathVariable String rut) {
-        waterMeterService.relateToClient(waterMeterDto, rut);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @GetMapping("/water-meter/{rut}")
-    public ResponseEntity<Collection<RelatedWaterMetersDto>> getWaterMeters(@PathVariable String rut) {
-        return ResponseEntity.ok(waterMeterService.getByUser(rut));
     }
 
     @GetMapping("/document")

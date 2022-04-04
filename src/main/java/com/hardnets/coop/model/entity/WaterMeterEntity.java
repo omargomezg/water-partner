@@ -10,6 +10,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -68,7 +69,7 @@ public class WaterMeterEntity extends BaseEntity {
     @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
     private Set<BillEntity> bills = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "waterMeter", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<SubsidyEntity> subsidies = new HashSet<>();
 
