@@ -13,6 +13,7 @@ import com.hardnets.coop.service.impl.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +48,12 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserDto> updateUser(@RequestParam String dni, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.update(userDto));
+    }
+
+    @PutMapping("{dni}/password")
+    public ResponseEntity<?> updatePassword(@PathVariable String dni, @RequestBody String password) {
+        userService.updatePassword(dni, password);
+        return ResponseEntity.noContent().build();
     }
 
 }

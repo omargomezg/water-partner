@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
@@ -93,8 +94,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(System.getenv().get("URL_FRONT"));
-        config.addAllowedOrigin(System.getenv().get("URL_FLOW"));
+        config.addAllowedOrigin(
+                Optional.ofNullable(System.getenv().get("URL_FRONT")).orElse("http://localhost:4200")
+        );
+        config.addAllowedOrigin(
+                Optional.ofNullable(System.getenv().get("URL_FLOW")).orElse("https://sandbox.flow.cl")
+        );
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

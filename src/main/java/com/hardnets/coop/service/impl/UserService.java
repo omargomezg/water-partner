@@ -79,4 +79,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
+
+    public void updatePassword(String dni, String password) {
+        var user = userRepository.getById(dni);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
 }
