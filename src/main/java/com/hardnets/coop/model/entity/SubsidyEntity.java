@@ -1,6 +1,7 @@
 package com.hardnets.coop.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,9 +50,10 @@ public class SubsidyEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "watermeter_id")
+    @JsonBackReference
     private WaterMeterEntity waterMeter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "decree_id")
     private DecreeEntity decree;
 }

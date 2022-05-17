@@ -2,6 +2,7 @@ package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.constant.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,5 +59,9 @@ public class TariffEntity extends BaseEntity {
      */
     @Enumerated(EnumType.STRING)
     private DiameterEnum diameter;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private StatusEnum status;
 
 }

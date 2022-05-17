@@ -1,5 +1,6 @@
 package com.hardnets.coop.model.dto;
 
+import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.entity.TariffEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class AllTariffsDto {
     private Float cubicMeter;
     private String clientType;
     private Instant lastUpdate;
+    private String status;
 
     public AllTariffsDto(TariffEntity tariffEntity) {
         setId(tariffEntity.getId());
@@ -24,6 +26,7 @@ public class AllTariffsDto {
         setCubicMeter(tariffEntity.getCubicMeter());
         setFlatFee(tariffEntity.getFlatFee());
         setDiameter(tariffEntity.getDiameter().getValue());
+        setStatus(tariffEntity.getStatus() == null ? StatusEnum.ACTIVE.name() : tariffEntity.getStatus().name());
         setLastUpdate(tariffEntity.getLastUpdate());
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TariffEntityToDto implements Converter<WaterMeterEntity, WaterMeterDto> {
     @Override
-    public WaterMeterDto convert(WaterMeterEntity waterMeterEntity) {
+    public WaterMeterDto convert(WaterMeterEntity source) {
         return null;
     }
 }

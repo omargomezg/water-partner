@@ -1,8 +1,10 @@
 package com.hardnets.coop.service.impl;
 
+import com.hardnets.coop.exception.ResourceExistsException;
 import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.dto.AllTariffsBaseDto;
 import com.hardnets.coop.model.dto.AllTariffsDto;
 import com.hardnets.coop.model.dto.TariffDto;
@@ -48,6 +50,8 @@ public class TariffServiceImpl implements TariffService {
 
     @Override
     public TariffDto create(TariffDto tariffDto) {
+        if (existsTariff(tariffDto))
+            throw new ResourceExistsException("Tariff already exists");
         TariffEntity tariff = conversionService.convert(tariffDto, TariffEntity.class);
         return conversionService.convert(tariffRepository.save(tariff), TariffDto.class);
     }
@@ -62,6 +66,7 @@ public class TariffServiceImpl implements TariffService {
         dbTariff.setFlatFee(tariffDto.getFlatFee());
         dbTariff.setLastUpdate(Instant.now());
         dbTariff.setDiameter(DiameterEnum.valueOf(tariffDto.getDiameter()));
+        dbTariff.setStatus(StatusEnum.valueOf(tariffDto.getStatus()));
         TariffEntity result = tariffRepository.save(dbTariff);
         return new TariffDto(result);
     }
@@ -76,5 +81,11 @@ public class TariffServiceImpl implements TariffService {
             }
         }
         return hastTariff;
+    }
+
+    private boolean existsTariff(TariffDto tariff) {
+        return tariffRepository.findBySizeAndClientType(
+                DiameterEnum.valueOf(tariff.getDiameter()),
+                ClientTypeEnum.valueOf(tariff.getClientType())).isPresent();
     }
 }

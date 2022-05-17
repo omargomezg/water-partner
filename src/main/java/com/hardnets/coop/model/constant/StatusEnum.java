@@ -3,7 +3,9 @@ package com.hardnets.coop.model.constant;
 public enum StatusEnum {
     NEW("Nuevo"),
     USED("Usado"),
-    BAD("Dañado");
+    BAD("Dañado"),
+    ACTIVE("Activo"),
+    INACTIVE("Inactivo");
 
     public final String label;
 
