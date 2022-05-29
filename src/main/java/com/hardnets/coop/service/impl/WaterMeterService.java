@@ -24,12 +24,15 @@ import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterPageableRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 @AllArgsConstructor
 @Service
 public class WaterMeterService {
@@ -95,6 +99,15 @@ public class WaterMeterService {
         return new WaterMeterDto(
                 waterMeterRepository.save(waterMeter)
         );
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        var meter = waterMeterRepository.findById(id);
+        if(meter.isPresent()) {
+            waterMeterRepository.delete(meter.get());
+            log.info("Meter with {} deleted", id);
+        }
     }
 
     public boolean existSerial(Integer serial) {

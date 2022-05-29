@@ -51,7 +51,7 @@ public class ClientListener {
     }
 
     public String buildFullName(ClientEntity client) {
-        return client.getClientType().equals(ClientTypeEnum.PARTNER) ?
+            return ClientTypeEnum.isPartner(client.getClientType()) ?
                 String.format("%s %s %s", client.getNames(), client.getMiddleName(), client.getLastName()) :
                 client.getBusinessName();
     }

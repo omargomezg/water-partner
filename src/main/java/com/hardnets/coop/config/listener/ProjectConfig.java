@@ -65,9 +65,9 @@ public class ProjectConfig {
     }
 
     private void checkClientType() {
-        if (dropDownListRepository.findByCode(ClientTypeEnum.PARTNER.label).isEmpty()) {
+        /*if (dropDownListRepository.findByCode(ClientTypeEnum.PARTNER.label).isEmpty()) {
             saveDropDownEntity("Socio", ClientTypeEnum.PARTNER.label);
-        }
+        }*/
         if (dropDownListRepository.findByCode(ClientTypeEnum.PUBLIC.label).isEmpty()) {
             saveDropDownEntity("Publico", ClientTypeEnum.PUBLIC.label);
         }

@@ -28,4 +28,6 @@ public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Lo
     @Query("select new com.hardnets.coop.model.dto.WaterMeterDto(wm.id, wm.serial, wm.trademark, wm.diameter, wm.description, wm.sector, wm.updated)" +
             " from WaterMeterEntity wm where wm.client is null")
     Collection<WaterMeterDto> findAllWhereClientIsNull();
+
+    void deleteAllById(Long id);
 }

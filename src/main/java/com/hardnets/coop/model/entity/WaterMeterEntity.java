@@ -63,17 +63,17 @@ public class WaterMeterEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER,  orphanRemoval = true)
     private Set<InvoiceEntity> invoices = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER,  orphanRemoval = true)
     private Set<BillEntity> bills = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "waterMeter",  orphanRemoval = true)
     @JsonManagedReference
     private Set<SubsidyEntity> subsidies = new HashSet<>();
 
-    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER,  orphanRemoval = true)
     @JsonManagedReference
     private Set<ConsumptionEntity> consumptions = new HashSet<>();
 

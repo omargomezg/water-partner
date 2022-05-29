@@ -63,6 +63,6 @@ public class PeriodEntity extends BaseEntity {
     /**
      * Relación de consumos para un periodo
      */
-    @OneToMany(mappedBy = "period", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "period", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<ConsumptionEntity> consumptions = new HashSet<>();
 }

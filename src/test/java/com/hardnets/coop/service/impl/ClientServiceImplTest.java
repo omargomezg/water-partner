@@ -80,7 +80,7 @@ class ClientServiceImplTest {
     private ClientDto getClient() {
         return ClientDto.builder()
                 .dni("14081226-9")
-                .clientType(ClientTypeEnum.PARTNER.label)
+                .clientType(ClientTypeEnum.RESIDENT_PARTNER.label)
                 .build();
     }
 }

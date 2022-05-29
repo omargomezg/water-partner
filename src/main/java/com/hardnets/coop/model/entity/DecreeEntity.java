@@ -1,16 +1,16 @@
 package com.hardnets.coop.model.entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "decree")
@@ -25,7 +25,19 @@ public class DecreeEntity extends BaseEntity {
      */
     private Date approved;
 
-    @OneToMany(mappedBy = "decree", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "decree", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<SubsidyEntity> subsidies;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        DecreeEntity that = (DecreeEntity) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

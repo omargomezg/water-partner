@@ -27,7 +27,7 @@ public class ClientMeterController {
     private final ClientMeterService clientMeterService;
 
     @PostMapping("/{dni}")
-    public ResponseEntity<Void> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
+    public ResponseEntity<?> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
                                               @PathVariable String dni) {
         waterMeterService.relateToClient(waterMeterDto, dni);
         return new ResponseEntity(HttpStatus.CREATED);

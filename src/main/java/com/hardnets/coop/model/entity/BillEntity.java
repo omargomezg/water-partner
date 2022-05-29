@@ -25,7 +25,7 @@ public class BillEntity extends SalesDocumentEntity {
     @JoinColumn(name = "client_dni", referencedColumnName = "dni", nullable = false)
     private ClientEntity client;
 
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<BillDetailEntity> detail = new HashSet<>();
 
     @ManyToOne

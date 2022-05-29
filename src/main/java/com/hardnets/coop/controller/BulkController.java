@@ -96,7 +96,7 @@ public class BulkController {
             ClientEntity client = new ClientEntity();
             client.setDni(rut);
             client.setNames(bulkRecord.getNames());
-            client.setClientType(ClientTypeEnum.PARTNER);
+            client.setClientType(ClientTypeEnum.RESIDENT_PARTNER);
             clientService.create(client);
         }
         saveWaterMeter(bulkRecord);

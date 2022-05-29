@@ -76,8 +76,4 @@ public class ClientController {
         return ResponseEntity.ok(documents);
     }
 
-    private ClientDto convertToDto(ClientEntity clientEntity) {
-        return modelMapper.map(clientEntity, ClientDto.class);
-    }
-
 }
