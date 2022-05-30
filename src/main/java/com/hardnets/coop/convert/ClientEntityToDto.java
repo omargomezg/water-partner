@@ -5,6 +5,7 @@ import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Component
@@ -20,7 +21,8 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
                 .birthDate(source.getBirthDate())
                 .telephone(source.getTelephone())
                 .clientNumber(source.getClientNumber())
-                .profession(getProfession(source));
+                .profession(getProfession(source))
+                .waterMeters(new ArrayList<>());
 
         if (Objects.nonNull(source.getTypeOfDni())) {
             clientDto.dniType(source.getTypeOfDni().name());

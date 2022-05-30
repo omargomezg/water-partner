@@ -35,7 +35,6 @@ public class ClientController {
 
     private final ClientService clientService;
     private final BillServiceImpl bill;
-    private final ModelMapper modelMapper;
     private final ConversionService conversionService;
 
     @GetMapping
