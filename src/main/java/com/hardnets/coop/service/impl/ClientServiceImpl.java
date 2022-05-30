@@ -82,7 +82,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     private WaterMeterDto getMeterDto(WaterMeterEntity meter) {
-        return conversionService.convert(meter, WaterMeterDto.class);
+        var meterConverted =  conversionService.convert(meter, WaterMeterDto.class);
+        log.info(meterConverted);
+        return meterConverted;
     }
 
     @Override
