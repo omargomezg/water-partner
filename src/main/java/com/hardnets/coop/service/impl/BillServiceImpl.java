@@ -89,8 +89,10 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
                 bill.setWaterMeter(consumption.getWaterMeter());
                 BillEntity dbBill = billRepository.save(bill);
                 List<BillDetailEntity> detail = billDetailService.getDetail(consumption, dbBill.getId());
-                billDetailRepository.saveAll(detail);
-                billRepository.save(bill);
+                if (detail.size() > 0) {
+                    billDetailRepository.saveAll(detail);
+                    billRepository.save(bill);
+                }
             }
         }
         period.setBillsCreated(true);

@@ -12,9 +12,4 @@ public class CoopApplication {
         SpringApplication.run(CoopApplication.class, args);
     }
 
-    /*@Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }*/
-
 }

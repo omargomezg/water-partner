@@ -2,14 +2,14 @@ package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.CalculationTypeEnum;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * Conceptos a cobrar a un cliente el cual puede ser un valor fijo o calculado

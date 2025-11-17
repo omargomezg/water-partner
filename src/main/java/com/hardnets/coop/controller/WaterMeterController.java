@@ -3,12 +3,12 @@ package com.hardnets.coop.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDto;
 import com.hardnets.coop.service.impl.WaterMeterService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

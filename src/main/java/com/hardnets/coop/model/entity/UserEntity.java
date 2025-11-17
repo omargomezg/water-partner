@@ -1,13 +1,15 @@
 package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.ProfileEnum;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -15,10 +17,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserEntity extends PersonEntity implements UserDetails, Serializable {
-
-    @Column
-    private String password;
+public class UserEntity extends PersonEntity implements UserDetails {
 
     @Column(name = "role")
     @Enumerated
@@ -34,7 +33,7 @@ public class UserEntity extends PersonEntity implements UserDetails, Serializabl
 
     @Override
     public String getUsername() {
-        return null;
+        return getEmail();
     }
 
     @Override

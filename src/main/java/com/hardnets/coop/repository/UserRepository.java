@@ -11,8 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-    Optional<UserEntity> findById(String dni);
-
     Optional<UserEntity> findByEmail(String email);
 
     List<UserEntity> findAllByProfileNot(ProfileEnum profileEnum);

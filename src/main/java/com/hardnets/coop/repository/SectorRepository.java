@@ -1,15 +1,14 @@
 package com.hardnets.coop.repository;
 
 import com.hardnets.coop.model.entity.SectorEntity;
-import org.springframework.data.repository.CrudRepository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SectorRepository extends CrudRepository<SectorEntity, Long> {
-    List<SectorEntity> findAll();
+public interface SectorRepository extends JpaRepository<SectorEntity, Long> {
 
     Optional<SectorEntity> findAllByNameEquals(String name);
 }

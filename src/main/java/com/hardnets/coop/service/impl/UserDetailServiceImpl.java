@@ -8,10 +8,15 @@ import com.hardnets.coop.model.dto.CreateUserDto;
 import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.service.UserDetailsService;
+
+import io.swagger.v3.oas.annotations.servers.Server;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,9 +26,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@Slf4j
 @Service
-public class UserService implements UserDetailsService {
+@RequiredArgsConstructor
+public class UserDetailServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -34,8 +40,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDto update(UserDto userDto) {
-        var user = userRepository.findById(userDto.getDni()).orElseThrow(ClientNotFoundException::new);
+    public UserDto update(@NotNull UserDto userDto) {
+        var dni = userDto.getDni();
+        if (Objects.isNull(dni)) {
+            throw new UserException("DNI is required");
+        }
+        var user = userRepository.findById(dni).orElseThrow(ClientNotFoundException::new);
         if (userDto.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
@@ -53,8 +63,8 @@ public class UserService implements UserDetailsService {
         return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
-    public UserDto getByDni(String dni) throws UserNotFoundException {
-        UserEntity user = userRepository.findById(dni).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserDto getByDni(@NonNull String dni) throws UserNotFoundException {
+        UserEntity user = userRepository.findById(dni).orElseThrow(UserNotFoundException::new);
         return new UserDto(user);
     }
 
@@ -76,12 +86,15 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        log.info("Loading UserDetails for {}", email);
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        log.info("UserDetails loaded for {}", user);
+        return user;
     }
 
-    public void updatePassword(String dni, String password) {
-        var user = userRepository.getById(dni);
+    public void updatePassword(@NonNull String dni, String password) {
+        var user = userRepository.findById(dni).orElseThrow(UserNotFoundException::new);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
     }

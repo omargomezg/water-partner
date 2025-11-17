@@ -15,6 +15,7 @@ import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.util.RutUtils;
 import io.swagger.annotations.Api;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 

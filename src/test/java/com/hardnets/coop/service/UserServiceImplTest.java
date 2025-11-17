@@ -2,7 +2,7 @@ package com.hardnets.coop.service;
 
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.service.impl.UserService;
+import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class UserServiceImplTest {
 
     @InjectMocks
-    UserService userService;
+    UserDetailServiceImpl userDetailService;
 
     @Mock
     UserRepository userRepository;
@@ -42,8 +42,8 @@ class UserServiceImplTest {
         String dni = "11111111-1";
         String password = "the new password";
 
-        when(userRepository.getById(dni)).thenReturn(new UserEntity());
+        when(userRepository.findById(dni)).thenReturn(Optional.of(new UserEntity()));
 
-        userService.updatePassword(dni, password);
+        userDetailService.updatePassword(dni, password);
     }
 }

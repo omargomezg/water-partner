@@ -1,6 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.service.impl.UserService;
+import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
-
+    UserDetailServiceImpl userDetailService;
 
     @Test
     void updatePassword() throws Exception {
@@ -36,10 +35,10 @@ class UserControllerTest {
         String password = "the new password";
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/v1/user/" + dni + "/password")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(password)
-                                .with(user("user")))
+                MockMvcRequestBuilders.put("/v1/user/" + dni + "/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(password)
+                        .with(user("user")))
                 .andExpect(status().isNoContent())
                 .andReturn();
     }

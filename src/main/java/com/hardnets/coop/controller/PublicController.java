@@ -15,10 +15,12 @@ import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.model.flow.UrlReturn;
 import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.security.JwtTokenUtil;
+import com.hardnets.coop.config.security.JwtUtils;
 import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.SaleDocumentService;
-import com.hardnets.coop.service.impl.UserService;
+import com.hardnets.coop.service.impl.UserDetailServiceImpl;
+
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.validation.Valid;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -55,23 +56,24 @@ public class PublicController {
 
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final UserService userService;
+    private final JwtUtils jwtTokenUtil;
+    private final UserDetailServiceImpl userService;
     private final FlowService flowService;
     private final SaleDocumentService<BillEntity> billService;
 
     @PostMapping("/auth/signup")
     public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
         try {
-            Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            var username = request.getEmail();
+            var password = request.getPassword();
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-            UserEntity user = (UserEntity) authenticate.getPrincipal();
+            UserEntity user = (UserEntity) authentication.getPrincipal();
             LoginDto response = new LoginDto();
             response.setDni(user.getDni());
             response.setEmail(user.getEmail());
             response.setFullName(String.format("%s %s", user.getNames().split(" ")[0], user.getLastName()));
-            response.setToken(jwtTokenUtil.generateAccessToken(user));
+            response.setToken(jwtTokenUtil.generateToken(user));
             user.setLastLogin(new Date());
             userRepository.save(user);
             return ResponseEntity.ok()
@@ -80,14 +82,17 @@ public class PublicController {
         } catch (BadCredentialsException ex) {
             log.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/pending-payment/{rut}")
     public ResponseEntity<IssuedBillsDto> getUserPendingPayment(@PathVariable String rut,
-                                                                @RequestParam(defaultValue = "1") Integer status,
-                                                                @RequestParam Integer pageIndex,
-                                                                @RequestParam Integer pageSize) {
+            @RequestParam(defaultValue = "1") Integer status,
+            @RequestParam Integer pageIndex,
+            @RequestParam Integer pageSize) {
         SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
         var pendingDocuments = billService.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
         return ResponseEntity.ok(pendingDocuments);
@@ -111,7 +116,8 @@ public class PublicController {
     }
 
     @GetMapping("/payment-status/{token}")
-    public PaymentOrderStatusResponse paymentStats(@PathVariable String token) throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+    public PaymentOrderStatusResponse paymentStats(@PathVariable String token)
+            throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         return flowService.findFlowPaymentStatusByToken(token);
     }
 

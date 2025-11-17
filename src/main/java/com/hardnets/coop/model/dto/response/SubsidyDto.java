@@ -1,8 +1,9 @@
 package com.hardnets.coop.model.dto.response;
 
 import com.hardnets.coop.model.dto.WaterMeterDto;
-import com.sun.istack.NotNull;
-import com.sun.istack.Nullable;
+
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

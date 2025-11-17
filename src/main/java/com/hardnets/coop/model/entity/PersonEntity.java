@@ -2,18 +2,19 @@ package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter

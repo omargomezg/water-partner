@@ -3,6 +3,12 @@ package com.hardnets.coop.model.entity;
 import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,11 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
 import java.time.Instant;
 
 

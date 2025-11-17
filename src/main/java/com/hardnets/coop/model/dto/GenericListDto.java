@@ -1,9 +1,9 @@
 package com.hardnets.coop.model.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
