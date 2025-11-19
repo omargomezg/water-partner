@@ -42,7 +42,7 @@ public class JwtUtils {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
-                .issuer("pinot.consultores.cl")
+                .issuer("pinotconsultores.cl")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
                 .signWith(key())
