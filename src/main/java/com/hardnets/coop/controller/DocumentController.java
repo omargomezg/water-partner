@@ -17,12 +17,12 @@ import java.util.Optional;
 public class DocumentController {
 
     @GetMapping
-    public ResponseEntity getDocument(@RequestParam Optional<Long> id) {
+    public ResponseEntity<Void> getDocument(@RequestParam Optional<Long> id) {
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity updateDocument() {
+    public ResponseEntity<Void> updateDocument() {
         return ResponseEntity.ok().build();
     }
 

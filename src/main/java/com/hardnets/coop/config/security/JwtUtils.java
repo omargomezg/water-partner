@@ -27,9 +27,9 @@ public class JwtUtils {
     public String getJwtTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7); // Remove "Bearer " prefix
+            return header.substring(7);
         }
-        return null; // Return null if no valid JWT token is found
+        return null;
     }
 
     private Key key() {
@@ -39,19 +39,16 @@ public class JwtUtils {
         return key;
     }
 
-    // Generate JWT token
     public String generateToken(UserDetails userDetails) {
-
         return Jwts.builder()
                 .subject(userDetails.getUsername())
-                .issuer("com.saatvik.app")
+                .issuer("pinot.consultores.cl")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
                 .signWith(key())
                 .compact();
     }
 
-    // Get username from JWT token
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .verifyWith((SecretKey) key())
@@ -60,7 +57,6 @@ public class JwtUtils {
                 .getPayload().getSubject();
     }
 
-    // Validate JWT token
     public boolean validateJwtToken(String token) {
         try {
             Jwts.parser()

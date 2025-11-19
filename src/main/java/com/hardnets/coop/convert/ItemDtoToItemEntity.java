@@ -5,13 +5,14 @@ import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.items.ItemDto;
 import com.hardnets.coop.model.entity.ItemEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ItemDtoToItemEntity implements Converter<ItemDto, ItemEntity> {
 
     @Override
-    public ItemEntity convert(ItemDto itemDto) {
+    public ItemEntity convert(@NonNull ItemDto itemDto) {
         return new ItemEntity(
                 itemDto.getDescription(),
                 itemDto.getExcerpt(),

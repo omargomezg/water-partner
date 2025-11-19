@@ -9,7 +9,6 @@ import com.hardnets.coop.repository.DropDownListRepository;
 import com.hardnets.coop.repository.UserRepository;
 import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.impl.ConsumptionService;
-import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

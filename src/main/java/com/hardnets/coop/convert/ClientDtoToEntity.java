@@ -5,6 +5,7 @@ import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -12,7 +13,7 @@ import java.util.Objects;
 @Component
 public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     @Override
-    public ClientEntity convert(ClientDto source) {
+    public ClientEntity convert(@NonNull ClientDto source) {
         ClientEntity clientEntity = new ClientEntity();
         clientEntity.setTypeOfDni(DniTypeEnum.valueOf(source.getDniType()));
         clientEntity.setDni(source.getDni());
@@ -32,7 +33,6 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
         clientEntity.setTelephone(source.getTelephone());
         return clientEntity;
     }
-
 
     private String getFullName(ClientDto source) {
         if (source.getBusinessName().isEmpty()) {

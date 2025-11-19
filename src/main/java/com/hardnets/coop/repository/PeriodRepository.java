@@ -16,8 +16,6 @@ import java.util.Set;
 @Repository
 public interface PeriodRepository extends JpaRepository<PeriodEntity, Long> {
 
-    PeriodEntity getById(Long id);
-
     @Query("select p from PeriodEntity p where p.status = ?1")
     List<PeriodEntity> findByStatus(PeriodStatusEnum status);
 
