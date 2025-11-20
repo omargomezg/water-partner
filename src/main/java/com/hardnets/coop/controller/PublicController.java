@@ -1,6 +1,7 @@
 package com.hardnets.coop.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hardnets.coop.config.security.JwtTokenService;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.CreateUserDto;
@@ -15,7 +16,6 @@ import com.hardnets.coop.model.flow.PaymentOrderResponse;
 import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
 import com.hardnets.coop.model.flow.UrlReturn;
 import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.config.security.JwtUtils;
 import com.hardnets.coop.service.FlowService;
 import com.hardnets.coop.service.SaleDocumentService;
 import com.hardnets.coop.service.impl.UserDetailServiceImpl;
@@ -56,7 +56,7 @@ public class PublicController {
 
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtTokenUtil;
+    private final JwtTokenService jwtTokenService;
     private final UserDetailServiceImpl userService;
     private final FlowService flowService;
     private final SaleDocumentService<BillEntity> billService;
@@ -66,14 +66,16 @@ public class PublicController {
         try {
             var username = request.getEmail();
             var password = request.getPassword();
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            var token = new UsernamePasswordAuthenticationToken(username, password);
+            Authentication authentication = authenticationManager.authenticate(token);
 
             UserEntity user = (UserEntity) authentication.getPrincipal();
             LoginDto response = new LoginDto();
             response.setDni(user.getDni());
             response.setEmail(user.getEmail());
             response.setFullName(String.format("%s %s", user.getNames().split(" ")[0], user.getLastName()));
-            response.setToken(jwtTokenUtil.generateToken(user));
+            response.setToken(jwtTokenService.generateToken(authentication));
+            response.setExpiresAt(jwtTokenService.extractExpirationTime(response.getToken()));
             user.setLastLogin(new Date());
             userRepository.save(user);
             return ResponseEntity.ok()
@@ -100,7 +102,7 @@ public class PublicController {
 
     @PostMapping("/auth/create")
     public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) {
-        if (userService.getUsers().size() > 0) {
+        if (!userService.getUsers().isEmpty()) {
             throw new HandleException("Cannot create user without authentication");
         }
         return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);

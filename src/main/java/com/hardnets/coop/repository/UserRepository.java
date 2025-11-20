@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
 
-    List<UserEntity> findAllByProfileNot(ProfileEnum profileEnum);
+    List<UserEntity> findAllByProfilesNot(ProfileEnum profileEnum);
 
 }

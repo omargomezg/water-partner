@@ -11,14 +11,21 @@ import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.SectorRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +40,9 @@ public class ClientServiceImpl implements ClientService {
     private final SectorRepository sectorRepository;
     private final WaterMeterRepository waterMeterRepository;
     private final ConversionService conversionService;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public ClientEntity update(ClientEntity clientEntity) {
         return clientRepository.save(clientEntity);
@@ -53,17 +63,35 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientEntity> findAll() {
-        return (List<ClientEntity>) clientRepository.findAll();
+        return clientRepository.findAll();
     }
 
     @Override
     public ClientsDto getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
-        var name = filter.getName() != null ? filter.getName().toLowerCase() : null;
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        var clients = clientRepository.findAllClientsByDniOrNameOrNone(filter.getDni(), name, pageable);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ClientEntity> cq = cb.createQuery(ClientEntity.class);
+        Root<ClientEntity> root = cq.from(ClientEntity.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (filter.getDni() != null) {
+            predicates.add(cb.equal(root.get("dni"), filter.getDni()));
+        }
+        if (filter.getName() != null) {
+            predicates.add(cb.equal(root.get("name"), filter.getName()));
+        }
+        if (!predicates.isEmpty()) {
+            cq.where(predicates.toArray(new Predicate[0]));
+        }
+        TypedQuery<ClientEntity> result = em.createQuery(cq);
+
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<ClientEntity> rootCount = countQuery.from(ClientEntity.class);
+        countQuery.select(cb.count(rootCount)).where(cb.and(predicates.toArray(new Predicate[0])));
+        Long count = em.createQuery(countQuery).getSingleResult();
+
         return ClientsDto.builder()
-                .totalHits(clients.getTotalElements())
-                .items(clients.getContent().stream().map(this::getClientDto).collect(Collectors.toList()))
+                .totalHits(count)
+                .items(result.getResultList().stream().map(this::getClientDto).collect(Collectors.toList()))
                 .build();
     }
 
@@ -82,7 +110,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     private WaterMeterDto getMeterDto(WaterMeterEntity meter) {
-        var meterConverted =  conversionService.convert(meter, WaterMeterDto.class);
+        var meterConverted = conversionService.convert(meter, WaterMeterDto.class);
         log.info(meterConverted);
         return meterConverted;
     }

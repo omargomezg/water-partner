@@ -9,7 +9,6 @@ import com.hardnets.coop.model.dto.UserDto;
 import com.hardnets.coop.model.entity.UserEntity;
 import com.hardnets.coop.repository.UserRepository;
 
-import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -34,10 +35,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
-
-    public UserDto signup(UserDto userDto, String password) {
-        return null;
-    }
 
     @Transactional
     public UserDto update(@NotNull UserDto userDto) {
@@ -53,13 +50,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
         user.setLastName(userDto.getLastName());
         user.setMiddleName(userDto.getMiddleName());
         user.setEnabled(userDto.getEnabled());
-        user.setProfile(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        List<ProfileEnum> roles  = new ArrayList<>();
+        userDto.getRoles().forEach(role -> roles.add(ProfileEnum.valueOf(role.toUpperCase())));
+        user.setProfiles(roles);
         userRepository.save(user);
         return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     public Collection<UserDto> getUsers() {
-        Collection<UserEntity> dbUsers = userRepository.findAllByProfileNot(ProfileEnum.KAL_EL);
+        Collection<UserEntity> dbUsers = userRepository.findAllByProfilesNot(ProfileEnum.KAL_EL);
         return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
@@ -80,7 +79,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setProfile(ProfileEnum.valueOf(userDto.getRole().toUpperCase()));
+        user.setProfiles(List.of(ProfileEnum.valueOf(userDto.getRole().toUpperCase())));
         return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 

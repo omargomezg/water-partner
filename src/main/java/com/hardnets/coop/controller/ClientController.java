@@ -6,7 +6,6 @@ import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
 import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
 import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.impl.BillServiceImpl;
 import io.swagger.annotations.Api;
@@ -49,8 +48,8 @@ public class ClientController {
 
     @GetMapping("/{dni}")
     public ResponseEntity<ClientDto> getUsers(@PathVariable String dni) {
-        ClientEntity client = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
-        return ResponseEntity.ok(conversionService.convert(client, ClientDto.class));
+        var clientEntity = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
+        return ResponseEntity.ok(conversionService.convert(clientEntity, ClientDto.class));
     }
 
     @PostMapping

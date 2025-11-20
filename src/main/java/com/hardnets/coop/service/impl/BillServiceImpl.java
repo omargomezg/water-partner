@@ -79,7 +79,7 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
     @Transactional
     @Override
     public void createAllInPeriod(long periodId) {
-        PeriodEntity period = periodRepository.getById(periodId);
+        PeriodEntity period = periodRepository.getReferenceById(periodId);
         List<ConsumptionEntity> consumptions = consumptionRepository.findAllByPeriod(period);
         for (ConsumptionEntity consumption : consumptions) {
             if (consumption.getWaterMeter().getClient() != null) {
@@ -89,7 +89,7 @@ public class BillServiceImpl implements SaleDocumentService<BillEntity> {
                 bill.setWaterMeter(consumption.getWaterMeter());
                 BillEntity dbBill = billRepository.save(bill);
                 List<BillDetailEntity> detail = billDetailService.getDetail(consumption, dbBill.getId());
-                if (detail.size() > 0) {
+                if (!detail.isEmpty()) {
                     billDetailRepository.saveAll(detail);
                     billRepository.save(bill);
                 }

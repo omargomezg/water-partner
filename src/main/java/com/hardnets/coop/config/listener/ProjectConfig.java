@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -57,7 +58,7 @@ public class ProjectConfig {
             user.setNames("Omar Fernando");
             user.setMiddleName("Gómez");
             user.setLastName("Gómez");
-            user.setProfile(ProfileEnum.KAL_EL);
+            user.setProfiles(List.of(ProfileEnum.KAL_EL));
             user.setDni("140812269");
             user.setPassword(passwordEncoder.encode("samsungMac"));
             userRepository.save(user);
