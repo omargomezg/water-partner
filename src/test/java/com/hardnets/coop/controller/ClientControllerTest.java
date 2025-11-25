@@ -1,39 +1,44 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.impl.BillServiceImpl;
 import com.hardnets.coop.utils.JsonUtil;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
+@WebMvcTest(controllers = ClientController.class)
 class ClientControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ClientService clientService;
+
+    @MockitoBean
+    private BillServiceImpl billServiceImpl;
+
+    @Autowired
+    private ConversionService conversionService;
 
     @Before
     public void setup() {
@@ -45,7 +50,8 @@ class ClientControllerTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client")
                         .param("pageIndex", "0")
                         .param("pageSize", "30")
-                        .with(user("user")))
+                        .with(user("user"))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andReturn();
         assertEquals(0, result.getResponse().getContentLength());
@@ -58,14 +64,16 @@ class ClientControllerTest {
     @Test
     void createUser_success() throws Exception {
         ClientDto client = getClient();
-        when(clientService.create(client)).thenReturn(client);
+        when(clientService.create(any(ClientDto.class))).thenReturn(client);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/client")
-                        .with(user("user"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(client)))
+                        .content(JsonUtil.toJson(client))
+                        .with(csrf())
+                        .with(user("user"))
+                )
                 .andExpect(status().isCreated())
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn();
-
     }
 
     @Test
@@ -73,6 +81,7 @@ class ClientControllerTest {
         ClientDto client = getClient();
         mockMvc.perform(MockMvcRequestBuilders.put("/v1/client")
                         .with(user("user"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.toJson(client)))
                 .andExpect(status().isOk())
@@ -90,7 +99,8 @@ class ClientControllerTest {
     private ClientDto getClient() {
         return ClientDto.builder()
                 .dni("14081226-9")
-                .clientType(ClientTypeEnum.RESIDENT_PARTNER.label)
+                .dniType("CHILE")
+                .clientType(1L)
                 .build();
     }
 }

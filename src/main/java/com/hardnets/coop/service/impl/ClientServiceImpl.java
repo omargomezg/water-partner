@@ -1,5 +1,14 @@
 package com.hardnets.coop.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
@@ -8,11 +17,12 @@ import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
+import com.hardnets.coop.repository.ClientTypeRepository;
 import com.hardnets.coop.repository.SectorRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
+
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -21,14 +31,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -40,6 +42,7 @@ public class ClientServiceImpl implements ClientService {
     private final SectorRepository sectorRepository;
     private final WaterMeterRepository waterMeterRepository;
     private final ConversionService conversionService;
+    private final ClientTypeRepository clientTypeRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -50,11 +53,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto update(ClientDto clientDto) {
+        var clientType = clientTypeRepository.findById(clientDto.getClientType())
+                .orElseThrow(() -> new ClientNotFoundException("Client type not found: " + clientDto.getClientType()));
         if (clientRepository.findByDni(clientDto.getDni()).isEmpty()) {
             throw new ClientNotFoundException(clientDto.getDni());
         }
         var client = conversionService.convert(clientDto, ClientEntity.class);
         assert client != null;
+        client.setClientType(clientType);
         var sector = sectorRepository.findById(clientDto.getSector());
         sector.ifPresent(client::setSector);
         ClientEntity dbClient = clientRepository.save(client);
@@ -122,7 +128,12 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto create(ClientDto clientDto) {
+
+        var clientType = clientTypeRepository.findById(clientDto.getClientType())
+                .orElseThrow(() -> new ClientNotFoundException("Client type not found: " + clientDto.getClientType()));
         ClientEntity client = conversionService.convert(clientDto, ClientEntity.class);
+        assert client != null;
+        client.setClientType(clientType);
         var sector = sectorRepository.findById(clientDto.getSector());
         sector.ifPresent(client::setSector);
         var dto = conversionService.convert(clientRepository.save(client), ClientDto.class);

@@ -1,6 +1,10 @@
 package com.hardnets.coop.model.dto;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.hardnets.coop.model.entity.ClientTypeEntity;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -8,10 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -48,7 +48,7 @@ public class ClientDto {
     private Integer clientNumber;
 
     @NotNull(message = "Client Type is required")
-    private String clientType;
+    private Long clientType;
 
     @Email
     private String email;
@@ -62,13 +62,13 @@ public class ClientDto {
     private List<WaterMeterDto> waterMeters = new ArrayList<>();
 
      public ClientDto(String dni, String names, String middleName, String lastName, String businessName,
-                      ClientTypeEnum clientType) {
+                      ClientTypeEntity clientType) {
         setDni(dni);
         setNames(names);
         setMiddleName(middleName);
         setLastName(lastName);
         setBusinessName(businessName);
-        setClientType(clientType.label);
+        setClientType(clientType != null ? clientType.getId() : null);
         generateFullName();
     }
 

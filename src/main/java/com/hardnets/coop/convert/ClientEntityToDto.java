@@ -17,7 +17,6 @@ public class ClientEntityToDto implements Converter<ClientEntity, ClientDto> {
                 .fullName(source.getFullName())
                 .names(source.getNames())
                 .email(source.getEmail())
-                .clientType(source.getClientType().label)
                 .birthDate(source.getBirthDate())
                 .telephone(source.getTelephone())
                 .clientNumber(source.getClientNumber())

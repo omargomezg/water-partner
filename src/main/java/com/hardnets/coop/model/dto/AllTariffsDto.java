@@ -1,12 +1,13 @@
 package com.hardnets.coop.model.dto;
 
+import java.time.Instant;
+
 import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.entity.TariffEntity;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class AllTariffsDto {
 
     public AllTariffsDto(TariffEntity tariffEntity) {
         setId(tariffEntity.getId());
-        setClientType(tariffEntity.getClientType().label);
+        setClientType(tariffEntity.getClientType().getDescription());
         setCubicMeter(tariffEntity.getCubicMeter());
         setFlatFee(tariffEntity.getFlatFee());
         setDiameter(tariffEntity.getDiameter().getValue());

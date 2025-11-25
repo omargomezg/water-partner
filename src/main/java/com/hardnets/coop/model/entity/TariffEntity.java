@@ -1,6 +1,9 @@
 package com.hardnets.coop.model.entity;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
+import java.time.Instant;
+
+import org.springframework.data.annotation.LastModifiedDate;
+
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
 
@@ -8,15 +11,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.Instant;
 
 
 /**
@@ -50,10 +52,11 @@ public class TariffEntity extends BaseEntity {
     private Instant lastUpdate;
 
     /**
-     * Tipo de cliente
+     * Inndica a que tipo de cliente aplica esta tarifa
      */
-    @Enumerated(EnumType.STRING)
-    private ClientTypeEnum clientType;
+    @ManyToOne
+    @JoinColumn(name = "client_type_id", nullable = false, referencedColumnName = "id")
+    private ClientTypeEntity clientType;
 
     /**
      * Tamaño en milímetros del medidor al que aplica la tarifa

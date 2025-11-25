@@ -1,21 +1,19 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.service.impl.UserDetailServiceImpl;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.hardnets.coop.model.entity.UserEntity;
+import com.hardnets.coop.repository.UserRepository;
+import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {

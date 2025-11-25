@@ -1,6 +1,5 @@
 package com.hardnets.coop.convert;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -25,7 +24,6 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
         clientEntity.setFullName(getFullName(source));
         clientEntity.setBusinessActivity(source.getBusinessActivity());
         clientEntity.setBirthDate(source.getBirthDate());
-        clientEntity.setClientType(ClientTypeEnum.valueOf(source.getClientType()));
         clientEntity.setProfession(source.getProfession());
         clientEntity.setDateOfAdmission(source.getDateOfAdmission());
         clientEntity.setEmail(source.getEmail());

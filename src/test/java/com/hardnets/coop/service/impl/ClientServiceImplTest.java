@@ -1,10 +1,13 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
-import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.entity.ClientEntity;
-import com.hardnets.coop.repository.ClientRepository;
-import com.hardnets.coop.repository.WaterMeterRepository;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,12 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.ClientTypeEntity;
+import com.hardnets.coop.model.entity.SectorEntity;
+import com.hardnets.coop.repository.ClientRepository;
+import com.hardnets.coop.repository.ClientTypeRepository;
+import com.hardnets.coop.repository.SectorRepository;
+import com.hardnets.coop.repository.WaterMeterRepository;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +36,13 @@ class ClientServiceImplTest {
     private ClientRepository clientRepository;
 
     @Mock
+    private ClientTypeRepository clientTypeRepository;
+
+    @Mock
     private WaterMeterRepository waterMeterRepository;
+
+    @Mock
+    private SectorRepository sectorRepository;
 
     @Mock
     private ModelMapper modelMapper;
@@ -63,6 +74,8 @@ class ClientServiceImplTest {
     void create_success() {
         ClientDto client = getClient();
         client.setEmail("omar.fdo.gomez@gmail.com");
+        when(clientTypeRepository.findById(any())).thenReturn(Optional.of(mock(ClientTypeEntity.class)));
+        when(sectorRepository.findById(any())).thenReturn(Optional.ofNullable(mock(SectorEntity.class)));
         when(conversionService.convert(any(), eq(ClientEntity.class))).thenReturn(mock(ClientEntity.class));
         when(conversionService.convert(any(), eq(ClientDto.class))).thenReturn(mock(ClientDto.class));
         when(clientRepository.save(any())).thenReturn(mapToClientEntity(client));
@@ -80,7 +93,7 @@ class ClientServiceImplTest {
     private ClientDto getClient() {
         return ClientDto.builder()
                 .dni("14081226-9")
-                .clientType(ClientTypeEnum.RESIDENT_PARTNER.label)
+                .clientType(1L)
                 .build();
     }
 }

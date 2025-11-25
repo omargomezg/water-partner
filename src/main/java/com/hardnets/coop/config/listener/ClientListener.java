@@ -1,6 +1,5 @@
 package com.hardnets.coop.config.listener;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.service.ClientService;
@@ -51,8 +50,10 @@ public class ClientListener {
     }
 
     public String buildFullName(ClientEntity client) {
-            return ClientTypeEnum.isPartner(client.getClientType()) ?
+        //TODO Evaluar si se mantiene esta logica
+            /*return ClientTypeEnum.isPartner(client.getClientType()) ?
                 String.format("%s %s %s", client.getNames(), client.getMiddleName(), client.getLastName()) :
-                client.getBusinessName();
+                client.getBusinessName();*/
+        return client.getNames();
     }
 }

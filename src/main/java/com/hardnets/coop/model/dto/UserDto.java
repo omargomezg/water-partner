@@ -2,14 +2,15 @@ package com.hardnets.coop.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hardnets.coop.model.entity.UserEntity;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class UserDto {
     @NotNull
     private String dni;
