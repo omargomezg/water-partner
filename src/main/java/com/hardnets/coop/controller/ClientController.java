@@ -1,5 +1,16 @@
 package com.hardnets.coop.controller;
 
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.ClientsDto;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.impl.BillServiceImpl;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,23 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.ClientsDto;
-import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
-import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.BillServiceImpl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
-
-@Api("All client operations")
 @Log4j2
 @AllArgsConstructor
 @RequestMapping("/v1/client")
@@ -57,12 +52,11 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientDto> createUser(@RequestBody ClientDto client) {
+    public ResponseEntity<ClientDto> createUser(@RequestBody @Valid ClientDto client) {
         log.info("Creating client with DNI: {}", client.getDni());
         return new ResponseEntity<>(clientService.create(client), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Update an specific user", notes = "The primary key is rut, for example: '12345678-9'")
     @PutMapping
     public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
         return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);

@@ -1,14 +1,5 @@
 package com.hardnets.coop.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.dto.ClientDto;
 import com.hardnets.coop.model.dto.ClientsDto;
@@ -21,7 +12,6 @@ import com.hardnets.coop.repository.ClientTypeRepository;
 import com.hardnets.coop.repository.SectorRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.ClientService;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -31,6 +21,13 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @AllArgsConstructor
@@ -97,7 +94,7 @@ public class ClientServiceImpl implements ClientService {
 
         return ClientsDto.builder()
                 .totalHits(count)
-                .items(result.getResultList().stream().map(this::getClientDto).collect(Collectors.toList()))
+                .items(result.getResultList().stream().map(this::getClientDto).toList())
                 .build();
     }
 
@@ -108,7 +105,7 @@ public class ClientServiceImpl implements ClientService {
             if (!meters.isEmpty()) {
                 clientDto.setWaterMeters(
                         waterMeterRepository.findAllIdsByClient(clientDto.getDni()).stream()
-                                .map(this::getMeterDto).collect(Collectors.toList())
+                                .map(this::getMeterDto).toList()
                 );
             }
         }
@@ -132,12 +129,13 @@ public class ClientServiceImpl implements ClientService {
         var clientType = clientTypeRepository.findById(clientDto.getClientType())
                 .orElseThrow(() -> new ClientNotFoundException("Client type not found: " + clientDto.getClientType()));
         ClientEntity client = conversionService.convert(clientDto, ClientEntity.class);
-        assert client != null;
         client.setClientType(clientType);
-        var sector = sectorRepository.findById(clientDto.getSector());
-        sector.ifPresent(client::setSector);
+        if (clientDto.getSector() != null) {
+            var sector = sectorRepository.findById(clientDto.getSector());
+            sector.ifPresent(client::setSector);
+        }
         var dto = conversionService.convert(clientRepository.save(client), ClientDto.class);
-        sector.ifPresent(item -> dto.setSector(item.getId()));
+        //sector.ifPresent(item -> dto.setSector(item.getId()));
         return dto;
     }
 

@@ -1,16 +1,5 @@
 package com.hardnets.coop.controller;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
@@ -24,12 +13,19 @@ import com.hardnets.coop.service.PeriodService;
 import com.hardnets.coop.service.impl.ConsumptionService;
 import com.hardnets.coop.service.impl.WaterMeterService;
 import com.hardnets.coop.util.RutUtils;
-
-import io.swagger.annotations.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Api("All client operations")
+import java.util.Date;
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/bulk")
 @RestController
@@ -41,14 +37,14 @@ public class BulkController {
     private final ConsumptionService consumptionService;
 
     @PostMapping(value = "/water-meter-with-user", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addWaterMeterWithUser(@RequestBody @Valid List<BulkWaterMeterUserDto> records) {
+    public ResponseEntity<Void> addWaterMeterWithUser(@RequestBody @Valid List<BulkWaterMeterUserDto> records) {
         periodService.findByStatus(PeriodStatusEnum.ACTIVE);
         records.parallelStream().forEach(this::saveClient);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/reading", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addReadings(@RequestBody @Valid List<BulkWaterMeterUserDto> records,
+    public ResponseEntity<Void> addReadings(@RequestBody @Valid List<BulkWaterMeterUserDto> records,
                                          @RequestParam Long period) {
         records.forEach(item -> saveReading(item, period));
         return ResponseEntity.ok().build();

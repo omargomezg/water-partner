@@ -1,6 +1,8 @@
 package com.hardnets.coop.model.dto.response;
 
 import com.hardnets.coop.model.constant.ClientTypeEnum;
+import com.hardnets.coop.model.entity.ClientTypeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class ResumeConsumptionDetailDto {
     /**
@@ -28,7 +31,7 @@ public class ResumeConsumptionDetailDto {
     private Long consumptionId;
     private List<DetailItemDto> detail = new ArrayList<>();
 
-    public ResumeConsumptionDetailDto(Integer serial, String dni, ClientTypeEnum clientType, String names,
+    public ResumeConsumptionDetailDto(Integer serial, String dni, ClientTypeEntity clientType, String names,
                                       String middleName, String lastName,
                                       String businessName, Integer actualRecord, Long consumptionId) {
         this.serial = serial;
@@ -38,7 +41,7 @@ public class ResumeConsumptionDetailDto {
         this.names = names;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.clientType = clientType.label;
+        this.clientType = clientType.getDescription();
         this.fullName = clientType.equals(ClientTypeEnum.PRIVATE) ? businessName : String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName);
     }
 }

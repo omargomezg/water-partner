@@ -33,7 +33,7 @@ public class ClientDtoToEntity implements Converter<ClientDto, ClientEntity> {
     }
 
     private String getFullName(ClientDto source) {
-        if (source.getBusinessName().isEmpty()) {
+        if (source.getBusinessName() == null || source.getBusinessName().isEmpty()) {
             StringBuilder sb = new StringBuilder().append(source.getNames());
             if (Objects.nonNull(source.getMiddleName())) {
                 sb.append(" ").append(source.getMiddleName());

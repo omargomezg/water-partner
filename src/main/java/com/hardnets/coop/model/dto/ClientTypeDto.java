@@ -1,4 +1,4 @@
-package com.hardnets.coop.model.dto.clientType;
+package com.hardnets.coop.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

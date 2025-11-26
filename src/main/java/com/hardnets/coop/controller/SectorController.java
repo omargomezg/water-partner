@@ -2,7 +2,6 @@ package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.entity.SectorEntity;
 import com.hardnets.coop.service.SectorService;
-import io.swagger.annotations.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Api("All sectors operations")
 @RequiredArgsConstructor
 @RequestMapping("/v1/sector")
 @RestController

@@ -1,10 +1,12 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.BillServiceImpl;
-import com.hardnets.coop.utils.JsonUtil;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,12 +19,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.impl.BillServiceImpl;
+import com.hardnets.coop.utils.JsonUtil;
 
 @ActiveProfiles("test")
 @WebMvcTest(controllers = ClientController.class)
@@ -39,11 +39,6 @@ class ClientControllerTest {
 
     @Autowired
     private ConversionService conversionService;
-
-    @Before
-    public void setup() {
-
-    }
 
     @Test
     void getUsers_success() throws Exception {
