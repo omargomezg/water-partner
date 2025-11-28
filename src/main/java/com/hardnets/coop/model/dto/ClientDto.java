@@ -19,64 +19,43 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ClientDto {
 
-    @NotNull
-    private String dniType;
+	@NotNull
+	private String dniType;
 
-    @NotNull(message = "Dni cannot be null")
-    private String dni;
+	@NotNull(message = "Dni cannot be null")
+	private String dni;
 
-    private String fullName;
+	private String fullName;
 
-    private String names;
+	private String businessActivity;
 
-    private String middleName;
+	private Date birthDate;
 
-    private String lastName;
+	private String profession;
 
-    private String businessName;
+	private Date dateOfAdmission;
 
-    private String businessActivity;
+	private Long sector;
 
-    private Date birthDate;
+	private Integer clientNumber;
 
-    private String profession;
+	@NotNull(message = "Client Type is required")
+	private Long clientType;
 
-    private Date dateOfAdmission;
+	@Email
+	private String email;
 
-    private Long sector;
+	private String telephone;
 
-    private Integer clientNumber;
+	@Builder.Default
+	private Boolean isActive = true;
 
-    @NotNull(message = "Client Type is required")
-    private Long clientType;
+	@Builder.Default
+	private List<WaterMeterDto> waterMeters = new ArrayList<>();
 
-    @Email
-    private String email;
-
-    private String telephone;
-
-    @Builder.Default
-    private Boolean isActive = true;
-
-    @Builder.Default
-    private List<WaterMeterDto> waterMeters = new ArrayList<>();
-
-     public ClientDto(String dni, String names, String middleName, String lastName, String businessName,
-                      ClientTypeEntity clientType) {
-        setDni(dni);
-        setNames(names);
-        setMiddleName(middleName);
-        setLastName(lastName);
-        setBusinessName(businessName);
-        setClientType(clientType != null ? clientType.getId() : null);
-        generateFullName();
-    }
-
-
-    private void generateFullName() {
-        if (getBusinessName().isEmpty())
-            setFullName(String.format("%s %s %s", getNames(), getMiddleName() != null ? getMiddleName(): "", getLastName()));
-        else
-            setFullName(getBusinessName());
-    }
+	public ClientDto(String dni, String fullName, ClientTypeEntity clientType) {
+		setDni(dni);
+		setFullName(fullName);
+		setClientType(clientType != null ? clientType.getId() : null);
+	}
 }

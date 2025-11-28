@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
 @ToString
@@ -16,22 +15,22 @@ import lombok.ToString;
 @NoArgsConstructor
 public class BulkWaterMeterUserDto {
 
-    @NotEmpty
-    private String dni;
+	@NotEmpty
+	private String dni;
 
-    @NotEmpty
-    private String names;
+	@NotEmpty
+	private String fullName;
 
-    @NotEmpty
-    @NotNull
-    private Integer diameter;
+	@NotEmpty
+	@NotNull
+	private Integer diameter;
 
-    @NotNull
-    @NotEmpty
-    private Integer serial = 0;
+	@NotNull
+	@NotEmpty
+	private Integer serial = 0;
 
-    @NotNull
-    @NotEmpty
-    private Integer reading;
+	@NotNull
+	@NotEmpty
+	private Integer reading;
 
 }

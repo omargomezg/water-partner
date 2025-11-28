@@ -27,52 +27,47 @@ import lombok.ToString;
 @Table(name = "client")
 public class ClientEntity extends PersonEntity {
 
-        private Date dateOfAdmission;
+	private Date dateOfAdmission;
 
-        @Column(length = 15)
-        private String telephone;
+	@Column(length = 15)
+	private String telephone;
 
-        private String businessName = "";
+	@Column
+	private String businessActivity = "";
 
-        @Column
-        private String businessActivity = "";
+	private String profession;
 
-        private String profession;
+	private Integer clientNumber;
 
-        private String fullName;
+	@ManyToOne
+	@JoinColumn(name = "sector_id")
+	private SectorEntity sector;
 
-        private Integer clientNumber;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "client_type_id")
+	private ClientTypeEntity clientType;
 
-        @ManyToOne
-        @JoinColumn(name = "sector_id")
-        private SectorEntity sector;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "subsidy_id")
+	private SubsidyEntity subsidy;
 
-        @NotNull
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "client_type_id")
-        private ClientTypeEntity clientType;
+	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+	@ToString.Exclude
+	private Set<BillEntity> bills = new HashSet<>();
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "subsidy_id")
-        private SubsidyEntity subsidy;
+	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+	private Set<InvoiceEntity> invoices = new HashSet<>();
 
-        @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-        @ToString.Exclude
-        private Set<BillEntity> bills = new HashSet<>();
+	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+	private Set<WaterMeterEntity> waterMeter = new HashSet<>();
 
-        @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-        private Set<InvoiceEntity> invoices = new HashSet<>();
-
-        @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-        private Set<WaterMeterEntity> waterMeter = new HashSet<>();
-
-        public ClientEntity(ClientDto client) {
-                super(client.getDni(), client.getNames(), client.getMiddleName(), client.getLastName(),
-                                client.getEmail(), client.getBirthDate());
-                setDateOfAdmission(client.getDateOfAdmission());
-                setTelephone(client.getTelephone());
-                setBusinessActivity(client.getBusinessActivity());
-                setBusinessName(client.getBusinessName());
-                setProfession(client.getProfession());
-        }
+	public ClientEntity(ClientDto client) {
+		super(client.getDni(), client.getFullName(), client.getEmail(), client.getBirthDate());
+		setDateOfAdmission(client.getDateOfAdmission());
+		setTelephone(client.getTelephone());
+		setBusinessActivity(client.getBusinessActivity());
+		setFullName(client.getFullName());
+		setProfession(client.getProfession());
+	}
 }

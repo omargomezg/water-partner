@@ -1,5 +1,26 @@
 package com.hardnets.coop.controller;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hardnets.coop.config.security.JwtTokenService;
 import com.hardnets.coop.exception.HandleException;
@@ -23,30 +44,10 @@ import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 
 /**
- * Todos los métodos públicos que no requieren autentificación inicialmente
- * se encontraran en este controller
+ * Todos los métodos públicos que no requieren autentificación inicialmente se
+ * encontraran en este controller
  */
 @Log4j2
 @AllArgsConstructor
@@ -54,87 +55,84 @@ import java.util.Date;
 @RequestMapping("/v1/public")
 public class PublicController {
 
-    private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenService jwtTokenService;
-    private final UserDetailServiceImpl userService;
-    private final FlowService flowService;
-    private final SaleDocumentService<BillEntity> billService;
+	private final UserRepository userRepository;
+	private final AuthenticationManager authenticationManager;
+	private final JwtTokenService jwtTokenService;
+	private final UserDetailServiceImpl userService;
+	private final FlowService flowService;
+	private final SaleDocumentService<BillEntity> billService;
 
-    @PostMapping("/auth/signup")
-    public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
-        try {
-            var username = request.getEmail();
-            var password = request.getPassword();
-            var token = new UsernamePasswordAuthenticationToken(username, password);
-            Authentication authentication = authenticationManager.authenticate(token);
+	@PostMapping("/auth/signup")
+	public ResponseEntity<LoginDto> signup(@RequestBody @Valid UserSignupRequest request) {
+		try {
+			var username = request.getEmail();
+			var password = request.getPassword();
+			var token = new UsernamePasswordAuthenticationToken(username, password);
+			Authentication authentication = authenticationManager.authenticate(token);
 
-            UserEntity user = (UserEntity) authentication.getPrincipal();
-            LoginDto response = new LoginDto();
-            response.setDni(user.getDni());
-            response.setEmail(user.getEmail());
-            response.setFullName(String.format("%s %s", user.getNames().split(" ")[0], user.getLastName()));
-            response.setToken(jwtTokenService.generateToken(authentication));
-            response.setExpiresAt(jwtTokenService.extractExpirationTime(response.getToken()));
-            user.setLastLogin(new Date());
-            userRepository.save(user);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, response.getToken())
-                    .body(response);
-        } catch (BadCredentialsException ex) {
-            log.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+			UserEntity user = (UserEntity) authentication.getPrincipal();
+			LoginDto response = new LoginDto();
+			response.setDni(user.getDni());
+			response.setEmail(user.getEmail());
+			response.setFullName(user.getFullName());
+			response.setToken(jwtTokenService.generateToken(authentication));
+			response.setExpiresAt(jwtTokenService.extractExpirationTime(response.getToken()));
+			user.setLastLogin(new Date());
+			userRepository.save(user);
+			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, response.getToken()).body(response);
+		} catch (BadCredentialsException ex) {
+			log.error(ex.getMessage());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		} catch (Exception ex) {
+			log.error(ex.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 
-    @GetMapping("/pending-payment/{rut}")
-    public ResponseEntity<IssuedBillsDto> getUserPendingPayment(@PathVariable String rut,
-            @RequestParam(defaultValue = "1") Integer status,
-            @RequestParam Integer pageIndex,
-            @RequestParam Integer pageSize) {
-        SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
-        var pendingDocuments = billService.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
-        return ResponseEntity.ok(pendingDocuments);
-    }
+	@GetMapping("/pending-payment/{rut}")
+	public ResponseEntity<IssuedBillsDto> getUserPendingPayment(@PathVariable String rut,
+			@RequestParam(defaultValue = "1") Integer status, @RequestParam Integer pageIndex,
+			@RequestParam Integer pageSize) {
+		SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
+		var pendingDocuments = billService.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
+		return ResponseEntity.ok(pendingDocuments);
+	}
 
-    @PostMapping("/auth/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) {
-        if (!userService.getUsers().isEmpty()) {
-            throw new HandleException("Cannot create user without authentication");
-        }
-        return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);
-    }
+	@PostMapping("/auth/create")
+	public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) {
+		if (!userService.getUsers().isEmpty()) {
+			throw new HandleException("Cannot create user without authentication");
+		}
+		return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);
+	}
 
-    @PostMapping("/confirmation-payment-order")
-    public RedirectView confirmationForPaymentOrder(@RequestBody String token) {
-        log.info("confirmation -> Recibido el token: {}", token);
-        String url = flowService.confirmationPaymentOrder(token, (byte) 1);
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(url);
-        return redirectView;
-    }
+	@PostMapping("/confirmation-payment-order")
+	public RedirectView confirmationForPaymentOrder(@RequestBody String token) {
+		log.info("confirmation -> Recibido el token: {}", token);
+		String url = flowService.confirmationPaymentOrder(token, (byte) 1);
+		RedirectView redirectView = new RedirectView();
+		redirectView.setUrl(url);
+		return redirectView;
+	}
 
-    @GetMapping("/payment-status/{token}")
-    public PaymentOrderStatusResponse paymentStats(@PathVariable String token)
-            throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
-        return flowService.findFlowPaymentStatusByToken(token);
-    }
+	@GetMapping("/payment-status/{token}")
+	public PaymentOrderStatusResponse paymentStats(@PathVariable String token)
+			throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+		return flowService.findFlowPaymentStatusByToken(token);
+	}
 
-    @PostMapping("/url-return")
-    public RedirectView urlReturn(@ModelAttribute UrlReturn token) {
-        String url = flowService.confirmationPaymentOrder(token.getToken(), (byte) 1);
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(url + "/" + token.getToken());
-        return redirectView;
-    }
+	@PostMapping("/url-return")
+	public RedirectView urlReturn(@ModelAttribute UrlReturn token) {
+		String url = flowService.confirmationPaymentOrder(token.getToken(), (byte) 1);
+		RedirectView redirectView = new RedirectView();
+		redirectView.setUrl(url + "/" + token.getToken());
+		return redirectView;
+	}
 
-    @PostMapping("/payment-order")
-    public PaymentOrderResponse sendPaymentOrder(@RequestBody PendingPaymentDto pendingPayment)
-            throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
-        return flowService.sendPaymentOrder(pendingPayment);
-    }
+	@PostMapping("/payment-order")
+	public PaymentOrderResponse sendPaymentOrder(@RequestBody PendingPaymentDto pendingPayment)
+			throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+		return flowService.sendPaymentOrder(pendingPayment);
+	}
 
 }

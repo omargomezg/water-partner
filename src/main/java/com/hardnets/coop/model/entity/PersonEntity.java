@@ -1,5 +1,7 @@
 package com.hardnets.coop.model.entity;
 
+import java.util.Date;
+
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
 
@@ -15,46 +17,43 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @Entity
 @ToString
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PersonEntity {
-    @Id
-    private String dni;
+	@Id
+	private String dni;
 
-    @Enumerated(EnumType.STRING)
-    private DniTypeEnum typeOfDni;
+	@Enumerated(EnumType.STRING)
+	private DniTypeEnum typeOfDni;
 
-    @Enumerated(EnumType.STRING)
-    private NationalityEnum nationality = NationalityEnum.CHILEAN;
+	@Enumerated(EnumType.STRING)
+	private NationalityEnum nationality = NationalityEnum.CHILEAN;
 
-    @NotNull
-    private String names;
+	/**
+	 * Puede ser un nombre completo o un nombre de fantasía
+	 */
+	@NotNull
+	private String fullName;
 
-    private String middleName = "";
-    private String lastName = "";
-    private Date birthDate;
+	private Date birthDate;
 
-    @Email
-    private String email;
+	@Email
+	private String email;
 
-    private Boolean enabled = true;
+	private Boolean enabled = true;
 
-    private String password;
+	private String password;
 
-    protected PersonEntity(String dni, String names, String middleName, String lastName, String email, Date birthDate) {
-        setDni(dni);
-        setNames(names);
-        setMiddleName(middleName);
-        setLastName(lastName);
-        setEmail(email);
-        setBirthDate(birthDate);
-    }
+	protected PersonEntity(String dni, String fullName, String email, Date birthDate) {
+		setFullName(fullName);
+		setDni(dni);
+		setEmail(email);
+		setBirthDate(birthDate);
+	}
 
-    protected PersonEntity() {
-    }
+	protected PersonEntity() {
+	}
 }
