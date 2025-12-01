@@ -1,47 +1,40 @@
 package com.hardnets.coop.model.dto.response;
 
-import com.hardnets.coop.model.constant.ClientTypeEnum;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.hardnets.coop.model.entity.ClientTypeEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResumeConsumptionDetailDto {
-    /**
-     * Serial number of water meter
-     */
-    private Integer serial;
-    private String dni;
-    private String names;
-    private String middleName;
-    private String lastName;
-    private String fullName;
-    private String clientType;
-    private Integer lastRecord;
-    private Integer actualRecord;
-    private Long amountToPaid;
-    private Long consumptionId;
-    private List<DetailItemDto> detail = new ArrayList<>();
+	/**
+	 * Serial number of water meter
+	 */
+	private Integer serial;
+	private String dni;
+	private String fullName;
+	private String clientType;
+	private Integer lastRecord;
+	private Integer actualRecord;
+	private Long amountToPaid;
+	private Long consumptionId;
+	private List<DetailItemDto> detail = new ArrayList<>();
 
-    public ResumeConsumptionDetailDto(Integer serial, String dni, ClientTypeEntity clientType, String names,
-                                      String middleName, String lastName,
-                                      String businessName, Integer actualRecord, Long consumptionId) {
-        this.serial = serial;
-        this.dni = dni;
-        this.actualRecord = actualRecord;
-        this.consumptionId = consumptionId;
-        this.names = names;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.clientType = clientType.getDescription();
-        this.fullName = clientType.equals(ClientTypeEnum.PRIVATE) ? businessName : String.format("%s %s %s", names, middleName == null ? "" : middleName, lastName);
-    }
+	public ResumeConsumptionDetailDto(Integer serial, String dni, ClientTypeEntity clientType, String fullName,
+			Integer actualRecord, Long consumptionId) {
+		this.serial = serial;
+		this.dni = dni;
+		this.actualRecord = actualRecord;
+		this.consumptionId = consumptionId;
+		this.fullName = fullName;
+		this.clientType = clientType.getDescription();
+	}
 }

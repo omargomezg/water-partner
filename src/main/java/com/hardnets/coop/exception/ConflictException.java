@@ -5,10 +5,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class ConflictException extends RuntimeException {
-    public ConflictException(String message) {
-        super(message);
-    }
 
-    public ConflictException() {
-    }
+	private static final long serialVersionUID = -4241316002822235391L;
+
+	public ConflictException(String message) {
+		super(message);
+	}
+
+	public ConflictException() {
+	}
 }

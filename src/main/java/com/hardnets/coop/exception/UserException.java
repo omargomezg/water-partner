@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 public class UserException extends RuntimeException {
-    public UserException(String message) {
-        super(message);
-    }
 
-    public UserException() {
-        super("User exception");
-    }
+	private static final long serialVersionUID = -2769003507210708531L;
+
+	public UserException(String message) {
+		super(message);
+	}
+
+	public UserException() {
+		super("User exception");
+	}
 }

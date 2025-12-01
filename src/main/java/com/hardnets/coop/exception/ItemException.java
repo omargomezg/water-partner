@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 public class ItemException extends RuntimeException {
-    public ItemException(String message) {
-        super(message);
-    }
 
-    public ItemException() {
-        super();
-    }
+	private static final long serialVersionUID = 2565142630500652830L;
+
+	public ItemException(String message) {
+		super(message);
+	}
+
+	public ItemException() {
+		super();
+	}
 }

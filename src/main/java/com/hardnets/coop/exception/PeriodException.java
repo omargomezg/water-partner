@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 public class PeriodException extends RuntimeException {
-    public PeriodException(String message) {
-        super(message);
-    }
 
-    public PeriodException() {
-        super();
-    }
+	private static final long serialVersionUID = 4132291301388145141L;
+
+	public PeriodException(String message) {
+		super(message);
+	}
+
+	public PeriodException() {
+		super();
+	}
 }

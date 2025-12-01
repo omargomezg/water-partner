@@ -28,74 +28,55 @@ import com.hardnets.coop.utils.JsonUtil;
 @WebMvcTest(controllers = ClientController.class)
 class ClientControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @MockitoBean
-    private ClientService clientService;
+	@MockitoBean
+	private ClientService clientService;
 
-    @MockitoBean
-    private BillServiceImpl billServiceImpl;
+	@MockitoBean
+	private BillServiceImpl billServiceImpl;
 
-    @Autowired
-    private ConversionService conversionService;
+	@Autowired
+	private ConversionService conversionService;
 
-    @Test
-    void getUsers_success() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client")
-                        .param("pageIndex", "0")
-                        .param("pageSize", "30")
-                        .with(user("user"))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andReturn();
-        assertEquals(0, result.getResponse().getContentLength());
-    }
+	@Test
+	void getUsers_success() throws Exception {
+		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/client").param("pageIndex", "0")
+				.param("pageSize", "30").with(user("user")).with(csrf())).andExpect(status().isOk()).andReturn();
+		assertEquals(0, result.getResponse().getContentLength());
+	}
 
-    @Test
-    void testGetUsers() {
-    }
+	@Test
+	void testGetUsers() {
+	}
 
-    @Test
-    void createUser_success() throws Exception {
-        ClientDto client = getClient();
-        when(clientService.create(any(ClientDto.class))).thenReturn(client);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/client")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(client))
-                        .with(csrf())
-                        .with(user("user"))
-                )
-                .andExpect(status().isCreated())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-    }
+	@Test
+	void createUser_success() throws Exception {
+		ClientDto client = getClient();
+		when(clientService.create(any(ClientDto.class))).thenReturn(client);
+		mockMvc.perform(MockMvcRequestBuilders.post("/v1/client").contentType(MediaType.APPLICATION_JSON)
+				.content(JsonUtil.toJson(client)).with(csrf()).with(user("user"))).andExpect(status().isCreated())
+				.andDo(MockMvcResultHandlers.print()).andReturn();
+	}
 
-    @Test
-    void updateUser_success() throws Exception {
-        ClientDto client = getClient();
-        mockMvc.perform(MockMvcRequestBuilders.put("/v1/client")
-                        .with(user("user"))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(client)))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
+	@Test
+	void updateUser_success() throws Exception {
+		ClientDto client = getClient();
+		mockMvc.perform(MockMvcRequestBuilders.put("/v1/client").with(user("user")).with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(client))).andExpect(status().isOk())
+				.andReturn();
+	}
 
-    @Test
-    void addWaterMeter() {
-    }
+	@Test
+	void addWaterMeter() {
+	}
 
-    @Test
-    void getWaterMeters() {
-    }
+	@Test
+	void getWaterMeters() {
+	}
 
-    private ClientDto getClient() {
-        return ClientDto.builder()
-                .dni("14081226-9")
-                .dniType("CHILE")
-                .clientType(1L)
-                .build();
-    }
+	private ClientDto getClient() {
+		return ClientDto.builder().dni("14081226-9").dniType("CHILE").clientType(1L).build();
+	}
 }

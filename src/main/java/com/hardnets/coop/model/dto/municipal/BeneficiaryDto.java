@@ -8,28 +8,18 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BeneficiaryDto {
-    /**
-     * Código: DNI
-     */
-    private String dni;
+	/**
+	 * Código: DNI
+	 */
+	private String dni;
 
-    /**
-     * Código: DV-RUT
-     */
-    private String names;
+	/**
+	 * Código: DV-RUT
+	 */
+	private String fullName;
 
-    /**
-     * Código: AP. PATERNO
-     */
-    private String middleName;
-
-    /**
-     * Código: AP. MATERNO
-     */
-    private String lastName;
-
-    /**
-     * Código: DIRECCION
-     */
-    private String address;
+	/**
+	 * Código: DIRECCION
+	 */
+	private String address;
 }
