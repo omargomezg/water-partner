@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
-public class ClientsDto {
+public class ClientsDTO {
     private Long totalHits;
-    private List<ClientDto> items;
+    private List<ClientDTO> items;
 }

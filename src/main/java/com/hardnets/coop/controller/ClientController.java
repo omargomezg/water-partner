@@ -1,16 +1,6 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.ClientsDto;
-import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
-import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.BillServiceImpl;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.PageResponse;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.views.AppViews;
+import com.hardnets.coop.model.dto.views.ViewSerializer;
+import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.impl.BillServiceImpl;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @AllArgsConstructor
@@ -30,46 +35,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ClientController {
 
-    private final ClientService clientService;
-    private final BillServiceImpl bill;
-    private final ConversionService conversionService;
+	private final ClientService clientService;
+	private final BillServiceImpl bill;
+	private final ConversionService conversionService;
+	private final ModelMapper modelMapper;
 
-    @GetMapping
-    public ResponseEntity<ClientsDto> getUsers(@RequestParam(required = false) String dni,
-                                               @RequestParam(required = false) String name,
-                                               @RequestParam Integer pageIndex,
-                                               @RequestParam Integer pageSize) {
-        FilterDto filter = new FilterDto();
-        filter.setDni(dni);
-        filter.setName(name);
-        return ResponseEntity.ok(clientService.getFilteredUsers(filter, pageIndex, pageSize));
-    }
+	@GetMapping
+	@JsonView(AppViews.Admin.class)
+	@ViewSerializer(value = { AppViews.Admin.class, AppViews.Internal.class })
+	public ResponseEntity<PageResponse<ClientDTO>> getUsers(@RequestParam(required = false) String dni,
+			@RequestParam(required = false) String name, @RequestParam Integer pageIndex,
+			@RequestParam Integer pageSize) {
+		FilterDto filter = new FilterDto();
+		filter.setDni(dni);
+		filter.setName(name);
+		var clients = clientService.getFilteredUsers(filter, pageIndex, pageSize);
+		var totalOfElements = clientService.getTotalOfFilteredUsers(filter);
+		var page = new PageResponse<ClientDTO>();
+		page.setContent(clients.stream().map(c -> modelMapper.map(c, ClientDTO.class)).toList());
+		page.setTotalElements(totalOfElements);
+		return ResponseEntity.ok(page);
+	}
 
-    @GetMapping("/{dni}")
-    public ResponseEntity<ClientDto> getUsers(@PathVariable String dni) {
-        var clientEntity = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
-        return ResponseEntity.ok(conversionService.convert(clientEntity, ClientDto.class));
-    }
+	@GetMapping("/{dni}")
+	public ResponseEntity<ClientDTO> getUsers(@PathVariable String dni) {
+		var clientEntity = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
+		return ResponseEntity.ok(conversionService.convert(clientEntity, ClientDTO.class));
+	}
 
-    @PostMapping
-    public ResponseEntity<ClientDto> createUser(@RequestBody @Valid ClientDto client) {
-        log.info("Creating client with DNI: {}", client.getDni());
-        return new ResponseEntity<>(clientService.create(client), HttpStatus.CREATED);
-    }
+	@PostMapping
+	public ResponseEntity<ClientDTO> createUser(@RequestBody @Valid ClientDTO client) {
+		log.info("Creating client with DNI: {}", client.getDni());
+		var result = clientService.create(client);
+		return new ResponseEntity<>(modelMapper.map(result, ClientDTO.class), HttpStatus.CREATED);
+	}
 
-    @PutMapping
-    public ResponseEntity<ClientDto> updateUser(@RequestBody @Valid ClientDto client) {
-        return new ResponseEntity<>(clientService.update(client), HttpStatus.OK);
-    }
+	@PutMapping
+	public ResponseEntity<ClientDTO> updateUser(@RequestBody @Valid ClientDTO client) {
+		var result = clientService.update(client);
+		return ResponseEntity.ok(modelMapper.map(result, ClientDTO.class));
+	}
 
-    @GetMapping("/document")
-    public ResponseEntity<IssuedBillsDto> getRelatedDocuments(@RequestParam String rut,
-                                                              @RequestParam(defaultValue = "1") Integer status,
-                                                              @RequestParam Integer pageIndex,
-                                                              @RequestParam Integer pageSize) {
-        SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
-        var documents = bill.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
-        return ResponseEntity.ok(documents);
-    }
+	@GetMapping("/document")
+	public ResponseEntity<IssuedBillsDto> getRelatedDocuments(@RequestParam String rut,
+			@RequestParam(defaultValue = "1") Integer status, @RequestParam Integer pageIndex,
+			@RequestParam Integer pageSize) {
+		SalesDocumentStatusEnum statusEnum = SalesDocumentStatusEnum.castIntToEnum(status);
+		var documents = bill.getAllByStatusAndDni(statusEnum, rut, pageIndex, pageSize);
+		return ResponseEntity.ok(documents);
+	}
 
 }

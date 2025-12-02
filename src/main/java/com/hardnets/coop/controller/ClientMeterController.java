@@ -1,7 +1,7 @@
 package com.hardnets.coop.controller;
 
 
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
 import com.hardnets.coop.service.ClientMeterService;
 import com.hardnets.coop.service.impl.WaterMeterService;
@@ -27,7 +27,7 @@ public class ClientMeterController {
     private final ClientMeterService clientMeterService;
 
     @PostMapping("/{dni}")
-    public ResponseEntity<Void> addWaterMeter(@RequestBody WaterMeterDto waterMeterDto,
+    public ResponseEntity<Void> addWaterMeter(@RequestBody WaterMeterDTO waterMeterDto,
                                               @PathVariable String dni) {
         waterMeterService.relateToClient(waterMeterDto, dni);
         return new ResponseEntity<>(HttpStatus.CREATED);

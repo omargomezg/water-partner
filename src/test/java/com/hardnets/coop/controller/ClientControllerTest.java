@@ -2,6 +2,7 @@ package com.hardnets.coop.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -19,7 +20,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.constant.DniTypeEnum;
+import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.ClientTypeDTO;
+import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
 import com.hardnets.coop.service.impl.BillServiceImpl;
 import com.hardnets.coop.utils.JsonUtil;
@@ -53,8 +57,8 @@ class ClientControllerTest {
 
 	@Test
 	void createUser_success() throws Exception {
-		ClientDto client = getClient();
-		when(clientService.create(any(ClientDto.class))).thenReturn(client);
+		ClientDTO client = getClient();
+		when(clientService.create(any(ClientDTO.class))).thenReturn(mock(ClientEntity.class));
 		mockMvc.perform(MockMvcRequestBuilders.post("/v1/client").contentType(MediaType.APPLICATION_JSON)
 				.content(JsonUtil.toJson(client)).with(csrf()).with(user("user"))).andExpect(status().isCreated())
 				.andDo(MockMvcResultHandlers.print()).andReturn();
@@ -62,7 +66,7 @@ class ClientControllerTest {
 
 	@Test
 	void updateUser_success() throws Exception {
-		ClientDto client = getClient();
+		ClientDTO client = getClient();
 		mockMvc.perform(MockMvcRequestBuilders.put("/v1/client").with(user("user")).with(csrf())
 				.contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(client))).andExpect(status().isOk())
 				.andReturn();
@@ -76,7 +80,8 @@ class ClientControllerTest {
 	void getWaterMeters() {
 	}
 
-	private ClientDto getClient() {
-		return ClientDto.builder().dni("14081226-9").dniType("CHILE").clientType(1L).build();
+	private ClientDTO getClient() {
+		return ClientDTO.builder().dni("14081226-9").typeOfDni(DniTypeEnum.CHILEAN)
+				.clientType(ClientTypeDTO.builder().id(1L).build()).build();
 	}
 }

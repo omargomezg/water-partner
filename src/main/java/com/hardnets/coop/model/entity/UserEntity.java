@@ -1,9 +1,10 @@
 package com.hardnets.coop.model.entity;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,9 +36,11 @@ public class UserEntity extends PersonEntity implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		var roles = new ArrayList<GrantedAuthority>();
-		profiles.forEach(profileEnum -> roles.add(new SimpleGrantedAuthority(profileEnum.name())));
-		return roles;
+		if (profiles == null) {
+			return Collections.emptyList();
+		}
+		return profiles.stream().map(profile -> new SimpleGrantedAuthority("ROLE_" + profile.name()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

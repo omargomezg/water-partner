@@ -1,6 +1,6 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 import com.hardnets.coop.model.dto.request.UserSubsidyRequest;
 import com.hardnets.coop.model.dto.response.SubsidyDto;
 import com.hardnets.coop.model.entity.DecreeEntity;
@@ -35,7 +35,7 @@ public class SubsidyService {
                 .orElse(new SubsidyEntity());
         SubsidyDto dto = parseToDto(subsidy);
         if (Objects.nonNull(subsidy.getWaterMeter())) {
-            var waterMeter = new WaterMeterDto();
+            var waterMeter = new WaterMeterDTO();
             waterMeter.setSerial(subsidy.getWaterMeter().getSerial());
             waterMeter.setId(subsidy.getWaterMeter().getId());
             dto.setWaterMeter(waterMeter);

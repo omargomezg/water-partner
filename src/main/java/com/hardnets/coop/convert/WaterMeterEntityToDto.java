@@ -1,6 +1,6 @@
 package com.hardnets.coop.convert;
 
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.converter.Converter;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-public class WaterMeterEntityToDto implements Converter<WaterMeterEntity, WaterMeterDto> {
+public class WaterMeterEntityToDto implements Converter<WaterMeterEntity, WaterMeterDTO> {
     @Override
-    public WaterMeterDto convert(@NonNull WaterMeterEntity meter) {
+    public WaterMeterDTO convert(@NonNull WaterMeterEntity meter) {
        log.info(meter);
-        return WaterMeterDto.builder()
+        return WaterMeterDTO.builder()
                 .id(meter.getId())
                 .serial(meter.getSerial())
                 .trademark(meter.getTrademark())

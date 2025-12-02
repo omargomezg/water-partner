@@ -1,6 +1,6 @@
 package com.hardnets.coop.model.dto.response;
 
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ public class SubsidyDto {
 
     private Date approvedDateOfDecree;
 
-    private WaterMeterDto waterMeter;
+    private WaterMeterDTO waterMeter;
 
     public SubsidyDto(Long id, Date startDate, Date endingDate, Short percentage, String observation) {
         this.id = id;

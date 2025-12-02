@@ -25,7 +25,7 @@ import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 import com.hardnets.coop.model.dto.pageable.record.RecordDto;
 import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
@@ -57,9 +57,9 @@ public class WaterMeterService {
     private final PeriodRepository periodRepository;
     private final ModelMapper modelMapper;
 
-    public void update(List<WaterMeterDto> waterMeterDtos) {
+    public void update(List<WaterMeterDTO> waterMeterDtos) {
         List<WaterMeterEntity> entities = new ArrayList<>();
-        for (WaterMeterDto dto : waterMeterDtos) {
+        for (WaterMeterDTO dto : waterMeterDtos) {
             WaterMeterEntity entity = waterMeterRepository.findBySerial(dto.getSerial()).orElseThrow(() ->
                     new WaterMeterNotFoundException("Water meter number " + dto.getSerial() + " was not found"));
             ClientEntity client = clientRepository.findByDni(dto.getDni())
@@ -70,14 +70,14 @@ public class WaterMeterService {
         waterMeterRepository.saveAll(entities);
     }
 
-    public WaterMeterDto update(WaterMeterDto waterMeterDto) {
+    public WaterMeterDTO update(WaterMeterDTO waterMeterDto) {
         var waterMeter = waterMeterRepository.findById(waterMeterDto.getId()).orElseThrow(WaterMeterNotFoundException::new);
         waterMeter.setDiameter(waterMeterDto.getDiameter());
         waterMeter.setTrademark(waterMeterDto.getTrademark());
         waterMeter.setSector(waterMeterDto.getSector());
         waterMeter.setUpdated(new Date());
         waterMeter.setDescription(waterMeterDto.getComment());
-        return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDto.class);
+        return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDTO.class);
     }
 
     public WaterMeterEntity create(WaterMeterEntity waterMeter) {
@@ -85,7 +85,7 @@ public class WaterMeterService {
     }
 
 
-    public WaterMeterDto create(WaterMeterDto waterMeterDto) {
+    public WaterMeterDTO create(WaterMeterDTO waterMeterDto) {
         if (checkIfExistsSerial(waterMeterDto.getSerial())) {
             throw new ConflictException("El numero de serie ya existe");
         }
@@ -97,7 +97,7 @@ public class WaterMeterService {
         waterMeter.setDiameter(waterMeterDto.getDiameter());
         waterMeter.setCreated(new Date());
         waterMeter.setStatus(StatusEnum.NEW);
-        return new WaterMeterDto(
+        return new WaterMeterDTO(
                 waterMeterRepository.save(waterMeter)
         );
     }
@@ -130,7 +130,7 @@ public class WaterMeterService {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         var result = waterMeterPageableRepository.findAllWhereClientIsNull(pageable);
 
-        meters.getMeters().addAll(result.getContent().stream().map(meter -> modelMapper.map(meter, WaterMeterDto.class))
+        meters.getMeters().addAll(result.getContent().stream().map(meter -> modelMapper.map(meter, WaterMeterDTO.class))
                 .collect(Collectors.toList()));
         meters.setTotalHits(result.getTotalElements());
         return meters;
@@ -143,15 +143,15 @@ public class WaterMeterService {
         ListOfWaterMeterDto result = new ListOfWaterMeterDto();
         result.setTotalHits(page.getTotalElements());
         page.getContent().forEach(meter ->
-                result.getContents().add(modelMapper.map(meter, WaterMeterDto.class))
+                result.getContents().add(modelMapper.map(meter, WaterMeterDTO.class))
         );
         return result;
     }
 
-    public List<WaterMeterDto> getAll() {
+    public List<WaterMeterDTO> getAll() {
         List<WaterMeterEntity> waterMeterEntities = waterMeterRepository.findAll();
-        return waterMeterEntities.stream().map(WaterMeterDto::new)
-                .sorted(Comparator.comparing(WaterMeterDto::getUpdated).reversed())
+        return waterMeterEntities.stream().map(WaterMeterDTO::new)
+                .sorted(Comparator.comparing(WaterMeterDTO::getUpdated).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -181,7 +181,7 @@ public class WaterMeterService {
         return relatedMeters.stream().sorted(Comparator.comparing(RelatedWaterMetersDto::getDischargeDate)).collect(Collectors.toList());
     }
 
-    public void relateToClient(WaterMeterDto waterMeterDto, String dni) {
+    public void relateToClient(WaterMeterDTO waterMeterDto, String dni) {
         Integer serial = waterMeterDto.getSerial();
         ClientEntity client = clientRepository.findByDni(dni)
                 .orElseThrow(UserNotFoundException::new);

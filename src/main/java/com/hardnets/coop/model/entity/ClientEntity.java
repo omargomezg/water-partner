@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hardnets.coop.model.dto.ClientDto;
+import com.hardnets.coop.model.dto.ClientDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,7 +62,7 @@ public class ClientEntity extends PersonEntity {
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
 	private Set<WaterMeterEntity> waterMeter = new HashSet<>();
 
-	public ClientEntity(ClientDto client) {
+	public ClientEntity(ClientDTO client) {
 		super(client.getDni(), client.getFullName(), client.getEmail(), client.getBirthDate());
 		setDateOfAdmission(client.getDateOfAdmission());
 		setTelephone(client.getTelephone());

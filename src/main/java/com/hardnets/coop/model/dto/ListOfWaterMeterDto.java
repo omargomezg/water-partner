@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 public class ListOfWaterMeterDto {
     private Long totalHits = 0L;
-    private List<WaterMeterDto> contents = new ArrayList<>();
+    private List<WaterMeterDTO> contents = new ArrayList<>();
 }

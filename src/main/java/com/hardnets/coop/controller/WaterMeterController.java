@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
-import com.hardnets.coop.model.dto.WaterMeterDto;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
 import com.hardnets.coop.service.impl.WaterMeterService;
 
 import jakarta.validation.Valid;
@@ -50,12 +50,12 @@ public class WaterMeterController {
     }
 
     @PostMapping
-    public ResponseEntity<WaterMeterDto> addWaterMeter(@RequestBody @Valid WaterMeterDto waterMeter) {
+    public ResponseEntity<WaterMeterDTO> addWaterMeter(@RequestBody @Valid WaterMeterDTO waterMeter) {
         return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WaterMeterDto> addWaterMeter(@PathVariable Long id, @RequestBody @Valid WaterMeterDto waterMeter) {
+    public ResponseEntity<WaterMeterDTO> addWaterMeter(@PathVariable Long id, @RequestBody @Valid WaterMeterDTO waterMeter) {
         return ResponseEntity.ok(waterMeterService.update(waterMeter));
     }
 
@@ -72,7 +72,7 @@ public class WaterMeterController {
      * @return
      */
     @PutMapping("/massive")
-    public ResponseEntity<?> update(@RequestBody @Valid List<WaterMeterDto> meters) {
+    public ResponseEntity<?> update(@RequestBody @Valid List<WaterMeterDTO> meters) {
         waterMeterService.update(meters);
         return ResponseEntity.ok("");
     }
@@ -84,8 +84,8 @@ public class WaterMeterController {
      * @return A water meter
      */
     @GetMapping("/{id}")
-    public ResponseEntity<WaterMeterDto> getWaterMeterByNumber(@PathVariable Long id) {
-        WaterMeterDto waterMeter = new WaterMeterDto(waterMeterService.getById(id));
+    public ResponseEntity<WaterMeterDTO> getWaterMeterByNumber(@PathVariable Long id) {
+        WaterMeterDTO waterMeter = new WaterMeterDTO(waterMeterService.getById(id));
         return ResponseEntity.ok(waterMeter);
     }
 }

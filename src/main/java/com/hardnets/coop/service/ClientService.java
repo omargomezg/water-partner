@@ -1,35 +1,36 @@
 package com.hardnets.coop.service;
 
-import com.hardnets.coop.model.dto.ClientDto;
-import com.hardnets.coop.model.dto.ClientsDto;
-import com.hardnets.coop.model.dto.request.FilterDto;
-import com.hardnets.coop.model.entity.ClientEntity;
-
 import java.util.List;
 import java.util.Optional;
 
+import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.entity.ClientEntity;
+
 public interface ClientService {
 
-    ClientEntity update(ClientEntity entity);
+	ClientEntity update(ClientEntity entity);
 
-    ClientDto update(ClientDto entity);
+	ClientEntity update(ClientDTO entity);
 
-    List<ClientEntity> findAll();
+	List<ClientEntity> findAll();
 
-    ClientsDto getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize);
+	List<ClientEntity> getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize);
 
-    Optional<ClientEntity> getByDni(String dni);
+	Long getTotalOfFilteredUsers(FilterDto filter);
 
-    /**
-     * Crea un nuevo cliente
-     *
-     * @param client Dto de cliente
-     * @return
-     * @throws Exception
-     */
-    ClientDto create(ClientDto client);
+	Optional<ClientEntity> getByDni(String dni);
 
-    ClientEntity create(ClientEntity client);
+	/**
+	 * Crea un nuevo cliente
+	 *
+	 * @param client Dto de cliente
+	 * @return
+	 * @throws Exception
+	 */
+	ClientEntity create(ClientDTO client);
 
-    boolean exist(String rut);
+	ClientEntity create(ClientEntity client);
+
+	boolean exist(String rut);
 }

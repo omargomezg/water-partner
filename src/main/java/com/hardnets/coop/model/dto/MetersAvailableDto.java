@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class MetersAvailableDto {
-    private List<WaterMeterDto> meters = new ArrayList<>();
+    private List<WaterMeterDTO> meters = new ArrayList<>();
     private Long totalHits = 0L;
 }
