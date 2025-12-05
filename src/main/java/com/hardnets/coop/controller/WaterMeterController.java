@@ -1,15 +1,13 @@
 package com.hardnets.coop.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
+import com.hardnets.coop.model.dto.PageResponse;
 import com.hardnets.coop.model.dto.WaterMeterDTO;
+import com.hardnets.coop.model.dto.WaterMeterFilterRequest;
 import com.hardnets.coop.service.impl.WaterMeterService;
-
 import jakarta.validation.Valid;
-
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -30,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class WaterMeterController {
 
     private final WaterMeterService waterMeterService;
+    private final ObjectMapper objectMapper;
 
     /**
      * List all water meters
@@ -37,10 +36,13 @@ public class WaterMeterController {
      * @return a list of water meters
      */
     @GetMapping
-    public ResponseEntity<ListOfWaterMeterDto> getWaterMeters(@RequestParam Integer pageIndex,
-                                                              @RequestParam Integer pageSize,
-                                                              @RequestParam(required = false) Optional<Integer> serial) {
-        return ResponseEntity.ok(waterMeterService.getAllByPage(pageIndex, pageSize, serial));
+    public ResponseEntity<PageResponse<WaterMeterDTO>> getWaterMeters(WaterMeterFilterRequest params) {
+        PageResponse<WaterMeterDTO> result = new PageResponse<>();
+        var meters = waterMeterService.getAllByPage(params);
+        var total = waterMeterService.getTotalOfElements(params);
+        result.setContent(meters.stream().map(WaterMeterDTO::new).toList());
+        result.setTotalElements(total);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/not-related")
@@ -72,9 +74,9 @@ public class WaterMeterController {
      * @return
      */
     @PutMapping("/massive")
-    public ResponseEntity<?> update(@RequestBody @Valid List<WaterMeterDTO> meters) {
+    public ResponseEntity<Void> update(@RequestBody @Valid List<WaterMeterDTO> meters) {
         waterMeterService.update(meters);
-        return ResponseEntity.ok("");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

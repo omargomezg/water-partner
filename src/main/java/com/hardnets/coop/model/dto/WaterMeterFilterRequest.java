@@ -5,9 +5,8 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ClientFilterRequest extends PageRequest {
+public class WaterMeterFilterRequest extends PageRequest {
 
-	private String dni;
-	private String name;
+    private Integer serial;
 
 }

@@ -1,31 +1,14 @@
 package com.hardnets.coop.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.hardnets.coop.exception.ConflictException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
 import com.hardnets.coop.exception.WaterMeterNotFoundException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-import com.hardnets.coop.model.dto.ListOfWaterMeterDto;
 import com.hardnets.coop.model.dto.MetersAvailableDto;
 import com.hardnets.coop.model.dto.WaterMeterDTO;
+import com.hardnets.coop.model.dto.WaterMeterFilterRequest;
 import com.hardnets.coop.model.dto.pageable.record.RecordDto;
 import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
 import com.hardnets.coop.model.dto.response.RelatedWaterMetersDto;
@@ -40,9 +23,30 @@ import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterPageableRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -56,6 +60,9 @@ public class WaterMeterService {
 	private final TariffRepository tariffRepository;
 	private final PeriodRepository periodRepository;
 	private final ModelMapper modelMapper;
+
+    @PersistenceContext
+    private EntityManager em;
 
 	public void update(List<WaterMeterDTO> waterMeterDtos) {
 		List<WaterMeterEntity> entities = new ArrayList<>();
@@ -131,16 +138,32 @@ public class WaterMeterService {
 		return meters;
 	}
 
-	public ListOfWaterMeterDto getAllByPage(Integer pageIndex, Integer pageSize, Optional<Integer> serial) {
-		Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("updated").descending());
-		Page<WaterMeterEntity> page = serial.isPresent()
-				? waterMeterPageableRepository.findBySerial(serial.get(), pageable)
-				: waterMeterPageableRepository.findAll(pageable);
-		ListOfWaterMeterDto result = new ListOfWaterMeterDto();
-		result.setTotalHits(page.getTotalElements());
-		page.getContent().forEach(meter -> result.getContents().add(modelMapper.map(meter, WaterMeterDTO.class)));
-		return result;
+    public List<WaterMeterEntity> getAllByPage(WaterMeterFilterRequest filter) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<WaterMeterEntity> cq = cb.createQuery(WaterMeterEntity.class);
+        var root = cq.from(WaterMeterEntity.class);
+        var predicates = buildPredicates(filter);
+        if (!predicates.isEmpty()) {
+            cq.where(predicates.toArray(new Predicate[0]));
+        }
+        cq.orderBy(cb.desc(root.get("updatedAt")));
+        var query = em.createQuery(cq);
+        query.setFirstResult(filter.getPage() * filter.getSize());
+        query.setMaxResults(filter.getSize());
+        return query.getResultList();
 	}
+
+    public Long getTotalOfElements(WaterMeterFilterRequest filter) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<WaterMeterEntity> root = cq.from(WaterMeterEntity.class);
+        List<Predicate> predicates = buildPredicates(filter);
+        if (!predicates.isEmpty()) {
+            cq.where(predicates.toArray(new Predicate[0]));
+        }
+        cq.select(cb.count(root)).where(cb.and(predicates.toArray(new Predicate[0])));
+        return em.createQuery(cq).getSingleResult();
+    }
 
 	public List<WaterMeterDTO> getAll() {
 		List<WaterMeterEntity> waterMeterEntities = waterMeterRepository.findAll();
@@ -232,5 +255,16 @@ public class WaterMeterService {
 	private boolean checkIfExistsSerial(Integer serial) {
 		return waterMeterRepository.findBySerial(serial).isPresent();
 	}
+
+    private List<Predicate> buildPredicates(WaterMeterFilterRequest filter) {
+        List<Predicate> predicates = new ArrayList<>();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Root<WaterMeterEntity> root = em.getCriteriaBuilder().createQuery(WaterMeterEntity.class).from(WaterMeterEntity.class);
+
+        if (filter.getSerial() != null) {
+            predicates.add(cb.equal(root.get("serial"), filter.getSerial()));
+        }
+        return predicates;
+    }
 
 }
