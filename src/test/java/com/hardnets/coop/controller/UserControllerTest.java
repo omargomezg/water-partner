@@ -1,7 +1,7 @@
 package com.hardnets.coop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hardnets.coop.model.dto.UserDto;
+import com.hardnets.coop.model.dto.UserDTO;
 import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +35,11 @@ class UserControllerTest {
     @Test
     void updatePassword() throws Exception {
         String dni = "11111111-1";
-        var dto = new UserDto();
+        var dto = new UserDTO();
         dto.setDni(dni);
         when(userDetailService.getByDni(dni)).thenReturn(dto);
 
-        when(userDetailService.update(any(UserDto.class))).thenReturn(mock(UserDto.class));
+        when(userDetailService.update(any(UserDTO.class))).thenReturn(mock(UserDTO.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.put("/v1/user/" + dni)

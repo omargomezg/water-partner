@@ -53,6 +53,7 @@ public class WaterMeterController {
 
     @PostMapping
     public ResponseEntity<WaterMeterDTO> addWaterMeter(@RequestBody @Valid WaterMeterDTO waterMeter) {
+
         return new ResponseEntity<>(waterMeterService.create(waterMeter), HttpStatus.CREATED);
     }
 

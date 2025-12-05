@@ -1,7 +1,9 @@
 package com.hardnets.coop.controller;
 
 import com.hardnets.coop.model.dto.CreateUserDto;
-import com.hardnets.coop.model.dto.UserDto;
+import com.hardnets.coop.model.dto.PageResponse;
+import com.hardnets.coop.model.dto.UserDTO;
+import com.hardnets.coop.model.dto.UserFilterRequest;
 import com.hardnets.coop.service.impl.UserDetailServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -14,11 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 @Log4j2
@@ -30,20 +29,23 @@ public class UserController {
     private final UserDetailServiceImpl userDetailService;
 
     @GetMapping
-    public ResponseEntity<Collection<UserDto>> getUsers(@RequestParam(required = false) String dni) {
-        if (dni == null)
-            return ResponseEntity.ok(userDetailService.getUsers());
-        return ResponseEntity.ok(new HashSet<>(List.of(userDetailService.getByDni(dni))));
+    public ResponseEntity<PageResponse<UserDTO>> getUsers(UserFilterRequest params) {
+        PageResponse<UserDTO> response = new PageResponse<>();
+        var users = userDetailService.findAll(params);
+        List<UserDTO> userDtos = users.stream().map(UserDTO::new).toList();
+        response.setContent(userDtos);
+        response.setTotalElements(userDetailService.count(params));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserDto user) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid CreateUserDto user) {
         log.info("access to Post User");
         return new ResponseEntity<>(userDetailService.create(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/{dni}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable String dni, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable String dni, @RequestBody UserDTO userDto) {
         return ResponseEntity.ok(userDetailService.update(userDto));
     }
 

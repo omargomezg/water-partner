@@ -1,18 +1,18 @@
 package com.hardnets.coop.model.dto;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hardnets.coop.model.entity.UserEntity;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
-public class UserDto {
+public class UserDTO {
+
 	@NotNull
 	private String dni;
 	private List<String> roles;
@@ -24,7 +24,7 @@ public class UserDto {
 	@JsonIgnore
 	private String password;
 
-	public UserDto(UserEntity user) {
+    public UserDTO(UserEntity user) {
 		this.setDni(user.getDni());
 		this.setEmail(user.getEmail());
 		this.setFullName(user.getFullName());

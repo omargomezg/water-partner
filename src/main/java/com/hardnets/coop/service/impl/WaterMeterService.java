@@ -142,7 +142,7 @@ public class WaterMeterService {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<WaterMeterEntity> cq = cb.createQuery(WaterMeterEntity.class);
         var root = cq.from(WaterMeterEntity.class);
-        var predicates = buildPredicates(filter);
+        var predicates = buildPredicates(filter, cb, root);
         if (!predicates.isEmpty()) {
             cq.where(predicates.toArray(new Predicate[0]));
         }
@@ -157,7 +157,7 @@ public class WaterMeterService {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<WaterMeterEntity> root = cq.from(WaterMeterEntity.class);
-        List<Predicate> predicates = buildPredicates(filter);
+        List<Predicate> predicates = buildPredicates(filter, cb, root);
         if (!predicates.isEmpty()) {
             cq.where(predicates.toArray(new Predicate[0]));
         }
@@ -256,11 +256,8 @@ public class WaterMeterService {
 		return waterMeterRepository.findBySerial(serial).isPresent();
 	}
 
-    private List<Predicate> buildPredicates(WaterMeterFilterRequest filter) {
+    private List<Predicate> buildPredicates(WaterMeterFilterRequest filter, CriteriaBuilder cb, Root<WaterMeterEntity> root) {
         List<Predicate> predicates = new ArrayList<>();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        Root<WaterMeterEntity> root = em.getCriteriaBuilder().createQuery(WaterMeterEntity.class).from(WaterMeterEntity.class);
-
         if (filter.getSerial() != null) {
             predicates.add(cb.equal(root.get("serial"), filter.getSerial()));
         }

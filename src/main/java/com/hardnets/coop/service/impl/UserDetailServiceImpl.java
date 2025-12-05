@@ -1,11 +1,23 @@
 package com.hardnets.coop.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.exception.UserException;
+import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.constant.ProfileEnum;
+import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDTO;
+import com.hardnets.coop.model.dto.UserFilterRequest;
+import com.hardnets.coop.model.entity.UserEntity;
+import com.hardnets.coop.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,18 +27,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.exception.UserException;
-import com.hardnets.coop.exception.UserNotFoundException;
-import com.hardnets.coop.model.constant.ProfileEnum;
-import com.hardnets.coop.model.dto.CreateUserDto;
-import com.hardnets.coop.model.dto.UserDto;
-import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.repository.UserRepository;
-
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,8 +42,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final ModelMapper modelMapper;
 
+	@PersistenceContext
+	private EntityManager em;
+
 	@Transactional
-	public UserDto update(@NotNull UserDto userDto) {
+	public UserDTO update(@NotNull UserDTO userDto) {
 		var dni = userDto.getDni();
 		if (Objects.isNull(dni)) {
 			throw new UserException("DNI is required");
@@ -53,21 +61,39 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		userDto.getRoles().forEach(role -> roles.add(ProfileEnum.valueOf(role.toUpperCase())));
 		user.setProfiles(roles);
 		userRepository.save(user);
-		return modelMapper.map(userRepository.save(user), UserDto.class);
+		return modelMapper.map(userRepository.save(user), UserDTO.class);
 	}
 
-	public Collection<UserDto> getUsers() {
+	public List<UserEntity> findAll(UserFilterRequest filter) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+		var root = cq.from(UserEntity.class);
+		List<Predicate> predicates = buildPredicates(filter, cb, root);
+		cq.where(predicates.toArray(new Predicate[0]));
+		return em.createQuery(cq).getResultList();
+	}
+
+	public long count(UserFilterRequest filter) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		var root = cq.from(UserEntity.class);
+		List<Predicate> predicates = buildPredicates(filter, cb, root);
+		cq.select(cb.count(root)).where(predicates.toArray(new Predicate[0]));
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public Collection<UserDTO> getUsers() {
 		Collection<UserEntity> dbUsers = userRepository.findAllByProfilesNot(ProfileEnum.KAL_EL);
-		return dbUsers.stream().map(UserDto::new).collect(Collectors.toList());
+		return dbUsers.stream().map(UserDTO::new).collect(Collectors.toList());
 	}
 
-	public UserDto getByDni(@NonNull String dni) throws UserNotFoundException {
+	public UserDTO getByDni(@NonNull String dni) throws UserNotFoundException {
 		UserEntity user = userRepository.findById(dni).orElseThrow(UserNotFoundException::new);
-		return new UserDto(user);
+		return new UserDTO(user);
 	}
 
 	@Transactional
-	public UserDto create(CreateUserDto userDto) {
+	public UserDTO create(CreateUserDto userDto) {
 		if (Objects.isNull(userDto.getPassword())) {
 			throw new UserException("Incomplete user data");
 		}
@@ -77,7 +103,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		user.setEmail(userDto.getEmail());
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		user.setProfiles(List.of(ProfileEnum.valueOf(userDto.getRole().toUpperCase())));
-		return modelMapper.map(userRepository.save(user), UserDto.class);
+		return modelMapper.map(userRepository.save(user), UserDTO.class);
 	}
 
 	@Override
@@ -94,4 +120,21 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		user.setPassword(passwordEncoder.encode(password));
 		userRepository.save(user);
 	}
+
+	private List<Predicate> buildPredicates(UserFilterRequest filter, CriteriaBuilder cb, Root<UserEntity> root) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (filter.getDni() != null && !filter.getDni().isEmpty()) {
+			predicates.add(cb.equal(root.get("dni"), filter.getDni()));
+		}
+		if (filter.getFullName() != null && !filter.getFullName().isEmpty()) {
+			predicates.add(cb.like(cb.lower(root.get("fullName")), "%" + filter.getFullName().toLowerCase() + "%"));
+		}
+		if (filter.getEmail() != null && !filter.getEmail().isEmpty()) {
+			predicates.add(cb.like(cb.lower(root.get("email")), "%" + filter.getEmail().toLowerCase() + "%"));
+		}
+
+		return predicates;
+	}
+
 }

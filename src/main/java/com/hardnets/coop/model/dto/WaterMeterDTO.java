@@ -1,14 +1,14 @@
 package com.hardnets.coop.model.dto;
 
-import java.util.Date;
-
 import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.constant.StatusEnum;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Builder
@@ -24,6 +24,8 @@ public class WaterMeterDTO {
 	private Date createdAt;
 	private Date updatedAt;
 	private String dni;
+    private String description;
+    private StatusEnum status;
 
 	/**
 	 * Date when is related to

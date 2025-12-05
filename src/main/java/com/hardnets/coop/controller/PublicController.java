@@ -1,9 +1,27 @@
 package com.hardnets.coop.controller;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hardnets.coop.config.security.JwtTokenService;
+import com.hardnets.coop.exception.HandleException;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDTO;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
+import com.hardnets.coop.model.dto.request.UserSignupRequest;
+import com.hardnets.coop.model.dto.response.LoginDto;
+import com.hardnets.coop.model.dto.response.PendingPaymentDto;
+import com.hardnets.coop.model.entity.BillEntity;
+import com.hardnets.coop.model.entity.UserEntity;
+import com.hardnets.coop.model.flow.PaymentOrderResponse;
+import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
+import com.hardnets.coop.model.flow.UrlReturn;
+import com.hardnets.coop.repository.UserRepository;
+import com.hardnets.coop.service.FlowService;
+import com.hardnets.coop.service.SaleDocumentService;
+import com.hardnets.coop.service.impl.UserDetailServiceImpl;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,29 +39,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hardnets.coop.config.security.JwtTokenService;
-import com.hardnets.coop.exception.HandleException;
-import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.CreateUserDto;
-import com.hardnets.coop.model.dto.UserDto;
-import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
-import com.hardnets.coop.model.dto.request.UserSignupRequest;
-import com.hardnets.coop.model.dto.response.LoginDto;
-import com.hardnets.coop.model.dto.response.PendingPaymentDto;
-import com.hardnets.coop.model.entity.BillEntity;
-import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.model.flow.PaymentOrderResponse;
-import com.hardnets.coop.model.flow.PaymentOrderStatusResponse;
-import com.hardnets.coop.model.flow.UrlReturn;
-import com.hardnets.coop.repository.UserRepository;
-import com.hardnets.coop.service.FlowService;
-import com.hardnets.coop.service.SaleDocumentService;
-import com.hardnets.coop.service.impl.UserDetailServiceImpl;
-
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 /**
  * Todos los métodos públicos que no requieren autentificación inicialmente se
@@ -99,7 +97,7 @@ public class PublicController {
 	}
 
 	@PostMapping("/auth/create")
-	public ResponseEntity<UserDto> addUser(@RequestBody @Valid CreateUserDto user) {
+    public ResponseEntity<UserDTO> addUser(@RequestBody @Valid CreateUserDto user) {
 		if (!userService.getUsers().isEmpty()) {
 			throw new HandleException("Cannot create user without authentication");
 		}

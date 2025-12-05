@@ -1,5 +1,20 @@
 package com.hardnets.coop.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
+import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.ClientFilterRequest;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
+import com.hardnets.coop.model.dto.PageResponse;
+import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
+import com.hardnets.coop.model.dto.views.AppViews;
+import com.hardnets.coop.model.dto.views.ViewSerializer;
+import com.hardnets.coop.service.ClientService;
+import com.hardnets.coop.service.impl.BillServiceImpl;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -13,23 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
-import com.hardnets.coop.model.dto.ClientDTO;
-import com.hardnets.coop.model.dto.ClientFilterRequest;
-import com.hardnets.coop.model.dto.ClientRequestDTO;
-import com.hardnets.coop.model.dto.PageResponse;
-import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
-import com.hardnets.coop.model.dto.views.AppViews;
-import com.hardnets.coop.model.dto.views.ViewSerializer;
-import com.hardnets.coop.service.ClientService;
-import com.hardnets.coop.service.impl.BillServiceImpl;
-
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @AllArgsConstructor
@@ -45,9 +43,9 @@ public class ClientController {
 	@GetMapping
 	@JsonView(AppViews.Admin.class)
 	@ViewSerializer(value = { AppViews.Admin.class, AppViews.Internal.class })
-	public ResponseEntity<PageResponse<ClientDTO>> getUsers(ClientFilterRequest filter) {
-		var clients = clientService.getFilteredUsers(filter);
-		var totalOfElements = clientService.getTotalOfFilteredUsers(filter);
+    public ResponseEntity<PageResponse<ClientDTO>> getUsers(ClientFilterRequest params) {
+        var clients = clientService.getFilteredUsers(params);
+        var totalOfElements = clientService.getTotalOfFilteredUsers(params);
 		var response = new PageResponse<ClientDTO>();
 		response.setContent(clients.stream().map(c -> modelMapper.map(c, ClientDTO.class)).toList());
 		response.setTotalElements(totalOfElements);
