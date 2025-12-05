@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.dto.ClientTypeDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.service.ClientService;
@@ -58,7 +59,7 @@ class ClientControllerTest {
 	@Test
 	void createUser_success() throws Exception {
 		ClientDTO client = getClient();
-		when(clientService.create(any(ClientDTO.class))).thenReturn(mock(ClientEntity.class));
+		when(clientService.create(any(ClientRequestDTO.class))).thenReturn(mock(ClientEntity.class));
 		mockMvc.perform(MockMvcRequestBuilders.post("/v1/client").contentType(MediaType.APPLICATION_JSON)
 				.content(JsonUtil.toJson(client)).with(csrf()).with(user("user"))).andExpect(status().isCreated())
 				.andDo(MockMvcResultHandlers.print()).andReturn();

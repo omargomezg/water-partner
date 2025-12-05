@@ -21,7 +21,7 @@ public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Lo
 	@Query(value = "select distinct wm.diameter from WaterMeterEntity wm")
 	List<DiameterEnum> findAllDiameters();
 
-	Collection<WaterMeterEntity> findAllByClientOrderByUpdatedDesc(ClientEntity clientEntity);
+	Collection<WaterMeterEntity> findAllByClientOrderByUpdatedAtDesc(ClientEntity clientEntity);
 
 	@Query("select w from WaterMeterEntity w where w.client.dni = ?1")
 	Collection<WaterMeterEntity> findAllIdsByClient(String dni);

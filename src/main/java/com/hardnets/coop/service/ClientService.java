@@ -3,21 +3,21 @@ package com.hardnets.coop.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.hardnets.coop.model.dto.ClientDTO;
-import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.ClientFilterRequest;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
 
 public interface ClientService {
 
 	ClientEntity update(ClientEntity entity);
 
-	ClientEntity update(ClientDTO entity);
+	ClientEntity update(ClientRequestDTO clientRequestDTO);
 
 	List<ClientEntity> findAll();
 
-	List<ClientEntity> getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize);
+	List<ClientEntity> getFilteredUsers(ClientFilterRequest filter);
 
-	Long getTotalOfFilteredUsers(FilterDto filter);
+	Long getTotalOfFilteredUsers(ClientFilterRequest filter);
 
 	Optional<ClientEntity> getByDni(String dni);
 
@@ -28,9 +28,11 @@ public interface ClientService {
 	 * @return
 	 * @throws Exception
 	 */
-	ClientEntity create(ClientDTO client);
+	ClientEntity create(ClientRequestDTO client);
 
 	ClientEntity create(ClientEntity client);
 
 	boolean exist(String rut);
+
+	void deleteByDni(String dni);
 }

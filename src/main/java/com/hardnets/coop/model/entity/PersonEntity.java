@@ -7,23 +7,21 @@ import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
 import com.hardnets.coop.model.dto.views.AppViews;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
-@Entity
-@ToString
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@MappedSuperclass
 public abstract class PersonEntity {
 	@Id
 	@JsonView(AppViews.Public.class)
@@ -32,6 +30,7 @@ public abstract class PersonEntity {
 	@Enumerated(EnumType.STRING)
 	private DniTypeEnum typeOfDni;
 
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	@JsonView(AppViews.Public.class)
 	private NationalityEnum nationality = NationalityEnum.CHILEAN;
@@ -48,17 +47,9 @@ public abstract class PersonEntity {
 	@Email
 	private String email;
 
+	@Builder.Default
 	private Boolean enabled = true;
 
 	private String password;
 
-	protected PersonEntity(String dni, String fullName, String email, Date birthDate) {
-		setFullName(fullName);
-		setDni(dni);
-		setEmail(email);
-		setBirthDate(birthDate);
-	}
-
-	protected PersonEntity() {
-	}
 }

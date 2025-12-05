@@ -33,3 +33,7 @@ build/
 .vscode/
 
 *.DS_Store
+
+.metadata
+.project
+system.properties

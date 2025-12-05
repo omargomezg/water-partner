@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.model.dto.ClientDTO;
-import com.hardnets.coop.model.dto.request.FilterDto;
+import com.hardnets.coop.model.dto.ClientFilterRequest;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ClientTypeRepository;
@@ -35,7 +34,6 @@ public class ClientServiceImpl implements ClientService {
 
 	private final ClientRepository clientRepository;
 	private final SectorRepository sectorRepository;
-	private final ConversionService conversionService;
 	private final ClientTypeRepository clientTypeRepository;
 
 	@PersistenceContext
@@ -46,17 +44,20 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public ClientEntity update(ClientDTO clientDto) {
-		var clientType = clientTypeRepository.findById(clientDto.getClientType().getId())
-				.orElseThrow(() -> new ClientNotFoundException("Client type not found: " + clientDto.getClientType()));
-		if (clientRepository.findByDni(clientDto.getDni()).isEmpty()) {
-			throw new ClientNotFoundException(clientDto.getDni());
-		}
-		var client = conversionService.convert(clientDto, ClientEntity.class);
-		assert client != null;
+	public ClientEntity update(ClientRequestDTO dto) {
+		var client = clientRepository.findByDni(dto.getDni()).orElseThrow(ClientNotFoundException::new);
+		var clientType = clientTypeRepository.findById(dto.getClientType().getId())
+				.orElseThrow(() -> new ClientNotFoundException("Client type not found: " + dto.getClientType()));
+		var sector = sectorRepository.findById(dto.getSector());
+
+		client.setFullName(dto.getFullName());
+		client.setEmail(dto.getEmail());
+		client.setTelephone(dto.getTelephone());
 		client.setClientType(clientType);
-		var sector = sectorRepository.findById(clientDto.getSector().getId());
-		sector.ifPresent(client::setSector);
+
+		if (sector.isPresent()) {
+			client.setSector(sector.get());
+		}
 		return clientRepository.save(client);
 	}
 
@@ -66,7 +67,7 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public List<ClientEntity> getFilteredUsers(FilterDto filter, Integer pageIndex, Integer pageSize) {
+	public List<ClientEntity> getFilteredUsers(ClientFilterRequest filter) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<ClientEntity> cq = cb.createQuery(ClientEntity.class);
 		Root<ClientEntity> root = cq.from(ClientEntity.class);
@@ -75,11 +76,16 @@ public class ClientServiceImpl implements ClientService {
 			cq.where(predicates.toArray(new Predicate[0]));
 		}
 		TypedQuery<ClientEntity> result = em.createQuery(cq);
+		int page = filter.getPage() != null ? filter.getPage() : 0;
+		int size = filter.getSize() != null ? filter.getSize() : 10;
+		int startPosition = page * size;
+		result.setFirstResult(startPosition);
+		result.setMaxResults(size);
 		return (List<ClientEntity>) result.getResultList();
 	}
 
 	@Override
-	public Long getTotalOfFilteredUsers(FilterDto filter) {
+	public Long getTotalOfFilteredUsers(ClientFilterRequest filter) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<ClientEntity> root = cq.from(ClientEntity.class);
@@ -91,7 +97,7 @@ public class ClientServiceImpl implements ClientService {
 		return em.createQuery(cq).getSingleResult();
 	}
 
-	private List<Predicate> buildPredicates(FilterDto filter, CriteriaBuilder cb, Root<ClientEntity> root) {
+	private List<Predicate> buildPredicates(ClientFilterRequest filter, CriteriaBuilder cb, Root<ClientEntity> root) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (filter.getDni() != null && !filter.getDni().trim().isEmpty()) {
@@ -112,16 +118,21 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public ClientEntity create(ClientDTO clientDto) {
-		var clientType = clientTypeRepository.findById(clientDto.getClientType().getId())
-				.orElseThrow(() -> new ClientNotFoundException("Client type not found: " + clientDto.getClientType()));
-		ClientEntity client = conversionService.convert(clientDto, ClientEntity.class);
-		client.setClientType(clientType);
-		if (clientDto.getSector() != null) {
-			var sector = sectorRepository.findById(clientDto.getSector().getId());
-			sector.ifPresent(client::setSector);
+	public ClientEntity create(ClientRequestDTO dto) {
+		if (clientRepository.findByDni(dto.getDni()).isPresent()) {
+			throw new RuntimeException("User exists");
 		}
-		return clientRepository.save(client);
+		var clientType = clientTypeRepository.findById(dto.getClientType().getId())
+				.orElseThrow(() -> new ClientNotFoundException("Client type not found: " + dto.getClientType()));
+		var client = ClientEntity.builder().typeOfDni(dto.getTypeOfDni()).dni(dto.getDni()).fullName(dto.getFullName())
+				.email(dto.getEmail()).telephone(dto.getTelephone()).clientType(clientType);
+		if (dto.getSector() != null) {
+			var sector = sectorRepository.findById(dto.getSector());
+			if (sector.isPresent()) {
+				client.sector(sector.get());
+			}
+		}
+		return clientRepository.save(client.build());
 	}
 
 	@Override
@@ -132,6 +143,12 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public boolean exist(String rut) {
 		return clientRepository.findByDni(rut).isPresent();
+	}
+
+	@Override
+	public void deleteByDni(String dni) {
+		var client = clientRepository.findByDni(dni).orElseThrow();
+		clientRepository.delete(client);
 	}
 
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
@@ -61,24 +63,29 @@ public class ClientDTO {
 	@JsonView(AppViews.Internal.class)
 	private Integer clientNumber;
 
+	@JsonBackReference
 	@JsonView(AppViews.Internal.class)
 	private SectorDTO sector;
 
 	@JsonView(AppViews.Internal.class)
 	private ClientTypeDTO clientType;
 
+	@JsonBackReference
 	@JsonView(AppViews.Internal.class)
 	private SubsidyDTO subsidy;
 
 	@Builder.Default
+	@JsonManagedReference
 	@JsonView(AppViews.Internal.class)
 	private Set<BillDTO> bills = new HashSet();
 
 	@Builder.Default
+	@JsonManagedReference
 	@JsonView(AppViews.Internal.class)
 	private Set<InvoiceDTO> invoices = new HashSet();
 
 	@Builder.Default
+	@JsonManagedReference
 	@JsonView(AppViews.Internal.class)
 	private Set<WaterMeterDTO> waterMeter = new HashSet();
 }

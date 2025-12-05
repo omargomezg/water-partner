@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 
 import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.dto.ClientTypeDTO;
 import com.hardnets.coop.model.dto.SectorDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
@@ -79,7 +80,7 @@ class ClientServiceImplTest {
 		when(conversionService.convert(any(), eq(ClientDTO.class))).thenReturn(mock(ClientDTO.class));
 		when(clientRepository.save(any())).thenReturn(mapToClientEntity(client));
 
-		var result = clientService.create(client);
+		var result = clientService.create(mock(ClientRequestDTO.class));
 		assertNotNull(result);
 	}
 
@@ -94,7 +95,7 @@ class ClientServiceImplTest {
 		when(conversionService.convert(any(), eq(ClientDTO.class))).thenReturn(mock(ClientDTO.class));
 		when(clientRepository.save(any())).thenReturn(mapToClientEntity(client));
 
-		var result = clientService.create(client);
+		var result = clientService.create(mock(ClientRequestDTO.class));
 		assertNotNull(result);
 		assertNotNull(result.getSector());
 	}

@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hardnets.coop.model.dto.ClientDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,17 +12,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+@Data
 @Entity
-@ToString
+@SuperBuilder
 @NoArgsConstructor
 @Table(name = "client")
+@EqualsAndHashCode(callSuper = true)
 public class ClientEntity extends PersonEntity {
 
 	private Date dateOfAdmission;
@@ -33,6 +33,7 @@ public class ClientEntity extends PersonEntity {
 	private String telephone;
 
 	@Column
+	@Builder.Default
 	private String businessActivity = "";
 
 	private String profession;
@@ -52,22 +53,17 @@ public class ClientEntity extends PersonEntity {
 	@JoinColumn(name = "subsidy_id")
 	private SubsidyEntity subsidy;
 
-	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
 	@ToString.Exclude
+	@Builder.Default
+	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
 	private Set<BillEntity> bills = new HashSet<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
 	private Set<InvoiceEntity> invoices = new HashSet<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-	private Set<WaterMeterEntity> waterMeter = new HashSet<>();
+	private Set<WaterMeterEntity> waterMeters = new HashSet<>();
 
-	public ClientEntity(ClientDTO client) {
-		super(client.getDni(), client.getFullName(), client.getEmail(), client.getBirthDate());
-		setDateOfAdmission(client.getDateOfAdmission());
-		setTelephone(client.getTelephone());
-		setBusinessActivity(client.getBusinessActivity());
-		setFullName(client.getFullName());
-		setProfession(client.getProfession());
-	}
 }

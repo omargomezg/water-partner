@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDTO;
+import com.hardnets.coop.model.dto.ClientFilterRequest;
+import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.dto.PageResponse;
 import com.hardnets.coop.model.dto.issuedBills.IssuedBillsDto;
-import com.hardnets.coop.model.dto.request.FilterDto;
 import com.hardnets.coop.model.dto.views.AppViews;
 import com.hardnets.coop.model.dto.views.ViewSerializer;
 import com.hardnets.coop.service.ClientService;
@@ -43,37 +45,42 @@ public class ClientController {
 	@GetMapping
 	@JsonView(AppViews.Admin.class)
 	@ViewSerializer(value = { AppViews.Admin.class, AppViews.Internal.class })
-	public ResponseEntity<PageResponse<ClientDTO>> getUsers(@RequestParam(required = false) String dni,
-			@RequestParam(required = false) String name, @RequestParam Integer pageIndex,
-			@RequestParam Integer pageSize) {
-		FilterDto filter = new FilterDto();
-		filter.setDni(dni);
-		filter.setName(name);
-		var clients = clientService.getFilteredUsers(filter, pageIndex, pageSize);
+	public ResponseEntity<PageResponse<ClientDTO>> getUsers(ClientFilterRequest filter) {
+		var clients = clientService.getFilteredUsers(filter);
 		var totalOfElements = clientService.getTotalOfFilteredUsers(filter);
-		var page = new PageResponse<ClientDTO>();
-		page.setContent(clients.stream().map(c -> modelMapper.map(c, ClientDTO.class)).toList());
-		page.setTotalElements(totalOfElements);
-		return ResponseEntity.ok(page);
+		var response = new PageResponse<ClientDTO>();
+		response.setContent(clients.stream().map(c -> modelMapper.map(c, ClientDTO.class)).toList());
+		response.setTotalElements(totalOfElements);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{dni}")
+	@JsonView(AppViews.Admin.class)
+	@ViewSerializer(value = { AppViews.Admin.class, AppViews.Internal.class })
 	public ResponseEntity<ClientDTO> getUsers(@PathVariable String dni) {
 		var clientEntity = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
 		return ResponseEntity.ok(conversionService.convert(clientEntity, ClientDTO.class));
 	}
 
 	@PostMapping
-	public ResponseEntity<ClientDTO> createUser(@RequestBody @Valid ClientDTO client) {
+	@JsonView(AppViews.Admin.class)
+	@ViewSerializer(value = { AppViews.Admin.class, AppViews.Internal.class })
+	public ResponseEntity<ClientDTO> createUser(@RequestBody @Valid ClientRequestDTO client) {
 		log.info("Creating client with DNI: {}", client.getDni());
 		var result = clientService.create(client);
 		return new ResponseEntity<>(modelMapper.map(result, ClientDTO.class), HttpStatus.CREATED);
 	}
 
 	@PutMapping
-	public ResponseEntity<ClientDTO> updateUser(@RequestBody @Valid ClientDTO client) {
+	public ResponseEntity<ClientDTO> updateUser(@RequestBody @Valid ClientRequestDTO client) {
 		var result = clientService.update(client);
 		return ResponseEntity.ok(modelMapper.map(result, ClientDTO.class));
+	}
+
+	@DeleteMapping("/{dni}")
+	public ResponseEntity<Void> deleteClient(@PathVariable String dni) {
+		clientService.deleteByDni(dni);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/document")

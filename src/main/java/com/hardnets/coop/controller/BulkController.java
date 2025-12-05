@@ -74,7 +74,7 @@ public class BulkController {
 			WaterMeterEntity waterMeter = new WaterMeterEntity();
 			waterMeter.setSerial(bulkRecord.getSerial());
 			waterMeter.setDiameter(DiameterEnum.castIntToEnum(bulkRecord.getDiameter()));
-			waterMeter.setCreated(new Date());
+			waterMeter.setCreatedAt(new Date());
 			waterMeter.setStatus(StatusEnum.NEW);
 
 			if (RutUtils.validateRut(dni)) {

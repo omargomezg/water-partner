@@ -16,13 +16,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode(callSuper = true)
 public class UserEntity extends PersonEntity implements UserDetails {
 
 	private static final long serialVersionUID = 907261733412678574L;
