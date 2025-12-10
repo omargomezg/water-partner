@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------
 # ETAPA 1: BUILDER (Compilación con Maven y JDK 21)
 # ----------------------------------------------------------------------
-FROM maven:3.9-jdk-21-slim AS builder
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
