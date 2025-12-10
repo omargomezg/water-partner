@@ -1,23 +1,20 @@
 package com.hardnets.coop.model.entity;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.hardnets.coop.model.constant.ProfileEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -40,7 +37,7 @@ public class UserEntity extends PersonEntity implements UserDetails {
 			return Collections.emptyList();
 		}
 		return profiles.stream().map(profile -> new SimpleGrantedAuthority("ROLE_" + profile.name()))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override

@@ -40,7 +40,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid CreateUserDto user) {
-        log.info("access to Post User");
+        var exists =  userDetailService.count(UserFilterRequest.builder().email(user.getEmail()).build());
+        if(exists > 0) {
+           return ResponseEntity.badRequest().build();
+        }
         return new ResponseEntity<>(userDetailService.create(user), HttpStatus.CREATED);
     }
 

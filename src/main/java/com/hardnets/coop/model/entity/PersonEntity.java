@@ -1,12 +1,10 @@
 package com.hardnets.coop.model.entity;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hardnets.coop.model.constant.DniTypeEnum;
 import com.hardnets.coop.model.constant.NationalityEnum;
 import com.hardnets.coop.model.dto.views.AppViews;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -17,6 +15,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Date;
 
 @Data
 @SuperBuilder
@@ -45,6 +45,7 @@ public abstract class PersonEntity {
 	private Date birthDate;
 
 	@Email
+    @Column(unique = true)
 	private String email;
 
 	@Builder.Default
