@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface SectorRepository extends JpaRepository<SectorEntity, Long> {
 
     Optional<SectorEntity> findAllByNameEquals(String name);
+    
+    Optional<SectorEntity> findByName(String name);
 }

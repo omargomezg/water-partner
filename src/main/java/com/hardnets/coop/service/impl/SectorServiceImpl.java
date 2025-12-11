@@ -4,6 +4,7 @@ import com.hardnets.coop.model.entity.SectorEntity;
 import com.hardnets.coop.repository.SectorRepository;
 import com.hardnets.coop.service.SectorService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +22,9 @@ public class SectorServiceImpl implements SectorService {
 
     @Override
     public SectorEntity save(SectorEntity sector) {
-        var sectorDB = sectorRepository.findAllByNameEquals(sector.getName());
-        if (sectorDB.isPresent()) {
-            sectorDB.get().setName(sector.getName());
-            return sectorRepository.save(sectorDB.get());
-        }
-        return sectorRepository.save(sector);
+    	return sectorRepository.findByName(sector.getName())
+    	        .map(existingSector -> {return sectorRepository.save(existingSector); 
+    	        })
+    	        .orElseGet(() -> sectorRepository.save(sector));
     }
 }
