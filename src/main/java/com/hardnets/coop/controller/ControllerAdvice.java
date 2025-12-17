@@ -1,7 +1,6 @@
 package com.hardnets.coop.controller;
 
-import java.util.stream.Stream;
-
+import com.hardnets.coop.model.dto.views.ViewSerializer;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -12,11 +11,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import com.hardnets.coop.model.dto.views.ViewSerializer;
+import java.util.stream.Stream;
 
 @RestControllerAdvice
 public class ControllerAdvice implements ResponseBodyAdvice<Object> {
-	@Override
+
+    @Override
 	public boolean supports(MethodParameter returnType, Class converterType) {
 		// Soporta cualquier método que retorne un objeto y tenga la anotación
 		// @ViewSerializer

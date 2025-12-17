@@ -1,12 +1,7 @@
 package com.hardnets.coop.model.entity;
 
-import java.time.Instant;
-
-import org.springframework.data.annotation.LastModifiedDate;
-
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,10 +14,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.Instant;
 
 
 /**
- * Its related to water meter and when this change the new value start on assign date
+ * It's related to water meter and when this change the new value start on assign date
  */
 @Getter
 @Setter
@@ -52,7 +50,7 @@ public class TariffEntity extends BaseEntity {
     private Instant lastUpdate;
 
     /**
-     * Inndica a que tipo de cliente aplica esta tarifa
+     * Indica a que tipo de cliente aplica esta tarifa
      */
     @ManyToOne
     @JoinColumn(name = "client_type_id", nullable = false, referencedColumnName = "id")

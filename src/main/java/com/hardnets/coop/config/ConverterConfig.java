@@ -1,24 +1,21 @@
 package com.hardnets.coop.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistrar;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.lang.NonNull;
-
 import com.hardnets.coop.convert.CalculationTypeEnumToDto;
 import com.hardnets.coop.convert.ClientTypeEnumToDto;
 import com.hardnets.coop.convert.ItemDtoToItemEntity;
 import com.hardnets.coop.convert.ItemEntityToItemDto;
 import com.hardnets.coop.convert.PeriodDtoToEntity;
 import com.hardnets.coop.convert.TariffDtoToEntity;
-import com.hardnets.coop.convert.TariffEntityToDto;
 import com.hardnets.coop.convert.WaterMeterEntityToDto;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistrar;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.lang.NonNull;
 
 @Configuration
 public class ConverterConfig implements FormatterRegistrar {
 	@Override
 	public void registerFormatters(@NonNull FormatterRegistry formatterRegistry) {
-		formatterRegistry.addConverter(new TariffEntityToDto());
 		formatterRegistry.addConverter(new TariffDtoToEntity());
 		formatterRegistry.addConverter(new PeriodDtoToEntity());
 		formatterRegistry.addConverter(new WaterMeterEntityToDto());
