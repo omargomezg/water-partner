@@ -14,7 +14,7 @@ public interface TariffService {
 
     TariffDto create(TariffDto tariffDto);
 
-    TariffDto update(TariffDto tariffDto);
+    TariffEntity update(TariffDto tariffDto);
 
     boolean hasTariffForAllDiameters();
 }

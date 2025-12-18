@@ -80,7 +80,7 @@ public class TariffServiceImpl implements TariffService {
     }
 
     @Override
-    public TariffDto update(TariffDto tariffDto) {
+    public TariffEntity update(TariffDto tariffDto) {
         TariffEntity dbTariff = tariffRepository.findById(tariffDto.getId()).orElseThrow(
                 () -> new TariffNotFoundException(String.format("Tariff not with id %s found", tariffDto.getId())));
         var clientType = clientTypeRepository.findById(tariffDto.getClientType().getId())
@@ -91,8 +91,7 @@ public class TariffServiceImpl implements TariffService {
         dbTariff.setLastUpdate(Instant.now());
         dbTariff.setDiameter(tariffDto.getDiameter());
         dbTariff.setStatus(StatusEnum.valueOf(tariffDto.getStatus()));
-        TariffEntity result = tariffRepository.save(dbTariff);
-        return conversionService.convert(result, TariffDto.class);
+        return tariffRepository.save(dbTariff);
     }
 
     @Override

@@ -133,7 +133,7 @@ public class WaterMeterService {
 		var result = waterMeterPageableRepository.findAllWhereClientIsNull(pageable);
 
 		meters.getMeters().addAll(result.getContent().stream().map(meter -> modelMapper.map(meter, WaterMeterDTO.class))
-				.collect(Collectors.toList()));
+				.toList());
 		meters.setTotalHits(result.getTotalElements());
 		return meters;
 	}

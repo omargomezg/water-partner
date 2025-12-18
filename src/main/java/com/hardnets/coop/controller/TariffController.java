@@ -48,7 +48,8 @@ public class TariffController {
     @PutMapping("/{id}")
     public ResponseEntity<TariffDto> updateTariff(@PathVariable Long id, @RequestBody @Valid TariffDto tariff) {
         tariff.setId(id);
-        return ResponseEntity.ok(tariffService.update(tariff));
+        var tariffEntity = tariffService.update(tariff);
+        return ResponseEntity.ok(modelMapper.map(tariffEntity, TariffDto.class));
     }
 
 }
