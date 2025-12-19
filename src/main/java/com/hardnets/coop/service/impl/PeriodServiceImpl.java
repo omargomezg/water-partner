@@ -2,19 +2,30 @@ package com.hardnets.coop.service.impl;
 
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
+import com.hardnets.coop.model.dto.PeriodFilterRequest;
 import com.hardnets.coop.model.dto.response.PeriodDto;
+import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,15 +38,30 @@ public class PeriodServiceImpl implements PeriodService {
     private final ModelMapper modelMapper;
     private final ConversionService conversionService;
 
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
-    public Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus) {
-        var periods = periodStatus.isPresent() ?
-                periodRepository.findAllByStatusEquals(periodStatus.get()) :
-                periodRepository.findAll();
-        return periods.stream().map(period -> modelMapper.map(period, PeriodDto.class))
-                .sorted(Comparator.comparing(PeriodDto::getStartDate))
-                .collect(Collectors.toSet());
+    public List<PeriodEntity> findAll(PeriodFilterRequest filter) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<PeriodEntity> cq = cb.createQuery(PeriodEntity.class);
+        Root<PeriodEntity> root = cq.from(PeriodEntity.class);
+        var predicates = buildPredicates(filter, cb, root);
+        if (predicates.isEmpty()) {
+            cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        }
+        TypedQuery<PeriodEntity> result = em.createQuery(cq);
+        int page = filter.getPage() != null ? filter.getPage() : 0;
+        int size = filter.getSize() != null ? filter.getSize() : 10;
+        int startPosition = page * size;
+        result.setFirstResult(startPosition);
+        result.setMaxResults(size);
+        return result.getResultList();
+    }
+
+    @Override
+    public Long totalElements(PeriodFilterRequest filter) {
+        return 1L;
     }
 
     @Override
@@ -106,5 +132,13 @@ public class PeriodServiceImpl implements PeriodService {
         newPeriod.setStartDate(startDate);
         newPeriod.setStatus(PeriodStatusEnum.ACTIVE);
         return periodRepository.save(newPeriod);
+    }
+
+    private List<Predicate> buildPredicates(PeriodFilterRequest filter, CriteriaBuilder cb, Root<PeriodEntity> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (filter.getStatus() != null) {
+            predicates.add(cb.equal(root.get("status"), filter.getStatus()));
+        }
+        return predicates;
     }
 }

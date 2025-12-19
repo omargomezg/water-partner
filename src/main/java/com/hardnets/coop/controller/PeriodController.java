@@ -1,8 +1,12 @@
 package com.hardnets.coop.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.hardnets.coop.model.dto.PageResponse;
+import com.hardnets.coop.model.dto.PeriodFilterRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +29,7 @@ import lombok.AllArgsConstructor;
 public class PeriodController {
 
 	private final PeriodService periodService;
+	private final ModelMapper modelMapper;
 
 	/**
 	 * Listado de periodo
@@ -32,10 +37,13 @@ public class PeriodController {
 	 * @return una lista de periodo
 	 */
 	@GetMapping
-	public ResponseEntity<Set<PeriodDto>> list(@RequestParam(required = false) String status) {
-		var periods = periodService
-				.findAll(status != null ? Optional.of(PeriodStatusEnum.valueOf(status)) : Optional.empty());
-		return ResponseEntity.ok(periods);
+	public ResponseEntity<PageResponse<PeriodDto>> list(PeriodFilterRequest filter) {
+		var periods = periodService.findAll(filter);
+		var total = periodService.totalElements(filter);
+		var result = new  PageResponse<PeriodDto>();
+		result.setContent(periods.stream().map(p -> modelMapper.map(p, PeriodDto.class)).toList());
+		result.setTotalElements(total);
+		return ResponseEntity.ok(result);
 	}
 
 	/**

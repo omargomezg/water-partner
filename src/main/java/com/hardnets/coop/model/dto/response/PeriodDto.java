@@ -16,12 +16,7 @@ public class PeriodDto {
     private Long id;
     private Date startDate;
     private Date endDate;
-    private String status;
-
-    public PeriodDto(Long id, Date startDate, Date endDate, PeriodStatusEnum status) {
-        this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status.label;
-    }
+    private Boolean billsCreated;
+    private Boolean invoicesCreated;
+    private PeriodStatusEnum status;
 }

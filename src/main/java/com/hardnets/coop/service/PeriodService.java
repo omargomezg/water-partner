@@ -1,16 +1,20 @@
 package com.hardnets.coop.service;
 
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
+import com.hardnets.coop.model.dto.PeriodFilterRequest;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface PeriodService {
 
-    Set<PeriodDto> findAll(Optional<PeriodStatusEnum> periodStatus);
+    List<PeriodEntity> findAll(PeriodFilterRequest filter);
+
+    Long totalElements(PeriodFilterRequest filter);
 
     Set<PeriodDto> findAllByYear(int year);
 
