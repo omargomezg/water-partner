@@ -1,11 +1,9 @@
 package com.hardnets.coop.repository;
 
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
-import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -20,9 +18,6 @@ public interface PeriodRepository extends JpaRepository<PeriodEntity, Long> {
     List<PeriodEntity> findByStatus(PeriodStatusEnum status);
 
     List<PeriodEntity> findAllByStatusEquals(PeriodStatusEnum periodStatusEnum);
-
-    @Query("select new com.hardnets.coop.model.dto.response.PeriodDto(p.id, p.startDate, p.endDate, p.status) from PeriodEntity p where YEAR(p.startDate) = :year")
-    Set<PeriodDto> findAllDto(@Param("year") Integer year);
 
     @Query("select distinct year(p.startDate) from PeriodEntity p")
     Set<Integer> findAllYears();

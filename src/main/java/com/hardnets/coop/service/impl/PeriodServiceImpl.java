@@ -4,7 +4,6 @@ import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
 import com.hardnets.coop.model.dto.PeriodFilterRequest;
 import com.hardnets.coop.model.dto.response.PeriodDto;
-import com.hardnets.coop.model.entity.ClientEntity;
 import com.hardnets.coop.model.entity.PeriodEntity;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.service.PeriodService;
@@ -23,12 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -65,8 +62,13 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public Set<PeriodDto> findAllByYear(int year) {
-        return periodRepository.findAllDto(year);
+    public List<PeriodEntity> findAllByYear(int year) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<PeriodEntity> cq = cb.createQuery(PeriodEntity.class);
+        Root<PeriodEntity> root = cq.from(PeriodEntity.class);
+        cq.where(cb.equal(cb.function("year", Integer.class, root.get("startDate")), year));
+        TypedQuery<PeriodEntity> result = em.createQuery(cq);
+        return result.getResultList();
     }
 
     @Override
@@ -105,9 +107,7 @@ public class PeriodServiceImpl implements PeriodService {
     @Transactional
     @Override
     public PeriodEntity close(Long id) {
-        PeriodEntity period = periodRepository.findById(id).orElseThrow(
-                () -> new PeriodException("Period was not found")
-        );
+        PeriodEntity period = periodRepository.findById(id).orElseThrow(() -> new PeriodException("Period was not found"));
         Date endDate = new Date();
         period.setEndDate(endDate);
         period.setStatus(PeriodStatusEnum.CLOSED);
@@ -132,6 +132,16 @@ public class PeriodServiceImpl implements PeriodService {
         newPeriod.setStartDate(startDate);
         newPeriod.setStatus(PeriodStatusEnum.ACTIVE);
         return periodRepository.save(newPeriod);
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        var criteriaDelete = cb.createCriteriaDelete(PeriodEntity.class);
+        var root = criteriaDelete.from(PeriodEntity.class);
+        criteriaDelete.where(cb.equal(root.get("id"), id));
+        em.createQuery(criteriaDelete).executeUpdate();
     }
 
     private List<Predicate> buildPredicates(PeriodFilterRequest filter, CriteriaBuilder cb, Root<PeriodEntity> root) {

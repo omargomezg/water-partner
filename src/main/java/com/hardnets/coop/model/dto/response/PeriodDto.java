@@ -18,5 +18,5 @@ public class PeriodDto {
     private Date endDate;
     private Boolean billsCreated;
     private Boolean invoicesCreated;
-    private PeriodStatusEnum status;
+    private PeriodStatusEnum status = PeriodStatusEnum.PREPARED;
 }

@@ -16,7 +16,7 @@ public interface PeriodService {
 
     Long totalElements(PeriodFilterRequest filter);
 
-    Set<PeriodDto> findAllByYear(int year);
+    List<PeriodEntity> findAllByYear(int year);
 
     Set<Integer> findAllYears();
 
@@ -36,5 +36,7 @@ public interface PeriodService {
     PeriodEntity close(Long id);
 
     PeriodEntity create(Date startDate);
+
+    void delete(Long id);
 
 }

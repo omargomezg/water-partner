@@ -1,10 +1,18 @@
 package com.hardnets.coop.controller;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
+import com.hardnets.coop.exception.PeriodException;
+import com.hardnets.coop.model.constant.PeriodStatusEnum;
+import com.hardnets.coop.model.dto.ReadingsDto;
+import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
+import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
+import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
+import com.hardnets.coop.model.entity.ConsumptionEntity;
+import com.hardnets.coop.model.entity.PeriodEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
+import com.hardnets.coop.service.PeriodService;
+import com.hardnets.coop.service.impl.ConsumptionService;
+import com.hardnets.coop.service.impl.WaterMeterService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,21 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hardnets.coop.exception.PeriodException;
-import com.hardnets.coop.model.constant.PeriodStatusEnum;
-import com.hardnets.coop.model.dto.ReadingsDto;
-import com.hardnets.coop.model.dto.pageable.record.RecordsDto;
-import com.hardnets.coop.model.dto.response.ConsumptionClientDto;
-import com.hardnets.coop.model.dto.response.PeriodDto;
-import com.hardnets.coop.model.dto.response.ResumeConsumptionDto;
-import com.hardnets.coop.model.entity.ConsumptionEntity;
-import com.hardnets.coop.model.entity.PeriodEntity;
-import com.hardnets.coop.model.entity.WaterMeterEntity;
-import com.hardnets.coop.service.PeriodService;
-import com.hardnets.coop.service.impl.ConsumptionService;
-import com.hardnets.coop.service.impl.WaterMeterService;
-
-import lombok.AllArgsConstructor;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @AllArgsConstructor
 @RestController
@@ -112,7 +109,7 @@ public class ConsumptionController {
 	 * @return Una lista de periodos
 	 */
 	@GetMapping("/v1/consumption/period/year")
-	public ResponseEntity<Set<PeriodDto>> getAllPeriodYears(@RequestParam Integer year) {
+    public ResponseEntity<List<PeriodEntity>> getAllPeriodYears(@RequestParam Integer year) {
 		return ResponseEntity.ok(periodService.findAllByYear(year));
 	}
 
