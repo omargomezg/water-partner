@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 
+import com.hardnets.coop.model.constant.DiameterEnum;
+import com.hardnets.coop.model.dto.ClientTypeDTO;
 import com.hardnets.coop.model.dto.TariffDto;
 import com.hardnets.coop.model.entity.ClientTypeEntity;
 import com.hardnets.coop.model.entity.TariffEntity;
@@ -41,11 +43,13 @@ class TariffServiceImplTest {
 
     @Test
     void create_success() {
+    	var clientType = new ClientTypeDTO();
+    	clientType.setId(1L);
         var tariffDto = TariffDto.builder()
-                .clientType(7L)
+                .clientType(clientType)
                 .cubicMeter(20f)
                 .flatFee(1300)
-                .diameter(25)
+                .diameter(DiameterEnum.NINETEEN)
                 .build();
         when(clientTypeRepository.findById(any())).thenReturn(java.util.Optional.of(mock(ClientTypeEntity.class)));
         when(conversionService.convert(any(), eq(TariffEntity.class))).thenReturn(mock(TariffEntity.class));

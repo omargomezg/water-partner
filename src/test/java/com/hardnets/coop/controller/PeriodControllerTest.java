@@ -1,6 +1,13 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.service.PeriodService;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -10,12 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.hardnets.coop.service.PeriodService;
 
 @ActiveProfiles("test")
 @WebMvcTest(controllers = PeriodController.class)
@@ -29,7 +31,7 @@ class PeriodControllerTest {
 
     @Test
     void tets_success() throws Exception {
-        when(periodService.findAll(Optional.empty())).thenReturn(java.util.Set.of());
+        when(periodService.findAll(any())).thenReturn(new ArrayList<>());
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/v1/period")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -41,7 +43,7 @@ class PeriodControllerTest {
 
     @Test
     void tets_success_with_status() throws Exception {
-        when(periodService.findAll(Optional.empty())).thenReturn(java.util.Set.of());
+        when(periodService.findAll(any())).thenReturn(new ArrayList<>());
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/v1/period")
                                 .param("status", "ACTIVE")

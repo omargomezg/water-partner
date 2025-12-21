@@ -53,10 +53,6 @@ class ClientControllerTest {
 	}
 
 	@Test
-	void testGetUsers() {
-	}
-
-	@Test
 	void createUser_success() throws Exception {
 		ClientDTO client = getClient();
 		when(clientService.create(any(ClientRequestDTO.class))).thenReturn(mock(ClientEntity.class));
