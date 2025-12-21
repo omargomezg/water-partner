@@ -1,13 +1,7 @@
 package com.hardnets.coop.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hardnets.coop.model.dto.MetersAvailableDto;
-import com.hardnets.coop.model.dto.PageResponse;
-import com.hardnets.coop.model.dto.WaterMeterDTO;
-import com.hardnets.coop.model.dto.WaterMeterFilterRequest;
-import com.hardnets.coop.service.impl.WaterMeterService;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.hardnets.coop.model.dto.MetersAvailableDto;
+import com.hardnets.coop.model.dto.PageResponse;
+import com.hardnets.coop.model.dto.WaterMeterDTO;
+import com.hardnets.coop.model.dto.WaterMeterFilterRequest;
+import com.hardnets.coop.service.impl.WaterMeterService;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
@@ -28,7 +29,6 @@ import java.util.List;
 public class WaterMeterController {
 
     private final WaterMeterService waterMeterService;
-    private final ObjectMapper objectMapper;
 
     /**
      * List all water meters

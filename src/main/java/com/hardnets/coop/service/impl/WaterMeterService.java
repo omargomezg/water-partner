@@ -1,5 +1,23 @@
 package com.hardnets.coop.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.hardnets.coop.exception.ConflictException;
 import com.hardnets.coop.exception.HandleException;
 import com.hardnets.coop.exception.UserNotFoundException;
@@ -23,6 +41,7 @@ import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterPageableRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -31,22 +50,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -61,8 +64,8 @@ public class WaterMeterService {
 	private final PeriodRepository periodRepository;
 	private final ModelMapper modelMapper;
 
-    @PersistenceContext
-    private EntityManager em;
+	@PersistenceContext
+	private EntityManager em;
 
 	public void update(List<WaterMeterDTO> waterMeterDtos) {
 		List<WaterMeterEntity> entities = new ArrayList<>();
@@ -138,32 +141,32 @@ public class WaterMeterService {
 		return meters;
 	}
 
-    public List<WaterMeterEntity> getAllByPage(WaterMeterFilterRequest filter) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<WaterMeterEntity> cq = cb.createQuery(WaterMeterEntity.class);
-        var root = cq.from(WaterMeterEntity.class);
-        var predicates = buildPredicates(filter, cb, root);
-        if (!predicates.isEmpty()) {
-            cq.where(predicates.toArray(new Predicate[0]));
-        }
-        cq.orderBy(cb.desc(root.get("updatedAt")));
-        var query = em.createQuery(cq);
-        query.setFirstResult(filter.getPage() * filter.getSize());
-        query.setMaxResults(filter.getSize());
-        return query.getResultList();
+	public List<WaterMeterEntity> getAllByPage(WaterMeterFilterRequest filter) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<WaterMeterEntity> cq = cb.createQuery(WaterMeterEntity.class);
+		var root = cq.from(WaterMeterEntity.class);
+		var predicates = buildPredicates(filter, cb, root);
+		if (!predicates.isEmpty()) {
+			cq.where(predicates.toArray(new Predicate[0]));
+		}
+		cq.orderBy(cb.desc(root.get("updatedAt")));
+		var query = em.createQuery(cq);
+		query.setFirstResult(filter.getPage() * filter.getSize());
+		query.setMaxResults(filter.getSize());
+		return query.getResultList();
 	}
 
-    public Long getTotalOfElements(WaterMeterFilterRequest filter) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<WaterMeterEntity> root = cq.from(WaterMeterEntity.class);
-        List<Predicate> predicates = buildPredicates(filter, cb, root);
-        if (!predicates.isEmpty()) {
-            cq.where(predicates.toArray(new Predicate[0]));
-        }
-        cq.select(cb.count(root)).where(cb.and(predicates.toArray(new Predicate[0])));
-        return em.createQuery(cq).getSingleResult();
-    }
+	public Long getTotalOfElements(WaterMeterFilterRequest filter) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<WaterMeterEntity> root = cq.from(WaterMeterEntity.class);
+		List<Predicate> predicates = buildPredicates(filter, cb, root);
+		if (!predicates.isEmpty()) {
+			cq.where(predicates.toArray(new Predicate[0]));
+		}
+		cq.select(cb.count(root)).where(cb.and(predicates.toArray(new Predicate[0])));
+		return em.createQuery(cq).getSingleResult();
+	}
 
 	public List<WaterMeterDTO> getAll() {
 		List<WaterMeterEntity> waterMeterEntities = waterMeterRepository.findAll();
@@ -221,17 +224,17 @@ public class WaterMeterService {
 		Page<RecordDto> consumptions;
 		Integer serial = number == null ? null : Integer.parseInt(number);
 		switch (status.toLowerCase()) {
-		case "pending":
-			consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(serial, dni, sector,
-					periodEntity.getId(), pageable);
-			break;
-		case "no-pending":
-			consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(serial, dni, sector,
-					periodEntity.getId(), pageable);
-			break;
-		default:
-			consumptions = waterMeterPageableRepository.findAllByCustomFilters(serial, dni, sector,
-					periodEntity.getId(), pageable);
+			case "pending":
+				consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(serial, dni, sector,
+						periodEntity.getId(), pageable);
+				break;
+			case "no-pending":
+				consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(serial, dni, sector,
+						periodEntity.getId(), pageable);
+				break;
+			default:
+				consumptions = waterMeterPageableRepository.findAllByCustomFilters(serial, dni, sector,
+						periodEntity.getId(), pageable);
 		}
 		recordsDto.setRecords(consumptions.getContent());
 		recordsDto.setTotalHits(consumptions.getTotalElements());
@@ -240,14 +243,14 @@ public class WaterMeterService {
 
 	private String getColumnToSort(String column) {
 		switch (column) {
-		case "client":
-			column = "waterMeter.client.fullName";
-			break;
-		case "sector":
-			column = "waterMeter.sector";
-			break;
-		default:
-			column = "waterMeter.serial";
+			case "client":
+				column = "waterMeter.client.fullName";
+				break;
+			case "sector":
+				column = "waterMeter.sector";
+				break;
+			default:
+				column = "waterMeter.serial";
 		}
 		return column;
 	}
@@ -256,12 +259,30 @@ public class WaterMeterService {
 		return waterMeterRepository.findBySerial(serial).isPresent();
 	}
 
-    private List<Predicate> buildPredicates(WaterMeterFilterRequest filter, CriteriaBuilder cb, Root<WaterMeterEntity> root) {
-        List<Predicate> predicates = new ArrayList<>();
-        if (filter.getSerial() != null) {
-            predicates.add(cb.equal(root.get("serial"), filter.getSerial()));
-        }
-        return predicates;
-    }
+	private List<Predicate> buildPredicates(WaterMeterFilterRequest filter, CriteriaBuilder cb,
+			Root<WaterMeterEntity> root) {
+		List<Predicate> predicates = new ArrayList<>();
+		if (filter.getSerial() != null) {
+			predicates.add(cb.equal(root.get("serial"), filter.getSerial()));
+		}
+		if (filter.getIsAssigned() != null) {
+			if (filter.getIsAssigned()) {
+				predicates.add(cb.isNotNull(root.get("client")));
+			} else {
+				predicates.add(cb.isNull(root.get("client")));
+			}
+		}
+		if (filter.getText() != null && !filter.getText().isEmpty()) {
+			String pattern = "%" + filter.getText().toLowerCase() + "%";
+			if (StringUtils.isNumeric(filter.getText())) {
+				Predicate serialPredicate = cb.equal(root.get("serial"), Integer.parseInt(filter.getText()));
+				Predicate trademarkPredicate = cb.like(cb.lower(root.get("trademark")), pattern);
+				predicates.add(cb.or(serialPredicate, trademarkPredicate));
+			} else {
+				predicates.add(cb.like(cb.lower(root.get("trademark")), pattern));
+			}
+		}
+		return predicates;
+	}
 
 }
