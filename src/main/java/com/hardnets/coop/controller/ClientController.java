@@ -68,6 +68,13 @@ public class ClientController {
 		return ResponseEntity.ok(conversionService.convert(clientEntity, ClientDTO.class));
 	}
 
+	/**
+	 * Agrega un medidor a un cliente
+	 * 
+	 * @param dni        Identificador del cliente
+	 * @param waterMeter Medidor a agregar
+	 * @return Cliente con el medidor agregado
+	 */
 	@PostMapping("/{dni}/water-meter")
 	public ResponseEntity<ClientDTO> addWaterMeterToClient(@PathVariable String dni,
 			@RequestBody WaterMeterDTO waterMeter) {
@@ -76,6 +83,23 @@ public class ClientController {
 		client = clientService.addWaterMeter(client, meter);
 		var clientDTO = clientDTOAssembler.toModel(client);
 		return new ResponseEntity<ClientDTO>(clientDTO, HttpStatus.CREATED);
+	}
+
+	/**
+	 * Remueve un medidor de un cliente
+	 * 
+	 * @param dni     Identificador del cliente
+	 * @param meterId Identificador del medidor a remover
+	 * @return Cliente con el medidor removido
+	 */
+	@DeleteMapping("/{dni}/water-meter/{meterId}")
+	public ResponseEntity<ClientDTO> removeWaterMeterFromClient(@PathVariable String dni,
+			@PathVariable Long meterId) {
+		var client = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
+		var meter = waterMeterService.getById(meterId);
+		client = clientService.removeWaterMeter(client, meter);
+		var clientDTO = clientDTOAssembler.toModel(client);
+		return new ResponseEntity<ClientDTO>(clientDTO, HttpStatus.OK);
 	}
 
 	@PostMapping

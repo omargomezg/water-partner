@@ -1,31 +1,36 @@
 package com.hardnets.coop.controller;
 
-import com.hardnets.coop.model.dto.views.ViewSerializer;
+import java.util.stream.Stream;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.stream.Stream;
+import com.hardnets.coop.model.dto.views.ViewSerializer;
 
 @RestControllerAdvice
 public class ControllerAdvice implements ResponseBodyAdvice<Object> {
 
-    @Override
-	public boolean supports(MethodParameter returnType, Class converterType) {
+	@Override
+	public boolean supports(@NonNull MethodParameter returnType, Class converterType) {
 		// Soporta cualquier método que retorne un objeto y tenga la anotación
 		// @ViewSerializer
 		return returnType.hasMethodAnnotation(ViewSerializer.class);
 	}
 
 	@Override
-	public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-			Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+	public Object beforeBodyWrite(
+			@NonNull Object body,
+			@NonNull MethodParameter returnType,
+			@NonNull MediaType selectedContentType,
+			Class selectedConverterType, @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
 
 		ViewSerializer viewSerializer = returnType.getMethodAnnotation(ViewSerializer.class);
 		Stream<? extends GrantedAuthority> roles = SecurityContextHolder.getContext().getAuthentication()

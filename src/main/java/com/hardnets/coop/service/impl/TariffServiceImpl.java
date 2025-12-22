@@ -1,5 +1,13 @@
 package com.hardnets.coop.service.impl;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+
 import com.hardnets.coop.exception.ResourceExistsException;
 import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.constant.DiameterEnum;
@@ -11,19 +19,14 @@ import com.hardnets.coop.repository.ClientTypeRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.TariffService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -49,9 +52,9 @@ public class TariffServiceImpl implements TariffService {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<TariffEntity> cq = cb.createQuery(TariffEntity.class);
         var root = cq.from(TariffEntity.class);
-        var predicates = buildPredicates(filter);
-        if (predicates.isEmpty()) {
-            cq.where(predicates.toArray(new Predicate[0]));
+        var predicates = buildPredicates(filter, cb, root);
+        if (!predicates.isEmpty()) {
+            cq.where(predicates.toArray(new Predicate[0])).distinct(true);
         }
         cq.orderBy(cb.desc(root.get("lastUpdate")));
         var query = em.createQuery(cq);
@@ -112,7 +115,14 @@ public class TariffServiceImpl implements TariffService {
         return tariffRepository.findBySizeAndClientType(tariff.getDiameter(), clientType).isPresent();
     }
 
-    private List<Predicate> buildPredicates(TariffFilterRequest filter) {
-        return new ArrayList<>();
+    private List<Predicate> buildPredicates(TariffFilterRequest filter, CriteriaBuilder cb, Root<TariffEntity> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (filter.getClientTypeId() != null) {
+            predicates.add(cb.equal(root.get("clientType").get("id"), filter.getClientTypeId()));
+        }
+        if (filter.getDiameter() != null) {
+            predicates.add(cb.equal(root.get("diameter"), filter.getDiameter()));
+        }
+        return predicates;
     }
 }

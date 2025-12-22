@@ -1,23 +1,11 @@
 package com.hardnets.coop.service.impl;
 
-import com.hardnets.coop.exception.ClientNotFoundException;
-import com.hardnets.coop.exception.UserException;
-import com.hardnets.coop.exception.UserNotFoundException;
-import com.hardnets.coop.model.constant.ProfileEnum;
-import com.hardnets.coop.model.dto.CreateUserDto;
-import com.hardnets.coop.model.dto.UserDTO;
-import com.hardnets.coop.model.dto.UserFilterRequest;
-import com.hardnets.coop.model.entity.UserEntity;
-import com.hardnets.coop.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,11 +15,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.exception.UserException;
+import com.hardnets.coop.exception.UserNotFoundException;
+import com.hardnets.coop.model.constant.ProfileEnum;
+import com.hardnets.coop.model.dto.CreateUserDto;
+import com.hardnets.coop.model.dto.UserDTO;
+import com.hardnets.coop.model.dto.UserFilterRequest;
+import com.hardnets.coop.model.entity.UserEntity;
+import com.hardnets.coop.repository.UserRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -123,7 +125,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 	private List<Predicate> buildPredicates(UserFilterRequest filter, CriteriaBuilder cb, Root<UserEntity> root) {
 		List<Predicate> predicates = new ArrayList<>();
-
 		if (filter.getDni() != null && !filter.getDni().isEmpty()) {
 			predicates.add(cb.equal(root.get("dni"), filter.getDni()));
 		}

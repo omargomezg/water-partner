@@ -38,4 +38,6 @@ public interface ClientService {
 	void deleteByDni(String dni);
 
 	ClientEntity addWaterMeter(ClientEntity client, WaterMeterEntity waterMeter);
+
+	ClientEntity removeWaterMeter(ClientEntity client, WaterMeterEntity waterMeter);
 }
