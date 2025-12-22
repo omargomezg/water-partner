@@ -10,10 +10,12 @@ import com.hardnets.coop.model.entity.WaterMeterEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,11 +53,13 @@ public class WaterMeterDTO {
 	@JsonView(AppViews.Internal.class)
     private StatusEnum status;
 
+	@Builder.Default
 	@JsonView(AppViews.Internal.class)
-	private Integer flatFee;
+	private Integer flatFee = 0;
 
+	@Builder.Default
 	@JsonView(AppViews.Internal.class)
-	private Float cubicMeter;
+	private Float cubicMeter = 0f;
 
 	/**
 	 * Date when is related to
