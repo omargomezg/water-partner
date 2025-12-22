@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.hardnets.coop.model.dto.ClientFilterRequest;
 import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 
 public interface ClientService {
 
@@ -35,4 +36,6 @@ public interface ClientService {
 	boolean exist(String rut);
 
 	void deleteByDni(String dni);
+
+	ClientEntity addWaterMeter(ClientEntity client, WaterMeterEntity waterMeter);
 }

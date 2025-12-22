@@ -1,35 +1,60 @@
 package com.hardnets.coop.model.dto;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
+import com.hardnets.coop.model.dto.views.AppViews;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaterMeterDTO {
+	@JsonView(AppViews.Internal.class)
 	private Long id;
+
+	@JsonView(AppViews.Internal.class)
 	private Integer serial;
+
+	@JsonView(AppViews.Internal.class)
 	private String trademark;
+
+	@JsonView(AppViews.Internal.class)
 	private DiameterEnum diameter;
+
+	@JsonView(AppViews.Internal.class)
 	private String comment;
+
+	@JsonView(AppViews.Internal.class)
 	private String sector;
+
+	@JsonView(AppViews.Internal.class)
 	private Date createdAt;
+
+	@JsonView(AppViews.Internal.class)
 	private Date updatedAt;
+
+	@JsonView(AppViews.Internal.class)
 	private String dni;
+
+	@JsonView(AppViews.Internal.class)
     private String description;
+
+	@JsonView(AppViews.Internal.class)
     private StatusEnum status;
 
 	/**
 	 * Date when is related to
 	 */
+	@JsonView(AppViews.Internal.class)
 	private Date dischargeDate;
 
 	public WaterMeterDTO(Long id, Integer serial, String trademark, DiameterEnum diameter, String comment,

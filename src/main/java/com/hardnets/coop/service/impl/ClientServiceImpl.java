@@ -11,6 +11,7 @@ import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.model.dto.ClientFilterRequest;
 import com.hardnets.coop.model.dto.ClientRequestDTO;
 import com.hardnets.coop.model.entity.ClientEntity;
+import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.ClientTypeRepository;
 import com.hardnets.coop.repository.SectorRepository;
@@ -149,6 +150,16 @@ public class ClientServiceImpl implements ClientService {
 	public void deleteByDni(String dni) {
 		var client = clientRepository.findByDni(dni).orElseThrow();
 		clientRepository.delete(client);
+	}
+
+	@Override
+	public ClientEntity addWaterMeter(ClientEntity client, WaterMeterEntity waterMeter) {
+		waterMeter.setClient(client);
+		client.getWaterMeters().add(waterMeter);
+		log.info("Adicionando medidor {} al cliente {}", waterMeter.getSerial(), client.getDni());
+		var savedClient = clientRepository.save(client);
+		log.info("Medidores del cliente {}: {}", client.getDni(), savedClient.getWaterMeters().toString());
+		return savedClient;
 	}
 
 }
