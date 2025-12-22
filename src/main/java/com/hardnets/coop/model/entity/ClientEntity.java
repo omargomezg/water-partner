@@ -40,15 +40,18 @@ public class ClientEntity extends PersonEntity {
 
 	private Integer clientNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@ToString.Exclude
 	@JoinColumn(name = "sector_id")
 	private SectorEntity sector;
 
 	@NotNull
+	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "client_type_id")
 	private ClientTypeEntity clientType;
 
+	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subsidy_id")
 	private SubsidyEntity subsidy;
@@ -59,10 +62,12 @@ public class ClientEntity extends PersonEntity {
 	private Set<BillEntity> bills = new HashSet<>();
 
 	@Builder.Default
+	@ToString.Exclude
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
 	private Set<InvoiceEntity> invoices = new HashSet<>();
 
 	@Builder.Default
+	@ToString.Exclude
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
 	private Set<WaterMeterEntity> waterMeters = new HashSet<>();
 

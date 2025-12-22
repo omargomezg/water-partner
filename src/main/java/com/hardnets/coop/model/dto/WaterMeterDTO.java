@@ -51,6 +51,12 @@ public class WaterMeterDTO {
 	@JsonView(AppViews.Internal.class)
     private StatusEnum status;
 
+	@JsonView(AppViews.Internal.class)
+	private Integer flatFee;
+
+	@JsonView(AppViews.Internal.class)
+	private Float cubicMeter;
+
 	/**
 	 * Date when is related to
 	 */

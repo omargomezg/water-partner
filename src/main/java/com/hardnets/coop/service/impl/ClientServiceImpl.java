@@ -22,6 +22,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
@@ -72,9 +73,11 @@ public class ClientServiceImpl implements ClientService {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<ClientEntity> cq = cb.createQuery(ClientEntity.class);
 		Root<ClientEntity> root = cq.from(ClientEntity.class);
+		root.fetch("waterMeters", JoinType.LEFT);
+		root.fetch("clientType", JoinType.LEFT);
 		List<Predicate> predicates = buildPredicates(filter, cb, root);
 		if (!predicates.isEmpty()) {
-			cq.where(predicates.toArray(new Predicate[0]));
+			cq.where(predicates.toArray(new Predicate[0])).distinct(true);
 		}
 		TypedQuery<ClientEntity> result = em.createQuery(cq);
 		int page = filter.getPage() != null ? filter.getPage() : 0;

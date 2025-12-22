@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hardnets.coop.exception.ClientNotFoundException;
+import com.hardnets.coop.mapper.ClientDTOAssembler;
 import com.hardnets.coop.model.constant.SalesDocumentStatusEnum;
 import com.hardnets.coop.model.dto.ClientDTO;
 import com.hardnets.coop.model.dto.ClientFilterRequest;
@@ -43,6 +44,7 @@ public class ClientController {
 	private final WaterMeterService waterMeterService;
 	private final BillServiceImpl bill;
 	private final ConversionService conversionService;
+	private final ClientDTOAssembler clientDTOAssembler;
 	private final ModelMapper modelMapper;
 
 	@GetMapping
@@ -52,15 +54,7 @@ public class ClientController {
 		var clients = clientService.getFilteredUsers(params);
 		var totalOfElements = clientService.getTotalOfFilteredUsers(params);
 		var response = new PageResponse<ClientDTO>();
-		response.setContent(clients.stream().map(c -> {
-			var client = modelMapper.map(c, ClientDTO.class);
-			if (c.getWaterMeters() != null && !c.getWaterMeters().isEmpty()) {
-				log.info(" Client {} has water meters", c.getDni());
-				client.setWaterMeters(
-						c.getWaterMeters().stream().map(w -> modelMapper.map(w, WaterMeterDTO.class)).toList());
-			}
-			return client;
-		}).toList());
+		response.setContent(clients.stream().map(clientDTOAssembler::toModel).toList());
 		response.setTotalElements(totalOfElements);
 		response.getContent().forEach(c -> log.info("Para {}, os Medidores: {}", c.getDni(), c.getWaterMeters()));
 		return ResponseEntity.ok(response);
@@ -80,9 +74,7 @@ public class ClientController {
 		var client = clientService.getByDni(dni).orElseThrow(ClientNotFoundException::new);
 		var meter = waterMeterService.getById(waterMeter.getId());
 		client = clientService.addWaterMeter(client, meter);
-		var clientDTO = modelMapper.map(clientService.addWaterMeter(client, meter), ClientDTO.class);
-		clientDTO.setWaterMeters(
-				client.getWaterMeters().stream().map(w -> modelMapper.map(w, WaterMeterDTO.class)).toList());
+		var clientDTO = clientDTOAssembler.toModel(client);
 		return new ResponseEntity<ClientDTO>(clientDTO, HttpStatus.CREATED);
 	}
 
