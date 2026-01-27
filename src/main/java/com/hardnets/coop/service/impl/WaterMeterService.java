@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,17 +36,15 @@ import com.hardnets.coop.model.entity.TariffEntity;
 import com.hardnets.coop.model.entity.WaterMeterEntity;
 import com.hardnets.coop.repository.ClientRepository;
 import com.hardnets.coop.repository.PeriodRepository;
+import com.hardnets.coop.repository.SectorCustomRepository;
 import com.hardnets.coop.repository.SubsidyRepository;
 import com.hardnets.coop.repository.TariffRepository;
+import com.hardnets.coop.repository.WaterMeterCustomRepository;
 import com.hardnets.coop.repository.WaterMeterPageableRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -58,10 +55,12 @@ public class WaterMeterService {
 
 	private final WaterMeterRepository waterMeterRepository;
 	private final WaterMeterPageableRepository waterMeterPageableRepository;
+	private final WaterMeterCustomRepository watermeterCustomRepository;
 	private final ClientRepository clientRepository;
 	private final SubsidyRepository subsidyRepository;
 	private final TariffRepository tariffRepository;
 	private final PeriodRepository periodRepository;
+	private final SectorCustomRepository sectorCustomRepository;
 	private final ModelMapper modelMapper;
 
 	@PersistenceContext
@@ -80,13 +79,19 @@ public class WaterMeterService {
 	}
 
 	public WaterMeterDTO update(WaterMeterDTO waterMeterDto) {
+		if (waterMeterDto.getId() == null) {
+			throw new WaterMeterNotFoundException();
+		}
 		var waterMeter = waterMeterRepository.findById(waterMeterDto.getId())
 				.orElseThrow(WaterMeterNotFoundException::new);
 		waterMeter.setDiameter(waterMeterDto.getDiameter());
 		waterMeter.setTrademark(waterMeterDto.getTrademark());
-		waterMeter.setSector(waterMeterDto.getSector());
 		waterMeter.setUpdatedAt(new Date());
 		waterMeter.setDescription(waterMeterDto.getComment());
+
+		Optional.of(waterMeterDto.getSector()).ifPresent(sector -> {
+			sectorCustomRepository.findById(waterMeterDto.getSector().getId()).ifPresent(waterMeter::setSector);
+		});
 		return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDTO.class);
 	}
 
@@ -98,15 +103,8 @@ public class WaterMeterService {
 		if (checkIfExistsSerial(waterMeterDto.getSerial())) {
 			throw new ConflictException("El numero de serie ya existe");
 		}
-		WaterMeterEntity waterMeter = new WaterMeterEntity();
-		waterMeter.setDescription(waterMeterDto.getComment());
-		waterMeter.setSerial(waterMeterDto.getSerial());
-		waterMeter.setTrademark(waterMeterDto.getTrademark());
-		waterMeter.setSector(waterMeterDto.getSector());
-		waterMeter.setDiameter(waterMeterDto.getDiameter());
-		waterMeter.setCreatedAt(new Date());
-		waterMeter.setStatus(StatusEnum.NEW);
-		return new WaterMeterDTO(waterMeterRepository.save(waterMeter));
+		WaterMeterEntity waterMeter = modelMapper.map(waterMeterDto, WaterMeterEntity.class);
+		return modelMapper.map(waterMeterRepository.save(waterMeter), WaterMeterDTO.class);
 	}
 
 	@Transactional
@@ -118,11 +116,11 @@ public class WaterMeterService {
 		}
 	}
 
-	public boolean existSerial(Integer serial) {
+	public boolean existSerial(String serial) {
 		return waterMeterRepository.findBySerial(serial).isPresent();
 	}
 
-	public WaterMeterEntity getBySerial(Integer serial) {
+	public WaterMeterEntity getBySerial(String serial) {
 		return waterMeterRepository.findBySerial(serial).orElseThrow(WaterMeterNotFoundException::new);
 	}
 
@@ -142,30 +140,13 @@ public class WaterMeterService {
 	}
 
 	public List<WaterMeterEntity> getAllByPage(WaterMeterFilterRequest filter) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<WaterMeterEntity> cq = cb.createQuery(WaterMeterEntity.class);
-		var root = cq.from(WaterMeterEntity.class);
-		var predicates = buildPredicates(filter, cb, root);
-		if (!predicates.isEmpty()) {
-			cq.where(predicates.toArray(new Predicate[0]));
-		}
-		cq.orderBy(cb.desc(root.get("updatedAt")));
-		var query = em.createQuery(cq);
-		query.setFirstResult(filter.getPage() * filter.getSize());
-		query.setMaxResults(filter.getSize());
-		return query.getResultList();
+		var watermeters = watermeterCustomRepository.getAllByPage(filter);
+		return watermeters;
 	}
 
 	public Long getTotalOfElements(WaterMeterFilterRequest filter) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<WaterMeterEntity> root = cq.from(WaterMeterEntity.class);
-		List<Predicate> predicates = buildPredicates(filter, cb, root);
-		if (!predicates.isEmpty()) {
-			cq.where(predicates.toArray(new Predicate[0]));
-		}
-		cq.select(cb.count(root)).where(cb.and(predicates.toArray(new Predicate[0])));
-		return em.createQuery(cq).getSingleResult();
+		var totalOfElements = watermeterCustomRepository.getTotalOfElements(filter);
+		return totalOfElements;
 	}
 
 	public List<WaterMeterDTO> getAll() {
@@ -183,11 +164,10 @@ public class WaterMeterService {
 					.findAllByWaterMeterAndIsActiveAndEndingDateAfter(dbRelatedMeter.getId(), true, new Date());
 			Optional<TariffEntity> tariff = tariffRepository.findBySizeAndClientType(dbRelatedMeter.getDiameter(),
 					client.getClientType());
-			RelatedWaterMetersDto related = new RelatedWaterMetersDto(dbRelatedMeter.getId(),
-					dbRelatedMeter.getSerial(), dbRelatedMeter.getDiameter(), dbRelatedMeter.getCreatedAt(),
-					dbRelatedMeter.getSector(), tariff.isPresent() ? tariff.get().getFlatFee() : 0,
-					tariff.isPresent() ? tariff.get().getCubicMeter() : 0,
-					subsidy.isPresent() ? subsidy.get().getPercentage() : 0);
+			RelatedWaterMetersDto related = modelMapper.map(dbRelatedMeter, RelatedWaterMetersDto.class);
+			related.setFlatFee(tariff.isPresent() ? tariff.get().getFlatFee() : 0);
+			related.setCubicMeter(tariff.isPresent() ? tariff.get().getCubicMeter() : 0);
+			related.setPercentage(subsidy.isPresent() ? subsidy.get().getPercentage() : 0);
 			relatedMeters.add(related);
 		}
 		return relatedMeters.stream().sorted(Comparator.comparing(RelatedWaterMetersDto::getDischargeDate))
@@ -195,7 +175,7 @@ public class WaterMeterService {
 	}
 
 	public void relateToClient(WaterMeterDTO waterMeterDto, String dni) {
-		Integer serial = waterMeterDto.getSerial();
+		var serial = waterMeterDto.getSerial();
 		ClientEntity client = clientRepository.findByDni(dni).orElseThrow(UserNotFoundException::new);
 		waterMeterRepository.findBySerial(waterMeterDto.getSerial()).ifPresent(result -> {
 			if (result.getClient() != null) {
@@ -206,11 +186,13 @@ public class WaterMeterService {
 		wEntity.setSerial(serial);
 		wEntity.setTrademark(waterMeterDto.getTrademark());
 		wEntity.setCreatedAt(new Date());
-		wEntity.setSector(waterMeterDto.getSector());
 		wEntity.setStatus(StatusEnum.NEW);
 		wEntity.setDiameter(waterMeterDto.getDiameter());
 		wEntity.setDescription(waterMeterDto.getComment());
 		wEntity.setClient(client);
+		Optional.of(waterMeterDto.getSector()).ifPresent(sector -> {
+			sectorCustomRepository.findById(waterMeterDto.getSector().getId()).ifPresent(wEntity::setSector);
+		});
 		waterMeterRepository.save(wEntity);
 	}
 
@@ -222,18 +204,17 @@ public class WaterMeterService {
 		Pageable pageable = PageRequest.of(pageIndex, pageSize,
 				direction.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, getColumnToSort(sortColumn));
 		Page<RecordDto> consumptions;
-		Integer serial = number == null ? null : Integer.parseInt(number);
 		switch (status.toLowerCase()) {
 			case "pending":
-				consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(serial, dni, sector,
+				consumptions = waterMeterPageableRepository.findAllByPendingCustomFilters(number, dni, sector,
 						periodEntity.getId(), pageable);
 				break;
 			case "no-pending":
-				consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(serial, dni, sector,
+				consumptions = waterMeterPageableRepository.findAllByNoPendingCustomFilters(number, dni, sector,
 						periodEntity.getId(), pageable);
 				break;
 			default:
-				consumptions = waterMeterPageableRepository.findAllByCustomFilters(serial, dni, sector,
+				consumptions = waterMeterPageableRepository.findAllByCustomFilters(number, dni, sector,
 						periodEntity.getId(), pageable);
 		}
 		recordsDto.setRecords(consumptions.getContent());
@@ -255,34 +236,8 @@ public class WaterMeterService {
 		return column;
 	}
 
-	private boolean checkIfExistsSerial(Integer serial) {
+	private boolean checkIfExistsSerial(String serial) {
 		return waterMeterRepository.findBySerial(serial).isPresent();
-	}
-
-	private List<Predicate> buildPredicates(WaterMeterFilterRequest filter, CriteriaBuilder cb,
-			Root<WaterMeterEntity> root) {
-		List<Predicate> predicates = new ArrayList<>();
-		if (filter.getSerial() != null) {
-			predicates.add(cb.equal(root.get("serial"), filter.getSerial()));
-		}
-		if (filter.getIsAssigned() != null) {
-			if (filter.getIsAssigned()) {
-				predicates.add(cb.isNotNull(root.get("client")));
-			} else {
-				predicates.add(cb.isNull(root.get("client")));
-			}
-		}
-		if (filter.getText() != null && !filter.getText().isEmpty()) {
-			String pattern = "%" + filter.getText().toLowerCase() + "%";
-			if (StringUtils.isNumeric(filter.getText())) {
-				Predicate serialPredicate = cb.equal(root.get("serial"), Integer.parseInt(filter.getText()));
-				Predicate trademarkPredicate = cb.like(cb.lower(root.get("trademark")), pattern);
-				predicates.add(cb.or(serialPredicate, trademarkPredicate));
-			} else {
-				predicates.add(cb.like(cb.lower(root.get("trademark")), pattern));
-			}
-		}
-		return predicates;
 	}
 
 }

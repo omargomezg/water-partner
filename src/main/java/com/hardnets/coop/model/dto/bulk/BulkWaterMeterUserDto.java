@@ -27,7 +27,7 @@ public class BulkWaterMeterUserDto {
 
 	@NotNull
 	@NotEmpty
-	private Integer serial = 0;
+	private String serial;
 
 	@NotNull
 	@NotEmpty

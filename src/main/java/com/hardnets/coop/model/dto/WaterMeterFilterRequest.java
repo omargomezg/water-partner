@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class WaterMeterFilterRequest extends PageRequest {
 
-    private Integer serial;
+    private String serial;
     private Boolean isAssigned;
     private String text;
 

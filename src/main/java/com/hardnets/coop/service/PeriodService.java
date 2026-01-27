@@ -24,6 +24,8 @@ public interface PeriodService {
 
     PeriodDto update(PeriodDto periodEntity);
 
+    PeriodEntity initPeriod(Long id);
+
     PeriodDto create(PeriodDto periodEntity);
 
     Optional<PeriodEntity> findByStatus(PeriodStatusEnum status);

@@ -47,6 +47,13 @@ public class PeriodServiceImpl implements PeriodService {
         if (predicates.isEmpty()) {
             cq.where(cb.and(predicates.toArray(new Predicate[0])));
         }
+        if (filter.getSortBy() != null) {
+            if (filter.getDescending()) {
+                cq.orderBy(cb.desc(root.get(filter.getSortBy())));
+            } else {
+                cq.orderBy(cb.asc(root.get(filter.getSortBy())));
+            }
+        }
         TypedQuery<PeriodEntity> result = em.createQuery(cq);
         int page = filter.getPage() != null ? filter.getPage() : 0;
         int size = filter.getSize() != null ? filter.getSize() : 10;
@@ -151,4 +158,12 @@ public class PeriodServiceImpl implements PeriodService {
         }
         return predicates;
     }
+
+    @Override
+    public PeriodEntity initPeriod(Long id) {
+        PeriodEntity period = periodRepository.findById(id).orElseThrow(() -> new PeriodException("Period was not found"));
+        period.setStatus(PeriodStatusEnum.ACTIVE);
+        return periodRepository.save(period);
+    }
+
 }

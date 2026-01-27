@@ -1,18 +1,8 @@
 package com.hardnets.coop.model.entity;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import org.hibernate.Hibernate;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hardnets.coop.model.constant.DiameterEnum;
 import com.hardnets.coop.model.constant.StatusEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,6 +15,14 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,13 +34,15 @@ public class WaterMeterEntity extends BaseEntity {
 	 * Serial number
 	 */
 	@Column(unique = true)
-	private Integer serial;
+	private String serial;
 
 	@Column(nullable = false)
 	private String trademark = "";
 
-	@Column
-	private String sector;
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "sector_id", referencedColumnName = "id")
+	private SectorEntity sector;
 
 	@CreationTimestamp
 	private Date createdAt;
@@ -53,8 +53,8 @@ public class WaterMeterEntity extends BaseEntity {
 	@Column
 	private String description = "";
 
-	@ToString.Exclude
 	@ManyToOne
+	@ToString.Exclude
 	@JoinColumn(name = "client_dni", referencedColumnName = "dni")
 	private ClientEntity client;
 
@@ -64,17 +64,17 @@ public class WaterMeterEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private StatusEnum status;
 
-	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<InvoiceEntity> invoices = new HashSet<>();
 
-	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<BillEntity> bills = new HashSet<>();
 
 	@OneToMany(mappedBy = "waterMeter", orphanRemoval = true)
 	@JsonManagedReference
 	private Set<SubsidyEntity> subsidies = new HashSet<>();
 
-	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "waterMeter", fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
 	private Set<ConsumptionEntity> consumptions = new HashSet<>();
 

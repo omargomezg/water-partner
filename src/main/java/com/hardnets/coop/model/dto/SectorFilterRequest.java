@@ -1,8 +1,8 @@
 package com.hardnets.coop.model.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -10,15 +10,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageRequest {
-    @Builder.Default
-    private Integer page = 0;
-
-    @Builder.Default
-    private Integer size = 10;
-
-    private String sortBy;
-
-    private Boolean descending;
-
+@EqualsAndHashCode(callSuper = true)
+public class SectorFilterRequest extends PageRequest {
+    private Long id;
+    private String name;    
 }

@@ -1,13 +1,5 @@
 package com.hardnets.coop.service.impl;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-
 import com.hardnets.coop.exception.ResourceExistsException;
 import com.hardnets.coop.exception.TariffNotFoundException;
 import com.hardnets.coop.model.constant.DiameterEnum;
@@ -19,7 +11,6 @@ import com.hardnets.coop.repository.ClientTypeRepository;
 import com.hardnets.coop.repository.TariffRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
 import com.hardnets.coop.service.TariffService;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -27,6 +18,13 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -61,14 +59,6 @@ public class TariffServiceImpl implements TariffService {
         query.setFirstResult(filter.getPage() * filter.getSize());
         query.setMaxResults(filter.getSize());
         return query.getResultList();
-        /*List<AllTariffsDto> allTariffs = new ArrayList<>();
-        AllTariffsBaseDto baseTariff = new AllTariffsBaseDto();
-        tariffRepository.findAll().forEach(tariffEntity -> allTariffs.add(new AllTariffsDto(tariffEntity)));
-        var tariffs = allTariffs.stream().sorted(Comparator.comparing(AllTariffsDto::getLastUpdate).reversed())
-                .collect(Collectors.toList());
-        baseTariff.setTariffs(tariffs);
-        baseTariff.setAllRatesAreConfigured(hasTariffForAllDiameters());
-        return baseTariff;*/
     }
 
     @Override

@@ -24,7 +24,7 @@ public class WaterMeterDTO {
 	private Long id;
 
 	@JsonView(AppViews.Internal.class)
-	private Integer serial;
+	private String serial;
 
 	@JsonView(AppViews.Internal.class)
 	private String trademark;
@@ -36,7 +36,7 @@ public class WaterMeterDTO {
 	private String comment;
 
 	@JsonView(AppViews.Internal.class)
-	private String sector;
+	private SectorDTO sector;
 
 	@JsonView(AppViews.Internal.class)
 	private Date createdAt;
@@ -67,14 +67,13 @@ public class WaterMeterDTO {
 	@JsonView(AppViews.Internal.class)
 	private Date dischargeDate;
 
-	public WaterMeterDTO(Long id, Integer serial, String trademark, DiameterEnum diameter, String comment,
-			String sector, Date updatedAt) {
+	public WaterMeterDTO(Long id, String serial, String trademark, DiameterEnum diameter, String comment,
+			Date updatedAt) {
 		this.id = id;
 		this.serial = serial;
 		this.trademark = trademark;
 		this.diameter = diameter;
 		this.comment = comment;
-		this.sector = sector;
 		this.updatedAt = updatedAt;
 	}
 
@@ -85,7 +84,6 @@ public class WaterMeterDTO {
 		this.setDischargeDate(waterMeter.getCreatedAt());
 		this.setComment(waterMeter.getDescription());
 		this.diameter = waterMeter.getDiameter();
-		this.setSector(waterMeter.getSector());
 		this.setUpdatedAt(waterMeter.getUpdatedAt());
 	}
 }

@@ -167,8 +167,9 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public ClientEntity removeWaterMeter(ClientEntity client, WaterMeterEntity waterMeter) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'removeWaterMeter'");
+		waterMeter.setClient(null);
+		client.getWaterMeters().remove(waterMeter);
+		return clientRepository.save(client);		
 	}
 
 }

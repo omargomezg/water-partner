@@ -3,6 +3,7 @@ package com.hardnets.coop.controller;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,8 +85,8 @@ public class BulkController {
 		}
 	}
 
-	private boolean isSerial(Integer serial) {
-		return serial != null && serial > 0;
+	private boolean isSerial(String serial) {
+		return StringUtils.isNotEmpty(serial);
 	}
 
 	private void saveClient(BulkWaterMeterUserDto bulkRecord) {

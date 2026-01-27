@@ -1,8 +1,8 @@
 package com.hardnets.coop.model.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
@@ -10,18 +10,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "consumption")
+@EqualsAndHashCode(callSuper = true)
 public class ConsumptionEntity extends BaseEntity {
 
     @Column
+    @Builder.Default
     private Integer reading = 0;
 
     @Column
@@ -30,10 +37,6 @@ public class ConsumptionEntity extends BaseEntity {
 
     @Column
     private Date readingDate;
-
-    // TODO esta deprecado? este campo aparece en PeriodEntity
-    @Column
-    private Date cutoffDate;
 
     @ManyToOne
     @JoinColumn(name = "watermeter_id", nullable = false)

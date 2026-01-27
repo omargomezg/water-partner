@@ -1,7 +1,6 @@
 package com.hardnets.coop.model.entity;
 
 import com.hardnets.coop.model.constant.PeriodStatusEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This indicate mensual consumption with start and end date
+ * This indicates mensual consumption with start and end date
  */
 @Getter
 @Setter
@@ -56,6 +55,7 @@ public class PeriodEntity extends BaseEntity {
      * Indica el estado de un periodo el cual puede ser:
      * - ACTIVE: Abierto, por cuanto puede recibir lecturas para el mes
      * - CLOSED: Cerrado, cuando cambia a este estado se generan las boletas/facturas
+     * - PREPARED: Cuando se crea un nuevo periodo pero aún no es el activo
      */
     @Column
     @Enumerated(EnumType.STRING)

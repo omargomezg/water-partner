@@ -4,6 +4,7 @@ import com.hardnets.coop.model.dto.PageResponse;
 import com.hardnets.coop.model.dto.PeriodFilterRequest;
 import com.hardnets.coop.model.dto.response.PeriodDto;
 import com.hardnets.coop.service.PeriodService;
+import com.hardnets.coop.service.impl.ConsumptionService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PeriodController {
 
     private final PeriodService periodService;
+    private final ConsumptionService consumptionService;
     private final ModelMapper modelMapper;
 
     /**
@@ -31,6 +33,8 @@ public class PeriodController {
      */
     @GetMapping
     public ResponseEntity<PageResponse<PeriodDto>> list(PeriodFilterRequest filter) {
+        filter.setSortBy("status");
+        filter.setDescending(false);
         var periods = periodService.findAll(filter);
         var total = periodService.totalElements(filter);
         var result = new PageResponse<PeriodDto>();
@@ -65,6 +69,19 @@ public class PeriodController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         periodService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Inicia un periodo, para permitir registrar las lecturas
+     *
+     * @param id Identificador del periodo
+     * @return Respuesta vacía
+     */
+    @PostMapping("/{id}/init")
+    public ResponseEntity<Void> initPeriod(@PathVariable Long id) {
+        periodService.initPeriod(id);
+        consumptionService.createAllRecords(id);
+        return ResponseEntity.ok().build();
     }
 
 }

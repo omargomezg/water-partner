@@ -1,21 +1,14 @@
 package com.hardnets.coop.model.dto.pageable.record;
 
 import com.hardnets.coop.model.constant.DiameterEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.hardnets.coop.model.dto.SectorDTO;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@Builder
-public class RecordDto {
-    private Long id;
-    private Integer serial;
-    private String client;
-    private Integer clientNumber;
-    private DiameterEnum diameter;
-    private String sector;
-    private Integer reading;
-}
+public record RecordDto (
+     Long id,
+     String serial,
+     String client,
+     Integer clientNumber,
+     DiameterEnum diameter,
+     SectorDTO sector,
+     Integer reading
+) {}

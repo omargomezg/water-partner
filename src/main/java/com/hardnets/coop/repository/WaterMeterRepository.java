@@ -16,7 +16,7 @@ import com.hardnets.coop.model.entity.WaterMeterEntity;
 @Repository
 public interface WaterMeterRepository extends JpaRepository<WaterMeterEntity, Long> {
 
-	Optional<WaterMeterEntity> findBySerial(Integer serial);
+	Optional<WaterMeterEntity> findBySerial(String serial);
 
 	@Query(value = "select distinct wm.diameter from WaterMeterEntity wm")
 	List<DiameterEnum> findAllDiameters();

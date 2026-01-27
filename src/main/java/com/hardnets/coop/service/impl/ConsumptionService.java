@@ -1,5 +1,19 @@
 package com.hardnets.coop.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.hardnets.coop.exception.ClientNotFoundException;
 import com.hardnets.coop.exception.PeriodException;
 import com.hardnets.coop.model.dto.ReadingsDto;
@@ -19,20 +33,8 @@ import com.hardnets.coop.repository.ConsumptionRepository;
 import com.hardnets.coop.repository.ConsumptionRepositoryCrud;
 import com.hardnets.coop.repository.PeriodRepository;
 import com.hardnets.coop.repository.WaterMeterRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
@@ -110,7 +112,7 @@ public class ConsumptionService {
      * @param period Periodo a consultar
      * @return Ultimo registro de consumo del medidor consultado
      */
-    private Integer getLastRecordConsumption(Integer serial, Optional<PeriodEntity> period) {
+    private Integer getLastRecordConsumption(String serial, Optional<PeriodEntity> period) {
         Optional<WaterMeterEntity> waterMeter = waterMeterRepository.findBySerial(serial);
         if (period.isPresent() && waterMeter.isPresent()) {
             Optional<ConsumptionEntity> consumption =
