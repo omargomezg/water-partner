@@ -23,7 +23,7 @@ public class ClientDTOAssembler {
         var client = modelMapper.map(clientEntity, ClientDTO.class);
         if (clientEntity.getWaterMeters() != null && !clientEntity.getWaterMeters().isEmpty()) {
             client.setWaterMeters(
-						clientEntity.getWaterMeters().stream().map(this::toWaterMeterDTO).toList());
+                    clientEntity.getWaterMeters().stream().map(this::toWaterMeterDTO).toList());
         }
         return client;
     }
@@ -39,6 +39,17 @@ public class ClientDTOAssembler {
             meter.setFlatFee(tariff.get().getFlatFee());
             meter.setCubicMeter(tariff.get().getCubicMeter());
         }
+
+        waterMeterEntity.getSubsidies().stream()
+                .filter(sub -> Boolean.TRUE.equals(sub.getIsActive())
+                        && sub.getEndingDate().after(new java.util.Date()))
+                .findFirst()
+                .ifPresent(sub -> {
+                    meter.setSubsidy(new com.hardnets.coop.model.dto.response.SubsidyDto(
+                            sub.getId(), sub.getStartDate(), sub.getEndingDate(), sub.getPercentage(),
+                            sub.getObservation()));
+                });
+
         return meter;
     }
 

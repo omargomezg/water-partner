@@ -48,10 +48,10 @@ public class WaterMeterDTO {
 	private String dni;
 
 	@JsonView(AppViews.Internal.class)
-    private String description;
+	private String description;
 
 	@JsonView(AppViews.Internal.class)
-    private StatusEnum status;
+	private StatusEnum status;
 
 	@Builder.Default
 	@JsonView(AppViews.Internal.class)
@@ -66,6 +66,9 @@ public class WaterMeterDTO {
 	 */
 	@JsonView(AppViews.Internal.class)
 	private Date dischargeDate;
+
+	@JsonView(AppViews.Internal.class)
+	private com.hardnets.coop.model.dto.response.SubsidyDto subsidy;
 
 	public WaterMeterDTO(Long id, String serial, String trademark, DiameterEnum diameter, String comment,
 			Date updatedAt) {
