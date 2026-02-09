@@ -17,12 +17,16 @@ import com.hardnets.coop.service.SectorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import com.hardnets.coop.model.dto.SectorDTO;
+import org.modelmapper.ModelMapper;
+
 @RequiredArgsConstructor
 @RequestMapping("/v1/sector")
 @RestController
 public class SectorController {
 
 	private final SectorService sectorService;
+	private final ModelMapper modelMapper;
 
 	@GetMapping
 	public ResponseEntity<List<SectorEntity>> getSectors() {
@@ -30,8 +34,10 @@ public class SectorController {
 	}
 
 	@PostMapping
-	public ResponseEntity<SectorEntity> createSector(@RequestBody @Valid SectorEntity sector) {
-		return ResponseEntity.ok(sectorService.save(sector));
+	public ResponseEntity<SectorDTO> createSector(@RequestBody @Valid SectorDTO sectorDto) {
+		SectorEntity sector = modelMapper.map(sectorDto, SectorEntity.class);
+		SectorEntity savedSector = sectorService.save(sector);
+		return ResponseEntity.ok(modelMapper.map(savedSector, SectorDTO.class));
 	}
 
 	@PutMapping
