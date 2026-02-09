@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -19,7 +20,8 @@ import com.hardnets.coop.model.dto.views.ViewSerializer;
 public class ControllerAdvice implements ResponseBodyAdvice<Object> {
 
 	@Override
-	public boolean supports(@NonNull MethodParameter returnType, Class converterType) {
+	public boolean supports(@NonNull MethodParameter returnType,
+			@NonNull Class<? extends HttpMessageConverter<?>> converterType) {
 		// Soporta cualquier método que retorne un objeto y tenga la anotación
 		// @ViewSerializer
 		return returnType.hasMethodAnnotation(ViewSerializer.class);
@@ -30,7 +32,8 @@ public class ControllerAdvice implements ResponseBodyAdvice<Object> {
 			@NonNull Object body,
 			@NonNull MethodParameter returnType,
 			@NonNull MediaType selectedContentType,
-			Class selectedConverterType, @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
+			@NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType, @NonNull ServerHttpRequest request,
+			@NonNull ServerHttpResponse response) {
 
 		ViewSerializer viewSerializer = returnType.getMethodAnnotation(ViewSerializer.class);
 		Stream<? extends GrantedAuthority> roles = SecurityContextHolder.getContext().getAuthentication()
