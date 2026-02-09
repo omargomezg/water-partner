@@ -17,56 +17,59 @@ public interface WaterMeterPageableRepository extends PagingAndSortingRepository
 
         Page<WaterMeterEntity> findBySerial(String serial, Pageable pageable);
 
-        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, "
+        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
                         +
-                        "cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
-                        +
-                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
-                        +
-                        "and (:sector is null or wm.sector = :sector)", countQuery = "select count(c)" +
-                                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
+                        "from WaterMeterEntity wm " +
+                        "inner join wm.client cl " +
+                        "left join wm.consumptions c on c.period.id = :period " +
+                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) " +
+                        "and (:sector is null or wm.sector.name = :sector)", countQuery = "select count(wm) " +
+                                        "from WaterMeterEntity wm " +
+                                        "inner join wm.client cl " +
+                                        "left join wm.consumptions c on c.period.id = :period " +
+                                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
                                         +
-                                        "and (:sector is null or wm.sector = :sector)")
+                                        "and (:sector is null or wm.sector.name = :sector)")
         Page<RecordDto> findAllByCustomFilters(@Param("number") String number,
                         @Param("dni") String dni,
                         @Param("sector") String sector,
                         @Param("period") Long period,
                         Pageable pageable);
 
-        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, "
+        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
                         +
-                        "cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
-                        +
-                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
-                        +
-                        "and c.reading = 0 and (:sector is null or wm.sector = :sector)", countQuery = "select count(c)"
+                        "from WaterMeterEntity wm " +
+                        "inner join wm.client cl " +
+                        "left join wm.consumptions c on c.period.id = :period " +
+                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) " +
+                        "and (:sector is null or wm.sector.name = :sector) and (c.id is null or c.reading = 0)", countQuery = "select count(wm) "
                                         +
-                                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
+                                        "from WaterMeterEntity wm " +
+                                        "inner join wm.client cl " +
+                                        "left join wm.consumptions c on c.period.id = :period " +
+                                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
                                         +
-                                        "and c.reading = 0 and (:sector is null or wm.sector = :sector)")
+                                        "and (:sector is null or wm.sector.name = :sector) and (c.id is null or c.reading = 0)")
         Page<RecordDto> findAllByPendingCustomFilters(@Param("number") String number,
                         @Param("dni") String dni,
                         @Param("sector") String sector,
                         @Param("period") Long period,
                         Pageable pageable);
 
-        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, "
+        @Query(value = "select new com.hardnets.coop.model.dto.pageable.record.RecordDto(wm.id, wm.serial, cl.fullName, cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
                         +
-                        "cl.clientNumber, wm.diameter, new com.hardnets.coop.model.dto.SectorDTO(wm.sector.id, wm.sector.name), c.reading) "
-                        +
-                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
-                        +
-                        "and c.reading > 0 and (:sector is null or wm.sector = :sector)", countQuery = "select count(c)"
+                        "from WaterMeterEntity wm " +
+                        "inner join wm.client cl " +
+                        "left join wm.consumptions c on c.period.id = :period " +
+                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) " +
+                        "and (:sector is null or wm.sector.name = :sector) and (c.reading > 0)", countQuery = "select count(wm) "
                                         +
-                                        "from ConsumptionEntity c inner join c.waterMeter wm inner join wm.client cl " +
-                                        "where c.period.id = :period and (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
+                                        "from WaterMeterEntity wm " +
+                                        "inner join wm.client cl " +
+                                        "left join wm.consumptions c on c.period.id = :period " +
+                                        "where (:number is null or wm.serial = :number) and (:dni is null or cl.dni = :dni) "
                                         +
-                                        "and c.reading > 0 and (:sector is null or wm.sector = :sector)")
+                                        "and (:sector is null or wm.sector.name = :sector) and (c.reading > 0)")
         Page<RecordDto> findAllByNoPendingCustomFilters(@Param("number") String number,
                         @Param("dni") String dni,
                         @Param("sector") String sector,

@@ -225,13 +225,13 @@ public class WaterMeterService {
 	private String getColumnToSort(String column) {
 		switch (column) {
 			case "client":
-				column = "waterMeter.client.fullName";
+				column = "client.fullName";
 				break;
 			case "sector":
-				column = "waterMeter.sector";
+				column = "sector.name";
 				break;
 			default:
-				column = "waterMeter.serial";
+				column = "serial";
 		}
 		return column;
 	}
